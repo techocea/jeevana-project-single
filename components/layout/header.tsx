@@ -31,16 +31,16 @@ const Header = () => {
   }, [isHomePage]);
 
   const headerWrapperStyles = !isHomePage
-    ? "fixed top-0 left-0 w-full bg-black" // Outer pages style
+    ? "fixed top-0 left-0 w-full bg-black px-6" // Outer pages style
     : isScrolled
-      ? "fixed top-0 left-0 w-full bg-black" // Homepage scrolled style
-      : "fixed top-6 left-1/2 -translate-x-1/2 w-[92%] max-w-4xl bg-black/50 backdrop-blur-md rounded-full border border-white/10"; // Homepage top floating style
+      ? "fixed top-0 left-0 w-full bg-black px-6" // Homepage scrolled style
+      : "fixed top-6 left-1/2 -translate-x-1/2 px-6 w-[92%] max-w-4xl bg-black/50 backdrop-blur-md rounded-full border border-white/10"; // Homepage top floating style
 
   return (
     <header
       className={`${headerWrapperStyles} z-50 transition-all duration-500 ease-in-out`}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 md:px-8">
+      <div className="mx-auto flex h-16 md:max-w-5xl items-center justify-between">
         <nav className="flex items-center justify-between w-full">
           <div>
             <Image

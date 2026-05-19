@@ -3,9 +3,6 @@ import Image from "next/image";
 import {
   ChevronDown,
   ArrowRight,
-  ShieldCheck,
-  Sparkles,
-  Users,
 } from "lucide-react";
 import {
   Accordion,
@@ -13,7 +10,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 import CTA from "@/components/landing/call-to-action";
 import SearchMatch from "@/components/landing/search-match";
 import TopProfiles from "@/components/landing/top-profiles";
@@ -59,7 +55,7 @@ export default function Home() {
       </section>
 
       <section className="py-10 px-6 lg:p-20 bg-white">
-        <CTA />
+        <CTA orientation="horizontal" />
       </section>
 
       <section className="py-10 px-6 lg:p-20 bg-background">

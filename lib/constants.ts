@@ -1,4 +1,11 @@
-import { FileText, Send, MessageCircle } from "lucide-react";
+import {
+  FileText,
+  Send,
+  MessageCircle,
+  FingerprintPattern,
+  Brush,
+  ShieldCheck,
+} from "lucide-react";
 
 export const NAVLINKS = [
   {
@@ -39,6 +46,30 @@ export const SIGN_UP_FEATURES = [
     title: "interact",
     description: "Engage in secure, moderated conversations with families.",
     icon: MessageCircle,
+  },
+];
+
+export const SERVICE_PROMISES = [
+  {
+    id: 1,
+    title: "Bespoke Verification",
+    description:
+      "Every member is manually vetted for background, professional integrity, and family values.",
+    icon: FingerprintPattern,
+  },
+  {
+    id: 2,
+    title: "Artisanal Matching",
+    description:
+      "We pair you based on intellectual synergy, lifestyle aesthetics, and long-term vision.",
+    icon: Brush,
+  },
+  {
+    id: 3,
+    title: "Absolute Discretion",
+    description:
+      "Your privacy is our highest priority. Only curated matches see what we allow them to see.",
+    icon: ShieldCheck,
   },
 ];
 
@@ -277,4 +308,16 @@ export const FAQS = [
     answer:
       "Yes. Go to Account Settings > Delete Account. Deleting will remove your profile and data according to our retention policy.",
   },
+];
+
+export const RESOURCE_LINKS = [
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms of Service", href: "/terms-of-service" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Help", href: "/help" },
+];
+
+export const LEARN_MORE_LINKS = [
+  { label: "Monthly Magazine", href: "/monthly-magazine" },
+  { label: "Blog", href: "/blog" },
 ];
