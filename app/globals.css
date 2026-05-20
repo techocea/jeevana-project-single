@@ -65,9 +65,9 @@
   --accent: oklch(55.34% 0.01156 57.906);
   --accent-foreground: oklch(0.2161 0.0061 56.04);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
+  --border: oklch(0.7665 0.1387 91.06);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --ring: oklch(0.7665 0.1387 91.06);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -132,7 +132,7 @@
     @apply text-5xl lg:text-8xl font-newsreader tracking-tight text-white lg:leading-24;
   }
   p {
-    @apply lg:text-lg text-base leading-8 text-accent;
+    @apply lg:text-lg text-base leading-6 text-accent;
   }
   h2 {
     @apply text-7xl tracking-tight;

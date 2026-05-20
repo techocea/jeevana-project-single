@@ -44,10 +44,11 @@ const Header = () => {
         <nav className="flex items-center justify-between w-full">
           <div>
             <Image
-              src="/logo.png"
+              src="/images/logo.png"
               alt="matrimony, matrimonial ads, marriage bureau, find life partner, wedding ads, jeevana matrimony"
               width={120}
               height={50}
+              style={{ width: "auto", height: "auto" }}
             />
           </div>
           <div className="hidden md:flex items-center gap-4">

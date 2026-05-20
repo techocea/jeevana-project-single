@@ -18,6 +18,7 @@ const Footer = () => {
                 alt="matrimony, matrimonial ads, marriage bureau, find life partner, wedding ads, jeevana matrimony"
                 width={120}
                 height={50}
+                style={{ width: "auto", height: "auto" }}
               />
             </div>
             <p className="text-sm text-white">

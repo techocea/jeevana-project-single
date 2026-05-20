@@ -52,5 +52,16 @@ export const profiles = pgTable("profiles", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const contacts = pgTable("contacts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  fullName: text("full_name").notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  interest: text("interest").notNull(),
+  message: text("message").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export type User = typeof users.$inferSelect;
 export type Profile = typeof profiles.$inferSelect;
+
+export type Contact = typeof contacts.$inferSelect;

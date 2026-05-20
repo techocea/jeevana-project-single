@@ -22,7 +22,7 @@ export default function Home() {
       {/* Hero Section spans full screen to showcase background behind floating header */}
       <section className="relative lg:h-180 h-screen w-full flex flex-col items-center justify-center">
         <Image
-          src="/hero-bg.png"
+          src="/images/hero-bg.png"
           alt="Elegant Sri Lankan bride dressed in traditional white Kandyan sari"
           fill
           priority
