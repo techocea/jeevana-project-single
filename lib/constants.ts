@@ -5,6 +5,7 @@ import {
   FingerprintPattern,
   Brush,
   ShieldCheck,
+  Headset,
 } from "lucide-react";
 
 export const NAVLINKS = [
@@ -70,6 +71,21 @@ export const SERVICE_PROMISES = [
     description:
       "Your privacy is our highest priority. Only curated matches see what we allow them to see.",
     icon: ShieldCheck,
+  },
+];
+
+export const PRICING_FEATURES = [
+  {
+    id: 1,
+    title: "data privacy",
+    description: "Bank-grade protection",
+    icon: ShieldCheck,
+  },
+  {
+    id: 2,
+    title: "24/7 Support",
+    description: "Personal support for every inquiry",
+    icon: Headset,
   },
 ];
 
@@ -320,4 +336,43 @@ export const RESOURCE_LINKS = [
 export const LEARN_MORE_LINKS = [
   { label: "Monthly Magazine", href: "/monthly-magazine" },
   { label: "Blog", href: "/blog" },
+];
+
+export const PRICING_PACKAGES = [
+  {
+    id: 1,
+    name: "Classical",
+    description: "Essential listing for thoughtful",
+    price: "LKR 1,999",
+    inclusions: [
+      "Send unlimited interests",
+      "View up to 50 verified contacts",
+      "Standard profile tagging",
+      "Featured profile listing",
+    ],
+  },
+  {
+    id: 2,
+    name: "Heritage",
+    description: "Enhanced visibility with curated introductions.",
+    price: "LKR 4,499",
+    inclusions: [
+      "Priority in search results",
+      "View unlimited verified contacts",
+      "Profile boost twice monthly",
+      "Verified badge on profile",
+    ],
+  },
+  {
+    id: 3,
+    name: "Elite",
+    description: "Full concierge service for selective families.",
+    price: "LKR 9,999",
+    inclusions: [
+      "Dedicated matchmaker",
+      "Bespoke intro sequences",
+      "Background verification service",
+      "Exclusive Elite events access",
+    ],
+  },
 ];
