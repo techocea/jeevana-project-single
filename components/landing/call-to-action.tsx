@@ -3,7 +3,9 @@ import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { ArrowRight, Phone } from "lucide-react";
 
-type Orientation = "horizontal" | "vertical";
+interface Orientation {
+  orientation: "horizontal" | "vertical";
+}
 
 const CTA = ({ orientation }: Orientation) => {
   return orientation === "horizontal" ? (

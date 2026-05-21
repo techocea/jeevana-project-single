@@ -25,11 +25,11 @@ const ContactForm = () => {
     formState: { errors, isSubmitting },
     reset,
   } = useForm<ContactFormValues>({
-    resolver: zodResolver(contactFormSchema),
+    resolver: zodResolver(contactFormSchema as any),
     defaultValues: {
       fullName: "",
       email: "",
-      interest: "",
+      interest: undefined,
       message: "",
     },
   });

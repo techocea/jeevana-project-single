@@ -6,6 +6,8 @@ import {
   Brush,
   ShieldCheck,
   Headset,
+  Sparkles,
+  CreditCard,
 } from "lucide-react";
 
 export const NAVLINKS = [
@@ -86,6 +88,37 @@ export const PRICING_FEATURES = [
     title: "24/7 Support",
     description: "Personal support for every inquiry",
     icon: Headset,
+  },
+];
+
+export const ONBOARDING_HIGHLIGHTS = [
+  {
+    id: 1,
+    title: "Privacy Friendly",
+    description:
+      "We protect your profile data with strict privacy controls and secure onboarding checks.",
+    icon: ShieldCheck,
+  },
+  {
+    id: 2,
+    title: "Genuine Profiles",
+    description:
+      "Every account is reviewed so you connect only with genuine members and verified listings.",
+    icon: Sparkles,
+  },
+  {
+    id: 3,
+    title: "Live Support",
+    description:
+      "Our support team is available to help you through registration, profile setup, and membership questions.",
+    icon: Headset,
+  },
+  {
+    id: 4,
+    title: "Paid Accounts",
+    description:
+      "Premium membership gives you priority access to curated matches and elite visibility.",
+    icon: CreditCard,
   },
 ];
 

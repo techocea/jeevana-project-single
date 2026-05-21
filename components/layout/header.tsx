@@ -40,7 +40,7 @@ const Header = () => {
     <header
       className={`${headerWrapperStyles} z-50 transition-all duration-500 ease-in-out`}
     >
-      <div className="mx-auto flex h-16 md:max-w-5xl items-center justify-between">
+    <div className="mx-auto flex h-16 md:max-w-5xl items-center justify-between">
         <nav className="flex items-center justify-between w-full">
           <div>
             <Image
@@ -63,7 +63,9 @@ const Header = () => {
             ))}
           </div>
           <div className="hidden md:flex items-center gap-4">
-            <Button className="rounded-full px-6">JOIN NOW</Button>
+            <Link href="/auth?mode=login">
+              <Button className="rounded-full px-6">JOIN NOW</Button>
+            </Link>
           </div>
 
           <div className="md:hidden flex items-center">
@@ -93,7 +95,9 @@ const Header = () => {
                       {link.name}
                     </Link>
                   ))}
-                  <Button className="w-full rounded-full p-6">JOIN NOW</Button>
+                  <Link href="/auth?mode=login" className="w-full">
+                    <Button className="w-full rounded-full p-6">JOIN NOW</Button>
+                  </Link>
                 </div>
               </div>
             )}

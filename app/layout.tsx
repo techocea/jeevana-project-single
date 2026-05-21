@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Newsreader, Inter } from "next/font/google";
 import "@/app/globals.css";
-import Header from "@/components/layout/header";
-import Footer from "@/components/layout/footer";
 
 const newsReader = Newsreader({
   variable: "--font-newsreader",
@@ -30,11 +28,7 @@ export default function RootLayout({
       lang="en"
       className={`${newsReader.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <Header />
-        {children}
-        <Footer />
-      </body>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }
