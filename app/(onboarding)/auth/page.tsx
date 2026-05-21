@@ -1,22 +1,17 @@
-"use client";
-
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ONBOARDING_HIGHLIGHTS } from "@/lib/constants";
-import { useRouter, useSearchParams } from "next/navigation";
 import LoginForm from "@/components/forms/login-form";
 import RegisterForm from "@/components/forms/register-form";
 
-const AuthPage = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+interface AuthPageProps {
+  searchParams: Promise<{ mode?: string }>;
+}
 
-  const mode = searchParams.get("mode") === "login" ? "login" : "register";
-
-  const handleModeChange = (newMode: "login" | "register") => {
-    router.push(`/auth?mode=${newMode}`);
-  };
+const AuthPage = async ({ searchParams }: AuthPageProps) => {
+  const params = await searchParams;
+  const mode = params.mode === "login" ? "login" : "register";
 
   return (
     <main className="w-full">
@@ -40,17 +35,23 @@ const AuthPage = () => {
           <div className="flex flex-col md:flex-row bg-white shadow-2xl w-full gap-10">
             <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-0 ">
               {mode === "login" ? <LoginForm /> : <RegisterForm />}
-              <Button
-                variant="link"
-                className="mt-4 text-sm cursor-pointer font-light"
-                onClick={() =>
-                  handleModeChange(mode === "login" ? "register" : "login")
-                }
-              >
-                {mode === "login"
-                  ? "Don't have an account? Sign up"
-                  : "Already have an account? Log in"}
-              </Button>
+              <div className="mt-4 text-center">
+                {mode === "login" ? (
+                  <Link
+                    href="/auth?mode=register"
+                    className="text-primary hover:text-secondary transition-colors "
+                  >
+                    Don't have an account? Sign up
+                  </Link>
+                ) : (
+                  <Link
+                    href="/auth?mode=login"
+                    className="text-primary hover:text-secondary transition-colors "
+                  >
+                    Already have an account? Log in
+                  </Link>
+                )}
+              </div>
             </div>
 
             <div className="flex-1 bg-linear-to-tr from-primary/10 to-primary/20">
