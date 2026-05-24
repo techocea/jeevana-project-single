@@ -134,8 +134,9 @@ export default function Home() {
           <div className="relative max-w-2xl w-full h-96 rounded-3xl overflow-hidden">
             <Image
               src="/images/pricing-img.png"
-              alt="Pricing"
+              alt="Pricing illustration"
               fill
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover object-center"
             />
           </div>

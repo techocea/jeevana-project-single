@@ -43,14 +43,14 @@ const CTA = ({ orientation }: Orientation) => {
           Browse curated profiles and find your perfect match today.
         </p>
 
-        <div className="flex items-center justify-center gap-4 mt-4">
-          <Button className="uppercase p-6">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-4 max-w-xs sm:w-full w-full">
+          <Button className="uppercase p-6 w-full md:w-fit">
             create a profile{" "}
             <span>
               <ArrowRight size={18} />
             </span>
           </Button>
-          <Button className="uppercase p-6" variant="ghost">
+          <Button className="uppercase p-6 w-full md:w-fit" variant="outline">
             talk to us
             <span>
               <Phone size={18} />

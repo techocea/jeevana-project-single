@@ -12,70 +12,88 @@ import {
   type AuthRegisterValues,
   type ForgotPasswordValues,
 } from "@/lib/validation";
+import { createClient } from "@/utils/supabase";
+import { z } from "zod";
+import { redirect } from "next/navigation";
 
 export async function registerUser(data: AuthRegisterValues) {
   const parsed = authRegisterSchema.safeParse(data);
 
   if (!parsed.success) {
-    const errors = parsed.error.flatten().fieldErrors;
-    const error = new Error("Validation failed");
-    (error as any).validation = errors;
-    throw error;
+    return {
+      error: "Validation failed",
+      fields: z.treeifyError(parsed.error).errors,
+    };
   }
 
   const email = parsed.data.email.trim().toLowerCase();
   const password = parsed.data.password;
 
-  const existingEmail = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
+  const supabase = await createClient();
 
-  if (existingEmail.length > 0) {
-    throw new Error("An account with this email already exists.");
-  }
-
-  const hashedPassword = createHash("sha256").update(password).digest("hex");
-
-  await db.insert(users).values({
+  const { data: authData, error: authError } = await supabase.auth.signUp({
     email,
-    password: hashedPassword,
+    password,
   });
 
-  return { success: true };
+  if (authError || !authData.user) {
+    return { error: authError?.message || "Registration failed." };
+  }
+
+  try {
+    await db.insert(users).values({
+      id: authData.user.id,
+      email,
+      onboardingStatus: "INCOMPLETE",
+    });
+  } catch (dbError: any) {
+    console.error("Drizzle mirror failure:", dbError);
+
+    await supabase.auth.admin.deleteUser(authData.user.id);
+    return { error: "Database registration failure. Please try again." };
+  }
+
+  // return {
+  //   success: true,
+  //   message: "Verification email sent! Please check your inbox to confirm your account."
+  // };
+
+  redirect("/auth?mode=login");
 }
 
 export async function loginUser(data: AuthLoginValues) {
   const parsed = authLoginSchema.safeParse(data);
 
   if (!parsed.success) {
-    const errors = parsed.error.flatten().fieldErrors;
-    const error = new Error("Validation failed");
-    (error as any).validation = errors;
-    throw error;
+    return {
+      error: "Validation failed",
+      fields: z.treeifyError(parsed.error).errors,
+    };
   }
 
   const email = parsed.data.email.trim().toLowerCase();
   const password = parsed.data.password;
 
-  const found = await db
+  const supabase = await createClient();
+
+  const { data: authData, error: authError } =
+    await supabase.auth.signInWithPassword({ email, password });
+
+  if (authError || !authData.user) {
+    return { error: "Invalid email or password." };
+  }
+
+  const [dbUser] = await db
     .select()
     .from(users)
-    .where(eq(users.email, email))
+    .where(eq(users.id, authData.user.id))
     .limit(1);
 
-  if (!found.length) {
-    throw new Error("Invalid email or password.");
+  if (!dbUser || dbUser.onboardingStatus === "INCOMPLETE") {
+    redirect("/onboarding");
   }
 
-  const hashedPassword = createHash("sha256").update(password).digest("hex");
-
-  if (found[0].password !== hashedPassword) {
-    throw new Error("Invalid email or password.");
-  }
-
-  return { success: true, userId: found[0].id };
+  redirect("/profile");
 }
 
 export async function requestPasswordReset(data: ForgotPasswordValues) {

@@ -28,8 +28,10 @@ const LoginForm = () => {
     setServerError(null);
 
     try {
-      await loginUser(data);
-      window.location.href = "/dashboard";
+      const result = await loginUser(data);
+      if (result?.error) {
+        setServerError(result.error);
+      }
     } catch (error) {
       if (error instanceof Error) {
         setServerError(error.message);

@@ -25,8 +25,9 @@ const AboutPage = () => {
           <div className="flex-2 flex relative max-w-sm w-full min-h-100 md:min-h-120">
             <Image
               src="/images/about-img-1.png"
-              alt="Pricing"
+              alt="About Jeevana matchmaking process"
               fill
+              sizes="(max-width: 768px) 100vw, 40vw"
               className="object-cover object-center rounded-3xl"
             />
             <Card className="absolute bottom-4 md:-left-16 -left-8 w-64 bg-white/90 backdrop-blur-sm shadow-lg">
@@ -65,8 +66,9 @@ const AboutPage = () => {
           <div className="flex-2 flex relative max-w-lg w-full min-h-100 md:min-h-120">
             <Image
               src="/images/about-img-2.png"
-              alt="Pricing"
+              alt="Jeevana heritage and matchmaking philosophy"
               fill
+              sizes="(max-width: 768px) 100vw, 45vw"
               className="object-cover object-center rounded-3xl"
             />
           </div>

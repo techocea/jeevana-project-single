@@ -53,8 +53,9 @@ const ContactPage = () => {
           <div className="flex-2 flex relative md:max-w-sm w-full min-h-64 md:min-h-80">
             <Image
               src="/images/contact-img.png"
-              alt="Pricing"
+              alt="Contact support illustration"
               fill
+              sizes="(max-width: 768px) 100vw, 40vw"
               className="object-cover object-center rounded-3xl"
             />
           </div>

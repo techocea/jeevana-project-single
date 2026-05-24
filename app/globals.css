@@ -40,7 +40,7 @@
   --color-background: var(--background);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
+  --radius-md: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
@@ -129,18 +129,18 @@
     @apply font-sans;
   } */
   .title {
-    @apply text-5xl lg:text-8xl font-newsreader tracking-tight text-white lg:leading-24;
+    @apply text-5xl md:text-8xl font-newsreader tracking-tight text-white md:leading-24;
   }
   p {
-    @apply lg:text-lg text-base leading-6 text-accent;
+    @apply md:text-lg text-base leading-6 text-accent;
   }
   h2 {
-    @apply text-7xl tracking-tight;
+    @apply md:text-5xl text-4xl tracking-tight;
   }
   h3 {
-    @apply lg:text-5xl text-4xl tracking-tight font-normal font-newsreader;
+    @apply md:text-5xl text-4xl tracking-tight font-normal font-newsreader;
   }
   .tagline {
-    @apply text-primary uppercase tracking-widest text-xs lg:text-sm font-semibold;
+    @apply text-primary uppercase tracking-widest text-xs md:text-sm font-semibold;
   }
 }

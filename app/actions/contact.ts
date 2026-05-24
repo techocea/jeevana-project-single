@@ -2,7 +2,7 @@
 
 import { contactFormSchema, type ContactFormValues } from "@/lib/validation";
 import { db } from "@/lib/db";
-import { contacts } from "@/drizzle/schema";
+import { inquiries } from "@/drizzle/schema";
 
 export async function createContactInquiry(data: ContactFormValues) {
   const parsed = contactFormSchema.safeParse(data);
@@ -14,7 +14,7 @@ export async function createContactInquiry(data: ContactFormValues) {
     throw error;
   }
 
-  await db.insert(contacts).values({
+  await db.insert(inquiries).values({
     fullName: parsed.data.fullName.trim(),
     email: parsed.data.email.trim().toLowerCase(),
     interest: parsed.data.interest,

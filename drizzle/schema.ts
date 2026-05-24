@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
   pgTable,
   uuid,
@@ -6,12 +7,29 @@ import {
   timestamp,
   date,
   varchar,
+  pgSequence,
 } from "drizzle-orm/pg-core";
+
+export const profileSeq = pgSequence("profile_id_seq", {
+  startWith: 1000,
+  increment: 1,
+});
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
+  profileID: varchar("profile_id", { length: 20 })
+    .default(sql`concat('JV', nextval('profile_id_seq'))`)
+    .notNull()
+    .unique(),
   email: varchar("email", { length: 255 }).notNull().unique(),
-  password: text("password").notNull(),
+
+  onboardingStatus: varchar("onboarding_status", { length: 20 })
+    .default("INCOMPLETE") // INCOMPLETE, VERIFYING, APPROVED
+    .notNull(),
+  onboardingStep: varchar("onboarding_step", { length: 20 })
+    .default("PERSONAL") // 'PERSONAL' | 'RELIGION' | 'ACHIEVEMENTS' | 'LOCATION' | 'FINAL'
+    .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const profiles = pgTable("profiles", {
@@ -20,48 +38,51 @@ export const profiles = pgTable("profiles", {
   tenant: text("tenant").notNull(), // "jeevana" or "soulmate"
 
   // Basic Info (Step 1)
-  fullName: text("full_name").notNull(),
-  email: text("email"),
-  contact: text("contact").notNull(),
-  gender: text("gender").notNull(),
-  dob: date("dob", { mode: "date" }).notNull(),
+  fullName: text("full_name"),
+  contact: text("contact"),
+  gender: text("gender"),
+  profilePic: text("profile_pic"),
+  dob: date("dob", { mode: "date" }),
 
   // Professional (Step 2)
-  religion: text("religion").notNull(),
-  caste: text("caste").notNull(),
-  motherTongue: text("mother_tongue").notNull(),
+  religion: text("religion"),
+  caste: text("caste"),
+  motherTongue: text("mother_tongue"),
 
   // Preferences (Step 3)
-  educationLevel: text("education_level").notNull(),
-  profession: text("profession").notNull(),
-  annualIncomeRange: text("annual_income_range").notNull(),
+  educationLevel: text("education_level"),
+  profession: text("profession"),
+  annualIncomeRange: text("annual_income_range"),
 
   // Location (Step 4)
   country: text("country").default("Sri Lanka"),
-  state: text("state").notNull(),
-  city: text("city").notNull(),
+  state: text("state"),
+  city: text("city"),
 
   // Final (Step 5)
-  height: integer("height_cm").notNull(),
-  weight: integer("weight_kg").notNull(),
+  height: integer("height_cm"),
+  weight: integer("weight_kg"),
   narrative: text("narrative"),
 
-  status: text("status").default("pending"), // 'pending' | 'approved' | 'rejected'
-  paymentStatus: text("payment_status").default("unpaid"), // 'unpaid' | 'paid'
+  status: text("status").default("PENDING"), // 'pending' | 'approved' | 'rejected'
+  paymentStatus: text("payment_status").default("UNPAID"), // 'unpaid' | 'paid'
 
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const contacts = pgTable("contacts", {
+export const inquiries = pgTable("inquiries", {
   id: uuid("id").primaryKey().defaultRandom(),
   fullName: text("full_name").notNull(),
   email: varchar("email", { length: 255 }).notNull(),
   interest: text("interest").notNull(),
   message: text("message").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export type User = typeof users.$inferSelect;
 export type Profile = typeof profiles.$inferSelect;
 
-export type Contact = typeof contacts.$inferSelect;
+export type Inquiry = typeof inquiries.$inferSelect;

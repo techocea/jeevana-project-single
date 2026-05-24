@@ -146,8 +146,9 @@ const PricingPage = () => {
             <div className="absolute inset-0 bg-linear-to-t from-black to-black/20 rounded-3xl opacity-50"></div>
             <Image
               src="/images/pricing-img.png"
-              alt="Pricing"
+              alt="Jeevana pricing and membership illustration"
               fill
+              sizes="(max-width: 768px) 100vw, 40vw"
               className="object-cover object-center rounded-3xl"
             />
           </div>

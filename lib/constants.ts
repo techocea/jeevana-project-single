@@ -1,3 +1,4 @@
+import { StepConfig } from "@/types";
 import {
   FileText,
   Send,
@@ -408,4 +409,12 @@ export const PRICING_PACKAGES = [
       "Exclusive Elite events access",
     ],
   },
+];
+
+export const ONBOARDING_STEPS: StepConfig[] = [
+  { id: 1, title: "the essentials", tagline: "the beginning" },
+  { id: 2, title: "roots & heritage", tagline: "identity & roots" },
+  { id: 3, title: "aspirations & achievements", tagline: "the journey" },
+  { id: 4, title: "location & residency", tagline: "where you call home" },
+  { id: 5, title: "final details", tagline: "complete your profile" },
 ];

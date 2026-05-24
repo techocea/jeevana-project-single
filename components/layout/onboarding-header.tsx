@@ -8,7 +8,7 @@ import React from "react";
 
 const OnboardingHeader = () => {
   return (
-    <header className="bg-black text-white">
+    <header className="bg-black text-white px-6 py-4 md:p-0">
       <div className="mx-auto flex h-16 md:max-w-5xl items-center justify-between">
         <Link href="/" className="flex items-center gap-3">
           <Image
@@ -28,7 +28,7 @@ const OnboardingHeader = () => {
             Support
           </Link>
           <Button asChild size="sm" className="rounded-full px-5">
-            <Link href="/auth">Get Started</Link>
+            <Link href="/auth?mode=login">Get Started</Link>
           </Button>
         </div>
       </div>

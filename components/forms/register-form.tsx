@@ -31,9 +31,13 @@ const RegisterForm = () => {
     setSuccessMessage(null);
 
     try {
-      await registerUser(data);
-      setSuccessMessage("Account created successfully. Please log in.");
-      reset();
+      const result = await registerUser(data);
+      if (result?.error) {
+        setServerError(result.error);
+      } else {
+        setSuccessMessage("Account created successfully. Please log in.");
+        reset();
+      }
     } catch (error) {
       if (error instanceof Error) {
         setServerError(error.message);
@@ -47,7 +51,9 @@ const RegisterForm = () => {
     <div className="flex flex-col md:max-w-sm w-full">
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <h3 className="text-2xl font-semibold text-black">Create an Account</h3>
+          <h3 className="text-2xl font-semibold text-black">
+            Create an Account
+          </h3>
           <p className="mt-2 text-sm text-muted">
             Register with username, email and password.
           </p>
@@ -55,8 +61,6 @@ const RegisterForm = () => {
       </div>
 
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-        
-
         <div>
           <Label
             htmlFor="email"
