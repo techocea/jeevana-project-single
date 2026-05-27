@@ -32,10 +32,7 @@ const SearchMatch = () => {
         <div className="hidden sm:flex items-center space-x-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="rounded-full text-muted-foreground uppercase text-lg"
-              >
+              <Button className="bg-transparent hover:bg-muted/50 rounded-full text-muted-foreground uppercase text-lg">
                 <User size={24} className="text-primary mr-2" /> Looking for{" "}
                 {lookingFor}
               </Button>
@@ -56,10 +53,7 @@ const SearchMatch = () => {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="rounded-full text-muted-foreground uppercase text-lg"
-              >
+              <Button className="bg-transparent hover:bg-muted/50 rounded-full text-muted-foreground uppercase text-lg">
                 <Cake size={24} className="text-primary mr-2" /> age range (ex:{" "}
                 {minAge}-{maxAge})
               </Button>
@@ -106,8 +100,7 @@ const SearchMatch = () => {
 
         <div className="flex flex-1 items-center justify-between sm:hidden">
           <Button
-            variant="ghost"
-            className="rounded-full text-muted-foreground uppercase text-lg"
+              className="bg-transparent hover:bg-muted/50 rounded-full text-muted-foreground uppercase text-lg"
             onClick={() => setDrawerOpen(true)}
           >
             <SlidersHorizontal size={24} className="text-primary mr-2" />{" "}
