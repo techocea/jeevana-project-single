@@ -1,55 +1,47 @@
-"use client";
+import { db } from "@/lib/db";
+import { users, profiles } from "@/drizzle/schema";
+import { createClient } from "@/utils/supabase";
+import { eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
+import OnboardingPageClient from "./page.client";
 
-import { useState } from "react";
-import BasicInformation from "@/components/forms/onboarding-basic-form";
-import ProgressBarHeader from "@/components/landing/progress-bar-header";
-import { ONBOARDING_STEPS } from "@/lib/constants";
-import ReligionInformation from "@/components/forms/onboarding-religion-form";
-import AchievementsForm from "@/components/forms/onboarding-achievements-form";
-import LocationInformation from "@/components/forms/onboarding-location-form";
-import FinalInformation from "@/components/forms/onboarding-final-form";
+const STEP_STRING_TO_NUMBER: Record<string, number> = {
+  START: 1,
+  RELIGION: 2,
+  ACHIEVEMENTS: 3,
+  LOCATION: 4,
+  PERSONAL: 5,
+  HOBBIES: 6,
+};
 
-const OnboardingPage = () => {
-  const [currentStep, setCurrentStep] = useState<number>(2);
-  const [initialData, setInitialData] = useState<Record<string, any>>({});
+const OnboardingPage = async () => {
+  const supabase = await createClient();
+  const {
+    data: { user: authedUser },
+  } = await supabase.auth.getUser();
 
-  const onNext = async (stepData: Record<string, any>) => {
-    // Merge new step inputs with previous step inputs
-    const updatedData = { ...initialData, ...stepData };
-    setInitialData(updatedData);
+  if (!authedUser) {
+    redirect("/auth?mode=login");
+  }
 
-    if (currentStep < 5) {
-      // Advance to next step view
-      setCurrentStep((prev) => prev + 1);
+  const [userRecord, profileRecord] = await Promise.all([
+    db.query.users.findFirst({ where: eq(users.id, authedUser.id) }),
+    db.query.profiles.findFirst({ where: eq(profiles.userId, authedUser.id) }),
+  ]);
 
-      // OPTIONAL INDUSTRIAL PRACTICE: Save draft progress to your backend here
-      // await updateDraftOnboarding(updatedData, currentStep + 1);
-    } else {
-      // We are on Step 5, trigger final submission to database
-      await handleFinalSubmit(updatedData);
-    }
-  };
+  const savedStepString = userRecord?.onboardingStep || "START";
 
-  const onPrev = () => {
-    if (currentStep > 1) setCurrentStep((prev) => prev - 1);
-  };
+  if (savedStepString === "COMPLETED") {
+    redirect(`/pricing?profileId=${profileRecord?.id}`);
+  }
 
-  const handleFinalSubmit = async (finalPayload: Record<string, any>) => {
-    console.log("Ready for Server Action submission:", finalPayload);
-    // Call your server action here to save to Drizzle Postgres and redirect to dashboard
-  };
+  const activeStepInt = STEP_STRING_TO_NUMBER[savedStepString] || 1;
+
   return (
-    <div className="w-full py-10 px-6 md:px-0 mx-auto md:max-w-4xl">
-      <ProgressBarHeader currentStep={currentStep} steps={ONBOARDING_STEPS} />
-
-      {currentStep === 1 && (
-        <BasicInformation initialData={initialData} onNext={onNext} />
-      )}
-      {currentStep === 2 && <ReligionInformation initialData={initialData} onNext={onNext} onPrev={onPrev} />}
-      {currentStep === 3 && <AchievementsForm />}
-      {currentStep === 4 && <LocationInformation />}
-      {currentStep === 5 && <FinalInformation />}
-    </div>
+    <OnboardingPageClient
+      initialDbData={profileRecord || {}}
+      savedStep={activeStepInt}
+    />
   );
 };
 

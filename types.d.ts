@@ -11,10 +11,12 @@ export interface ProgressBarHeaderProps {
 
 export interface StepOneInitialData {
   initialData: {
+    createdBy?: "self" | "parent" | "guardian" | "sibling" | "friend";
+    profilePic?: string;
     fullName?: string;
     contact?: string;
     gender?: "MALE" | "FEMALE";
-    dob?: string;
+    dob?: Date;
   };
 }
 
@@ -39,13 +41,19 @@ export interface StepFourInitialData {
     country?: string;
     state?: string;
     city?: string;
+    residencyStatus?: "CITIZEN" | "PR" | "WORK";
   };
 }
 
 export interface StepFiveInitialData {
   initialData: {
-    height?: string;
-    weight?: string;
+    height?: number;
+    weight?: number;
+    smoking?: "never" | "occasionally" | "regularly";
+    drinking?: "never" | "socially" | "regularly";
+    foodPreferences?: "vegetarian" | "non-vegetarian" | "vegan";
+    isDifferentlyAbled?: boolean;
+    differentlyAbledDetails?: string;
     narrative?: string;
   };
 }

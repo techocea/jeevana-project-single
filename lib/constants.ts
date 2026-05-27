@@ -11,6 +11,16 @@ import {
   CreditCard,
 } from "lucide-react";
 
+export const STEP_STRING_TO_NUMBER: Record<string, number> = {
+  START: 1,
+  RELIGION: 2,
+  ACHIEVEMENTS: 3,
+  LOCATION: 4,
+  PERSONAL: 5,
+  HOBBIES: 6,
+  COMPLETED: 6,
+};
+
 export const NAVLINKS = [
   {
     name: "Home",
@@ -416,5 +426,41 @@ export const ONBOARDING_STEPS: StepConfig[] = [
   { id: 2, title: "roots & heritage", tagline: "identity & roots" },
   { id: 3, title: "aspirations & achievements", tagline: "the journey" },
   { id: 4, title: "location & residency", tagline: "where you call home" },
-  { id: 5, title: "final details", tagline: "complete your profile" },
+  {
+    id: 5,
+    title: "Personal & Physical Details",
+    tagline: "complete your profile",
+  },
+  {
+    id: 6,
+    title: "Hobbies & Interests",
+    tagline: "tell us what you love",
+  },
 ];
+
+export const PERSONAL_DROPDOWNS = {
+  education_levels: [
+    "Less than High School",
+    "High School Graduate / GED",
+    "Some College / Associate Degree",
+    "Bachelor's Degree",
+    "Graduate / Professional Degree",
+  ],
+  annual_income_ranges: [
+    "Under LKR 600,000",
+    "LKR 600,000 to LKR 1,199,999",
+    "LKR 1,200,000 to LKR 2,399,999",
+    "LKR 2,400,000 to LKR 4,799,999",
+    "LKR 4,800,000 and over",
+  ],
+  hobbies: [
+    { label: "Traveling", icon: "✈️" },
+    { label: "Cooking", icon: "🍳" },
+    { label: "Reading", icon: "📚" },
+    { label: "Fitness", icon: "🏋️‍♂️" },
+    { label: "Music", icon: "🎵" },
+    { label: "Painting", icon: "🎨" },
+    { label: "Gaming", icon: "🎮" },
+    { label: "Photography", icon: "📸" },
+  ],
+};

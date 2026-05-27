@@ -11,11 +11,11 @@ import { StepOneInitialData } from "@/types";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Camera } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import ImageUploadZone from "@/components/landing/image-upload";
 import { OnboardingFormValues, stepOneBasicSchema } from "@/lib/validation";
-import Image from "next/image";
 
 type StepOneValues = z.infer<typeof stepOneBasicSchema>;
 
@@ -33,50 +33,71 @@ const BasicInformation = ({ onNext, initialData }: StepOneProps) => {
   } = useForm<OnboardingFormValues>({
     resolver: zodResolver(stepOneBasicSchema as any),
     defaultValues: {
+      createdBy: initialData?.createdBy || undefined,
+      profilePic: initialData?.profilePic || "",
       fullName: initialData?.fullName || "",
       contact: initialData?.contact || "",
       gender: initialData?.gender || undefined,
-      dob: initialData?.dob
-        ? new Date(initialData?.dob).toISOString().split("T")[0]
-        : undefined,
+      dob: initialData?.dob || undefined,
     },
   });
 
   return (
     <div className="mt-16 w-full flex flex-col md:flex-row gap-10">
       <div className="flex-1 flex items-center justify-center w-full">
-        <div className="border border-secondary rounded-md bg-white/5 flex flex-col items-center justify-center min-w-100 w-full min-h-48 h-full relative">
-          <div
-            className="absolute inset-0 bg-cover bg-center scale-110 blur-xl opacity-20 pointer-events-none"
-            style={{ backgroundImage: `url(/images/step-3-img.png)` }}
-          />
-          <div className="z-20 flex flex-col items-center gap-4">
-            <Image
-              src="/images/demo-profile-pic.png"
-              alt=""
-              fill
-              priority
-              className="object-contain"
-            />
-          </div>
-        </div>
+        <Controller
+          control={control}
+          name="profilePic"
+          render={({ field }) => (
+            <ImageUploadZone value={field.value} onChange={field.onChange} />
+          )}
+        />
       </div>
       <div className="flex-1">
         <form
           onSubmit={handleSubmit(onNext)}
-          className="space-y-2 md:space-y-4 grid grid-cols-1 md:grid-cols-2 gap-4"
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
-          <div className="col-span-2">
+          <div className="col-span-2 flex flex-col gap-2">
+            <Label
+              htmlFor="createdBy"
+              className="text-sm font-medium text-slate-700 uppercase"
+            >
+              This Profile is Created By
+            </Label>
+            <Controller
+              name="createdBy"
+              control={control}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select relationship" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="self">Myself</SelectItem>
+                    <SelectItem value="parent">Parent / Guardian</SelectItem>
+                    <SelectItem value="sibling">Sibling</SelectItem>
+                    <SelectItem value="friend">Friend</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.createdBy && (
+              <p className="text-xs text-red-500">{errors.createdBy.message}</p>
+            )}
+          </div>
+
+          <div className="col-span-2 flex flex-col gap-2">
             <Label
               htmlFor="fullName"
-              className="text-sm font-medium text-slate-700 uppercase mb-2"
+              className="text-sm font-medium text-slate-700 uppercase"
             >
               Full Name
             </Label>
             <Input
               id="fullName"
               type="text"
-              placeholder="Enter your full name"
+              placeholder="John Smith"
               {...register("fullName")}
             />
             {errors.fullName && (
@@ -84,17 +105,17 @@ const BasicInformation = ({ onNext, initialData }: StepOneProps) => {
             )}
           </div>
 
-          <div className="md:col-span-1 col-span-2">
+          <div className="md:col-span-1 col-span-2 flex flex-col gap-2">
             <Label
               htmlFor="contact"
-              className="text-sm font-medium text-slate-700 uppercase mb-2"
+              className="text-sm font-medium text-slate-700 uppercase"
             >
               Contact Number
             </Label>
             <Input
               id="contact"
               type="text"
-              placeholder="Enter your contact number"
+              placeholder="07X XXX XXXX"
               {...register("contact")}
             />
             {errors.contact && (
@@ -102,10 +123,10 @@ const BasicInformation = ({ onNext, initialData }: StepOneProps) => {
             )}
           </div>
 
-          <div className="md:col-span-1 col-span-2">
+          <div className="md:col-span-1 col-span-2 flex flex-col gap-2">
             <Label
               htmlFor="gender"
-              className="text-sm font-medium text-slate-700 uppercase mb-2"
+              className="text-sm font-medium text-slate-700 uppercase"
             >
               Gender
             </Label>
@@ -114,8 +135,8 @@ const BasicInformation = ({ onNext, initialData }: StepOneProps) => {
               name="gender"
               render={({ field }) => (
                 <Select
-                  onValueChange={field.onChange}
                   value={field.value ?? ""}
+                  onValueChange={field.onChange}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select gender" />
@@ -136,10 +157,10 @@ const BasicInformation = ({ onNext, initialData }: StepOneProps) => {
             )}
           </div>
 
-          <div className="col-span-2">
+          <div className="col-span-2 flex flex-col gap-2">
             <Label
               htmlFor="dob"
-              className="text-sm font-medium text-slate-700 uppercase mb-2"
+              className="text-sm font-medium text-slate-700 uppercase"
             >
               Date of Birth
             </Label>

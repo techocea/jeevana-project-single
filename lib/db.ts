@@ -1,10 +1,13 @@
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
+import * as schema from "@/drizzle/schema";
 
 declare global {
   // eslint-disable-next-line no-var
   var __pgClient: ReturnType<typeof postgres> | undefined;
 }
+
+const queryClient = postgres(process.env.DATABASE_URL!);
 
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL must be set in environment variables");
@@ -22,4 +25,4 @@ const sql = (globalThis.__pgClient ??= postgres(process.env.DATABASE_URL, {
   prepare: false, // CRITICAL: Supabase Pooler (Port 6543 / Transaction Mode) does not support prepared statements
 }));
 
-export const db = drizzle(sql);
+export const db = drizzle(queryClient, { schema });

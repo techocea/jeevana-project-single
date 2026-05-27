@@ -43,27 +43,25 @@ const LoginForm = () => {
 
   return (
     <div className="flex flex-col md:max-w-sm w-full">
-      <div className="mb-6 flex items-center justify-between gap-4">
-        <div>
-          <h3 className="text-2xl font-semibold text-black">Login</h3>
-          <p className="mt-2 text-sm text-muted">
-            Sign in with your email and password.
-          </p>
-        </div>
+      <div className="mb-6 flex flex-col items-start justify-center">
+        <h3 className="text-2xl font-semibold text-black">Login</h3>
+        <p className="text-sm text-muted">
+          Sign in with your email and password.
+        </p>
       </div>
 
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-        <div>
+       <div className="flex flex-col gap-2">
           <Label
             htmlFor="email"
-            className="text-sm font-medium text-slate-700 uppercase mb-2"
+            className="text-sm font-medium text-slate-700 uppercase"
           >
             Email
           </Label>
           <Input
             id="email"
             type="text"
-            placeholder="Enter your email"
+            placeholder="john@example.com"
             {...register("email")}
           />
           {errors.email && (
@@ -71,10 +69,10 @@ const LoginForm = () => {
           )}
         </div>
 
-        <div>
+        <div className="flex flex-col gap-2">
           <Label
             htmlFor="password"
-            className="text-sm font-medium text-slate-700 uppercase mb-2"
+            className="text-sm font-medium text-slate-700 uppercase"
           >
             Password
           </Label>
@@ -82,7 +80,7 @@ const LoginForm = () => {
             id="password"
             type="password"
             {...register("password")}
-            placeholder="Enter your password"
+            placeholder="********"
           />
           {errors.password && (
             <p className="text-sm text-red-600">{errors.password.message}</p>

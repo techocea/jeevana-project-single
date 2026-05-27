@@ -8,6 +8,7 @@ import {
   date,
   varchar,
   pgSequence,
+  boolean,
 } from "drizzle-orm/pg-core";
 
 export const profileSeq = pgSequence("profile_id_seq", {
@@ -35,9 +36,9 @@ export const users = pgTable("users", {
 export const profiles = pgTable("profiles", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
-  tenant: text("tenant").notNull(), // "jeevana" or "soulmate"
 
   // Basic Info (Step 1)
+  createdBy: text("created_by"), // 'self' | 'parent' | 'guardian' | 'sibling' | 'friend'
   fullName: text("full_name"),
   contact: text("contact"),
   gender: text("gender"),
@@ -58,11 +59,19 @@ export const profiles = pgTable("profiles", {
   country: text("country").default("Sri Lanka"),
   state: text("state"),
   city: text("city"),
+  residencyStatus: text("residency_status"), // citizen, pr, work
 
   // Final (Step 5)
   height: integer("height_cm"),
   weight: integer("weight_kg"),
   narrative: text("narrative"),
+  smoking: text("smoking_habits"), // 'never' | 'occasionally' | 'regularly'
+  drinking: text("drinking_habits"), // 'never' | 'occasionally' | 'regularly'
+  foodPreferences: text("food_preferences"), // 'vegetarian' | 'non-vegetarian' | 'vegan'
+  isDifferentlyAbled: boolean("is_differently_abled").default(false),
+  differentlyAbledDetails: text("differently_abled_details"),
+
+  hobbies: text("hobbies").array(),
 
   status: text("status").default("PENDING"), // 'pending' | 'approved' | 'rejected'
   paymentStatus: text("payment_status").default("UNPAID"), // 'unpaid' | 'paid'
@@ -84,5 +93,4 @@ export const inquiries = pgTable("inquiries", {
 
 export type User = typeof users.$inferSelect;
 export type Profile = typeof profiles.$inferSelect;
-
 export type Inquiry = typeof inquiries.$inferSelect;
