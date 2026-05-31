@@ -1,4 +1,4 @@
-import { StepConfig } from "@/types";
+import { LKRegionMap, ProfessionCategory, StepConfig } from "@/types";
 import {
   FileText,
   Send,
@@ -10,16 +10,6 @@ import {
   Sparkles,
   CreditCard,
 } from "lucide-react";
-
-export const STEP_STRING_TO_NUMBER: Record<string, number> = {
-  START: 1,
-  RELIGION: 2,
-  ACHIEVEMENTS: 3,
-  LOCATION: 4,
-  PERSONAL: 5,
-  HOBBIES: 6,
-  COMPLETED: 6,
-};
 
 export const NAVLINKS = [
   {
@@ -320,6 +310,21 @@ export const PROFILES = [
   },
 ];
 
+export const RELIGIONS_AND_CASTES: Record<string, string[]> = {
+  Buddhism: ["Govi", "Karava", "Durava", "Salagama", "Other"],
+  Hinduism: ["Brahmin", "Vellalar", "Chettiar", "Arunthathiyar", "Other"],
+  Christianity: ["Catholic", "Anglican", "Methodist", "Pentecostal", "Other"],
+  Islam: ["Sunni", "Shia", "Moor", "Malay", "Other"],
+};
+
+export const MOTHER_TONGUES = [
+  "Sinhala",
+  "Tamil",
+  "English",
+  "Arabic",
+  "Malayalam",
+];
+
 export const COMMUNITIES = [
   {
     label: "Catholic",
@@ -464,3 +469,220 @@ export const PERSONAL_DROPDOWNS = {
     { label: "Photography", icon: "📸" },
   ],
 };
+
+export const LK_DATA: LKRegionMap = {
+  Colombo: [
+    "Colombo 1-15",
+    "Dehiwala",
+    "Mount Lavinia",
+    "Nugegoda",
+    "Maharagama",
+    "Kottawa",
+    "Malabe",
+    "Battaramulla",
+    "Kaduwela",
+    "Avissawella",
+    "Homagama",
+    "Kolonnawa",
+  ],
+  Gampaha: [
+    "Negombo",
+    "Gampaha Town",
+    "Wattala",
+    "Ja-Ela",
+    "Kelaniya",
+    "Ragama",
+    "Kiribathgoda",
+    "Kadawatha",
+    "Minuwangoda",
+    "Nittambuwa",
+    "Mirigama",
+    "Veyangoda",
+  ],
+  Kalutara: [
+    "Kalutara Town",
+    "Panadura",
+    "Horana",
+    "Matugama",
+    "Beruwala",
+    "Aluthgama",
+    "Ingiriya",
+  ],
+  Kandy: [
+    "Kandy City",
+    "Peradeniya",
+    "Katugastota",
+    "Gampola",
+    "Nawalapitiya",
+    "Kundasale",
+    "Gelioya",
+  ],
+  Matale: ["Matale Town", "Dambulla", "Sigiriya", "Ukuwela", "Rattota"],
+  "Nuwara Eliya": [
+    "Nuwara Eliya Town",
+    "Hatton",
+    "Talawakele",
+    "Ginigathena",
+    "Walapane",
+  ],
+  Galle: [
+    "Galle Fort",
+    "Hikkaduwa",
+    "Ambalangoda",
+    "Karapitiya",
+    "Elpitiya",
+    "Ahangama",
+    "Baddegama",
+  ],
+  Matara: [
+    "Matara Town",
+    "Weligama",
+    "Akuressa",
+    "Dikwella",
+    "Hakmana",
+    "Deniyaya",
+  ],
+  Hambantota: [
+    "Hambantota",
+    "Tangalle",
+    "Beliatta",
+    "Ambalantota",
+    "Tissamaharama",
+  ],
+  Jaffna: [
+    "Jaffna Town",
+    "Chavakachcheri",
+    "Point Pedro",
+    "Nallur",
+    "Karainagar",
+    "Kayts",
+  ],
+  Kilinochchi: ["Kilinochchi Town", "Poonakary", "Karachchi", "Pallai"],
+  Mannar: ["Mannar Town", "Murunkan", "Madhu"],
+  Vavuniya: ["Vavuniya Town", "Cheddikulam", "Nedunkeni"],
+  Mullaitivu: ["Mullaitivu Town", "Puthukkudiyiruppu", "Oddusuddan"],
+  Batticaloa: [
+    "Batticaloa Town",
+    "Kattankudy",
+    "Eravur",
+    "Kalkudah",
+    "Valachchenai",
+  ],
+  Ampara: [
+    "Ampara Town",
+    "Kalmunai",
+    "Sainthamaruthu",
+    "Akkaraipattu",
+    "Sammanthurai",
+  ],
+  Trincomalee: ["Trincomalee Town", "Kinniya", "Mutur", "Kantale"],
+  Kurunegala: [
+    "Kurunegala Town",
+    "Kuliyapitiya",
+    "Narammala",
+    "Wariyapola",
+    "Pannala",
+    "Ibbagamuwa",
+  ],
+  Puttalam: [
+    "Puttalam Town",
+    "Chilaw",
+    "Marawila",
+    "Wennappuwa",
+    "Anamaduwa",
+    "Dankotuwa",
+  ],
+  Anuradhapura: [
+    "Anuradhapura Town",
+    "Mihintale",
+    "Tambuttegama",
+    "Kekirawa",
+    "Medawachchiya",
+  ],
+  Polonnaruwa: [
+    "Polonnaruwa Town",
+    "Hingurakgoda",
+    "Kaduruwela",
+    "Medirigiriya",
+  ],
+  Badulla: [
+    "Badulla Town",
+    "Bandarawela",
+    "Hali-Ela",
+    "Diyatalawa",
+    "Ella",
+    "Mahiyanganaya",
+    "Welimada",
+  ],
+  Moneragala: [
+    "Moneragala Town",
+    "Wellawaya",
+    "Kataragama",
+    "Bibile",
+    "Buttala",
+  ],
+  Ratnapura: [
+    "Ratnapura Town",
+    "Balangoda",
+    "Embilipitiya",
+    "Pelmadulla",
+    "Kuruwita",
+  ],
+  Kegalle: [
+    "Kegalle Town",
+    "Mawanella",
+    "Rambukkana",
+    "Dehiowita",
+    "Ruwanwella",
+    "Warakapola",
+  ],
+};
+
+export const GROUPS_PROFESSIONS = [
+  {
+    category: "ADMINISTRATION",
+    roles: [
+      "Manager",
+      "Supervisor",
+      "Officer",
+      "Administrative Professional",
+      "Executive",
+      "Clerk",
+      "Human Resources Professional",
+      "Secretary / Front Office",
+    ],
+  },
+  {
+    category: "AGRICULTURE",
+    roles: ["Agriculture & Farming Professional", "Horticulturist"],
+  },
+  {
+    category: "AIRLINE",
+    roles: ["Pilot", "Air Hostess / Flight Attendant", "Airline Professional"],
+  },
+  {
+    category: "ARCHITECTURE & DESIGN",
+    roles: ["Architect", "Interior Designer"],
+  },
+  {
+    category: "BANKING & FINANCE",
+    roles: [
+      "Accountant",
+      "Financial Analyst",
+      "Investment Banker",
+      "Auditor",
+      "Tax Consultant",
+    ],
+  },
+  {
+    category: "TECHNOLOGY & SOFTWARE",
+    roles: [
+      "Software Engineer",
+      "Frontend Developer",
+      "Backend Developer",
+      "Data Scientist",
+      "UI/UX Designer",
+      "Product Manager",
+    ],
+  },
+];

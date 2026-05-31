@@ -6,12 +6,12 @@ import { redirect } from "next/navigation";
 import OnboardingPageClient from "./page.client";
 
 const STEP_STRING_TO_NUMBER: Record<string, number> = {
-  START: 1,
-  RELIGION: 2,
-  ACHIEVEMENTS: 3,
-  LOCATION: 4,
-  PERSONAL: 5,
-  HOBBIES: 6,
+  "START": 1,        // Hasn't filled anything yet
+  "RELIGION": 2,     // Finished Step 1, needs to do Religion
+  "ACHIEVEMENTS": 3, // Finished Step 2, needs to do Achievements
+  "LOCATION": 4,     // Finished Step 3, needs to do Location
+  "PERSONAL": 5,     // Finished Step 4, needs to do Personal
+  "HOBBIES": 6,      // Finished Step 5, needs to do Hobbies
 };
 
 const OnboardingPage = async () => {
@@ -29,6 +29,9 @@ const OnboardingPage = async () => {
     db.query.profiles.findFirst({ where: eq(profiles.userId, authedUser.id) }),
   ]);
 
+  if (!userRecord) {
+    return <OnboardingPageClient initialDbData={null} savedStep={1} />;
+  }
   const savedStepString = userRecord?.onboardingStep || "START";
 
   if (savedStepString === "COMPLETED") {
@@ -39,7 +42,7 @@ const OnboardingPage = async () => {
 
   return (
     <OnboardingPageClient
-      initialDbData={profileRecord || {}}
+      initialDbData={profileRecord || null}
       savedStep={activeStepInt}
     />
   );

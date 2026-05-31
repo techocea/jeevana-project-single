@@ -41,7 +41,8 @@ export async function proxy(request: NextRequest) {
   const isAccessingAuthRoute = request.nextUrl.pathname.startsWith("/auth");
 
   if (!user && isAccessingProtectedRoute) {
-    const loginUrl = new URL("/auth?mode=login", request.url);
+    const loginUrl = new URL("/auth", request.url);
+    loginUrl.searchParams.set("mode", "login");
     loginUrl.searchParams.set("next", request.nextUrl.pathname);
     return NextResponse.redirect(loginUrl);
   }

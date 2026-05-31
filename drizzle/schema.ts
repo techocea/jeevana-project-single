@@ -56,14 +56,14 @@ export const profiles = pgTable("profiles", {
   annualIncomeRange: text("annual_income_range"),
 
   // Location (Step 4)
-  country: text("country").default("Sri Lanka"),
+  country: text("country"),
   state: text("state"),
   city: text("city"),
   residencyStatus: text("residency_status"), // citizen, pr, work
 
   // Final (Step 5)
-  height: integer("height_cm"),
-  weight: integer("weight_kg"),
+  height: text("height_cm"),
+  weight: text("weight_kg"),
   narrative: text("narrative"),
   smoking: text("smoking_habits"), // 'never' | 'occasionally' | 'regularly'
   drinking: text("drinking_habits"), // 'never' | 'occasionally' | 'regularly'

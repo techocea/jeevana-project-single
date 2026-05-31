@@ -7,10 +7,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxLabel,
+  ComboboxGroup,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxCollection,
+} from "@/components/ui/combobox";
 import Image from "next/image";
 import { useForm, Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { StepThreeInitialData } from "@/types";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -19,7 +29,7 @@ import {
   OnboardingFormValues,
   stepThreeAchievementsSchema,
 } from "@/lib/validation";
-import { PERSONAL_DROPDOWNS } from "@/lib/constants";
+import { GROUPS_PROFESSIONS, PERSONAL_DROPDOWNS } from "@/lib/constants";
 
 type StepThreeValues = z.infer<typeof stepThreeAchievementsSchema>;
 
@@ -45,6 +55,12 @@ const AchievementsForm = ({ onPrev, onNext, initialData }: StepThreeProps) => {
       annualIncomeRange: initialData?.annualIncomeRange || undefined,
     },
   });
+
+  //  Flatten all roles into a single string array for the top-level items property
+  // This ensures Shadcn's internal tracking and filtering logic registers every role
+  const allProfessionsFlatList = GROUPS_PROFESSIONS.flatMap(
+    (group) => group.roles,
+  );
 
   return (
     <div className="mt-16 w-full flex flex-col md:flex-row gap-10">
@@ -115,11 +131,36 @@ const AchievementsForm = ({ onPrev, onNext, initialData }: StepThreeProps) => {
             >
               Current Profession
             </Label>
-            <Input
-              id="profession"
-              type="text"
-              placeholder="Enter your profession"
-              {...register("profession")}
+            <Controller
+              control={control}
+              name="profession"
+              render={({ field }) => (
+                <Combobox
+                  items={GROUPS_PROFESSIONS}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <ComboboxInput placeholder="Select Profession" />
+
+                  <ComboboxContent alignOffset={-28} className="w-60">
+                    <ComboboxEmpty>No match found.</ComboboxEmpty>
+                    <ComboboxList>
+                      {(group) => (
+                        <ComboboxGroup key={group.category} items={group.roles}>
+                          <ComboboxLabel className="uppercase font-bold text-black">{group.category}</ComboboxLabel>
+                          <ComboboxCollection>
+                            {(item) => (
+                              <ComboboxItem key={item} value={item}>
+                                {item}
+                              </ComboboxItem>
+                            )}
+                          </ComboboxCollection>
+                        </ComboboxGroup>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              )}
             />
             {errors.profession && (
               <p className="text-sm text-red-600">
@@ -175,7 +216,7 @@ const AchievementsForm = ({ onPrev, onNext, initialData }: StepThreeProps) => {
               size="lg"
               onClick={onPrev}
               variant="link"
-            className="w-fit uppercase rounded-xl py-3 pr-5 -ml-3"
+              className="w-fit uppercase rounded-xl py-3 pr-5 -ml-3"
             >
               <ArrowLeft />
               Back

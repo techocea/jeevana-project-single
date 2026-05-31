@@ -61,7 +61,7 @@ const HobbiesSelector = ({ initialData, onPrev, onNext }: StepSixProps) => {
                 >
                   {hobby.icon}
                 </span>
-                <span className="text-sm font-medium tracking-tight text-muted-foreground">
+                <span className="text-sm font-medium tracking-tight text-secondary">
                   {hobby.label}
                 </span>
               </Button>

@@ -8,8 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 
 const RegisterForm = () => {
+  const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -17,7 +19,6 @@ const RegisterForm = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    reset,
   } = useForm<AuthRegisterValues>({
     resolver: zodResolver(authRegisterSchema as any),
     defaultValues: {
@@ -34,16 +35,18 @@ const RegisterForm = () => {
       const result = await registerUser(data);
       if (result?.error) {
         setServerError(result.error);
-      } else {
-        setSuccessMessage("Account created successfully. Please log in.");
-        reset();
+        return;
+      }
+      if (result?.success) {
+        if (result.emailVerificationRequired) {
+          setSuccessMessage("Check your email inbox to confirm");
+        } else {
+          router.push("/onboarding");
+          router.refresh();
+        }
       }
     } catch (error) {
-      if (error instanceof Error) {
-        setServerError(error.message);
-      } else {
-        setServerError("Unable to register. Please try again.");
-      }
+     setServerError("An unexpected error occurred during signup.");
     }
   };
 
@@ -94,10 +97,10 @@ const RegisterForm = () => {
         </div>
 
         {serverError ? (
-          <p className="text-sm text-red-600">{serverError}</p>
+          <div className="p-3 text-sm bg-red-200 border-l-4 border-red-600 text-red-600">{serverError}</div>
         ) : null}
         {successMessage ? (
-          <p className="text-sm text-emerald-600">{successMessage}</p>
+          <div className="p-3 text-sm bg-emerald-200 border-l-4 border-emerald-600 text-emerald-600">{successMessage}</div>
         ) : null}
 
         <Button

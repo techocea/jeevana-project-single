@@ -8,8 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 
 const LoginForm = () => {
+  const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
 
   const {
@@ -31,13 +33,16 @@ const LoginForm = () => {
       const result = await loginUser(data);
       if (result?.error) {
         setServerError(result.error);
+        return;
+      }
+
+      if (result?.success && result.targetRoute) {
+        router.push(result.targetRoute);
+        router.refresh();
       }
     } catch (error) {
-      if (error instanceof Error) {
-        setServerError(error.message);
-      } else {
-        setServerError("Unable to login. Please try again.");
-      }
+      console.error("Auth submission error:", error);
+      setServerError("Unable to login. Please try again.");
     }
   };
 
@@ -51,7 +56,7 @@ const LoginForm = () => {
       </div>
 
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-       <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2">
           <Label
             htmlFor="email"
             className="text-sm font-medium text-slate-700 uppercase"
@@ -87,8 +92,8 @@ const LoginForm = () => {
           )}
         </div>
 
-        {serverError ? (
-          <p className="text-sm text-red-600">{serverError}</p>
+         {serverError ? (
+          <div className="p-3 text-sm bg-red-200 border-l-4 border-red-600 text-red-600">{serverError}</div>
         ) : null}
 
         <Button

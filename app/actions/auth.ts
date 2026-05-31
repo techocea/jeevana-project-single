@@ -45,20 +45,22 @@ export async function registerUser(data: AuthRegisterValues) {
       id: authData.user.id,
       email,
       onboardingStatus: "INCOMPLETE",
+      onboardingStep: "START",
     });
   } catch (dbError: any) {
-    console.error("Drizzle mirror failure:", dbError);
+    console.error("[DRIZZLE_REGISTRATION_MIRROR_FAILURE]:", dbError);
 
-    await supabase.auth.admin.deleteUser(authData.user.id);
-    return { error: "Database registration failure. Please try again." };
+    return {
+      error:
+        "Account initialization failed. If this persists, your email might already be registered.",
+    };
   }
-
-  // return {
-  //   success: true,
-  //   message: "Verification email sent! Please check your inbox to confirm your account."
-  // };
-
-  redirect("/auth?mode=login");
+  return {
+    success: true,
+    // Pass this boolean flag back so your client UI knows if it needs to say
+    // "Check your email!" or if it can auto-login/redirect.
+    emailVerificationRequired: authData.session === null,
+  };
 }
 
 export async function loginUser(data: AuthLoginValues) {
@@ -83,17 +85,30 @@ export async function loginUser(data: AuthLoginValues) {
     return { error: "Invalid email or password." };
   }
 
-  const [dbUser] = await db
-    .select()
-    .from(users)
-    .where(eq(users.id, authData.user.id))
-    .limit(1);
+  let dbUser;
+  try {
+    const [fetchedUser] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, authData.user.id))
+      .limit(1);
 
-  if (!dbUser || dbUser.onboardingStatus === "INCOMPLETE") {
-    redirect("/onboarding");
+    dbUser = fetchedUser;
+  } catch (error) {
+    console.error("[DATABASE_READ_FAILURE]:", error);
+    return { error: "A secure connection error occurred. Please try again." };
   }
 
-  redirect("/profile");
+  let targetRoute = "/profile";
+
+  if (!dbUser || dbUser.onboardingStatus === "INCOMPLETE") {
+    targetRoute = "/onboarding";
+  }
+
+  return {
+    success: true,
+    targetRoute,
+  };
 }
 
 export async function requestPasswordReset(data: ForgotPasswordValues) {

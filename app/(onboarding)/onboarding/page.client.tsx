@@ -14,7 +14,7 @@ import LocationInformation from "@/components/forms/onboarding-location-form";
 import AchievementsForm from "@/components/forms/onboarding-achievements-form";
 
 interface OnboardingClientProps {
-  initialDbData: Record<string, any>;
+  initialDbData: Record<string, any> | null;
   savedStep: number;
 }
 
@@ -25,7 +25,7 @@ const OnboardingPageClient = ({
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<number>(savedStep);
   const [initialData, setInitialData] =
-    useState<Record<string, any>>(initialDbData);
+    useState<Record<string, any>>(initialDbData || {});
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
 
   const onNext = async (stepData: Record<string, any>) => {
@@ -40,7 +40,7 @@ const OnboardingPageClient = ({
         throw new Error(result.error || "Failed to preserve session progress.");
       }
 
-      if (result.isFinished || currentStep === 6) {
+      if (result.isFinished) {
         router.push(`/pricing?profileId=${result.profileId}`);
         router.refresh();
       } else {

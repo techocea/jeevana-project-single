@@ -47,8 +47,8 @@ export interface StepFourInitialData {
 
 export interface StepFiveInitialData {
   initialData: {
-    height?: number;
-    weight?: number;
+    height?: text;
+    weight?: text;
     smoking?: "never" | "occasionally" | "regularly";
     drinking?: "never" | "socially" | "regularly";
     foodPreferences?: "vegetarian" | "non-vegetarian" | "vegan";
@@ -56,4 +56,17 @@ export interface StepFiveInitialData {
     differentlyAbledDetails?: string;
     narrative?: string;
   };
+}
+
+export interface LocationNode {
+  value: string;
+  isoCode?: string;
+}
+
+export interface LKRegionMap {
+  [district: string]: string[];
+}
+
+export interface ProfessionCategory {
+  [category: string]: string[];
 }

@@ -39,7 +39,7 @@ export const stepThreeAchievementsSchema = z.object({
 
 // Step 4 Schema: Location Architecture
 export const stepFourLocationSchema = z.object({
-  country: z.string().default("Sri Lanka").optional(),
+  country: z.string().optional(),
   state: z.string().max(100).nullable().optional(),
   city: z.string().max(100).nullable().optional(),
   residencyStatus: z.enum(["CITIZEN", "PR", "WORK"]).nullable().optional(),
@@ -47,20 +47,8 @@ export const stepFourLocationSchema = z.object({
 
 // Step 5 Schema: Physical Attributes & Bio Narrative
 export const stepFivePersonalSchema = z.object({
-  height: z.coerce
-    .number()
-    .int()
-    .min(100, "Minimum height is 100cm")
-    .max(250)
-    .nullable()
-    .optional(),
-  weight: z.coerce
-    .number()
-    .int()
-    .min(30, "Minimum weight is 30kg")
-    .max(300)
-    .nullable()
-    .optional(),
+  height: z.string().optional(),
+  weight: z.string().optional(),
   narrative: z
     .string()
     .min(20, "Bio introduction must be at least 20 characters")

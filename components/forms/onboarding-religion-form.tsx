@@ -1,6 +1,21 @@
 import { z } from "zod";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
 import Image from "next/image";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { StepTwoInitialData } from "@/types";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -8,6 +23,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { OnboardingFormValues, stepTwoReligionSchema } from "@/lib/validation";
+import { MOTHER_TONGUES, RELIGIONS_AND_CASTES } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 
 type StepTwoValues = z.infer<typeof stepTwoReligionSchema>;
 
@@ -19,6 +36,9 @@ interface StepTwoProps {
 
 const ReligionInformation = ({ onPrev, onNext, initialData }: StepTwoProps) => {
   const {
+    watch,
+    control,
+    setValue,
     register,
     handleSubmit,
     formState: { errors },
@@ -30,6 +50,11 @@ const ReligionInformation = ({ onPrev, onNext, initialData }: StepTwoProps) => {
       motherTongue: initialData?.motherTongue || undefined,
     },
   });
+
+  const selectedReligion = watch("religion");
+  const availableCastes = selectedReligion
+    ? RELIGIONS_AND_CASTES[selectedReligion] || []
+    : [];
 
   return (
     <div className="mt-16 w-full flex flex-col md:flex-row gap-10">
@@ -55,54 +80,115 @@ const ReligionInformation = ({ onPrev, onNext, initialData }: StepTwoProps) => {
           onSubmit={handleSubmit(onNext)}
           className="space-y-2 flex flex-col gap-4"
         >
-          <div className="space-y-3">
+          <div className="space-y-2">
             <Label
               htmlFor="religion"
               className="text-sm font-medium text-slate-700 uppercase"
             >
               Religion
             </Label>
-            <Input
-              id="religion"
-              type="text"
-              placeholder="Enter religion"
-              {...register("religion")}
+            <Controller
+              control={control}
+              name="religion"
+              render={({ field }) => (
+                <Select
+                  onValueChange={(val) => {
+                    field.onChange(val);
+                    setValue("caste", ""); // 🚀 Clear dependent caste selection when religion switches
+                  }}
+                  value={field.value || ""}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Religion" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(RELIGIONS_AND_CASTES).map((rel) => (
+                      <SelectItem key={rel} value={rel}>
+                        {rel}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             />
             {errors.religion && (
               <p className="text-sm text-red-600">{errors.religion.message}</p>
             )}
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2">
             <Label
               htmlFor="caste"
               className="text-sm font-medium text-slate-700 uppercase"
             >
               Caste
             </Label>
-            <Input
-              id="caste"
-              type="text"
-              placeholder="Enter caste"
-              {...register("caste")}
+            <Controller
+              control={control}
+              name="caste"
+              render={({ field }) => (
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value || ""}
+                  disabled={!selectedReligion}
+                >
+                  <SelectTrigger
+                    className={cn(
+                      "w-full",
+                      !selectedReligion &&
+                        "bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed",
+                    )}
+                  >
+                    <SelectValue
+                      placeholder={
+                        selectedReligion
+                          ? "Select Caste"
+                          : "Choose a religion first"
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableCastes.map((caste) => (
+                      <SelectItem key={caste} value={caste}>
+                        {caste}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             />
             {errors.caste && (
               <p className="text-sm text-red-600">{errors.caste.message}</p>
             )}
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2">
             <Label
               htmlFor="motherTongue"
               className="text-sm font-medium text-slate-700 uppercase"
             >
               Mother Tongue
             </Label>
-            <Input
-              id="motherTongue"
-              type="text"
-              placeholder="Enter mother tongue"
-              {...register("motherTongue")}
+            <Controller
+              control={control}
+              name="motherTongue"
+              render={({ field }) => (
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value || ""}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Mother Tongue" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MOTHER_TONGUES.map((lang) => (
+                      <SelectItem key={lang} value={lang}>
+                        {lang}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             />
             {errors.motherTongue && (
               <p className="text-sm text-red-600">
@@ -111,7 +197,6 @@ const ReligionInformation = ({ onPrev, onNext, initialData }: StepTwoProps) => {
             )}
           </div>
 
-        
           {/* {serverError ? (
             <p className="text-sm text-red-600">{serverError}</p>
           ) : null} */}
@@ -121,7 +206,7 @@ const ReligionInformation = ({ onPrev, onNext, initialData }: StepTwoProps) => {
               size="lg"
               onClick={onPrev}
               variant="link"
-                className="w-fit uppercase rounded-xl py-3 pr-5 -ml-3"
+              className="w-fit uppercase rounded-xl py-3 pr-5 -ml-3"
             >
               <ArrowLeft />
               Back

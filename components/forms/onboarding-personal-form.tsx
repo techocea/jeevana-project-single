@@ -1,6 +1,14 @@
 import { z } from "zod";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
 import Image from "next/image";
-import { useState } from "react";
+import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { StepFiveInitialData } from "@/types";
 import { Input } from "@/components/ui/input";
@@ -10,6 +18,10 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { OnboardingFormValues, stepFivePersonalSchema } from "@/lib/validation";
+import {
+  generateHeightOptions,
+  generateWeightOptions,
+} from "@/helpers/measurement-utils";
 
 type StepFiveValues = z.infer<typeof stepFivePersonalSchema>;
 
@@ -33,8 +45,8 @@ const PersonalInformation = ({
   } = useForm<OnboardingFormValues>({
     resolver: zodResolver(stepFivePersonalSchema as any),
     defaultValues: {
-      height: initialData?.height || 0,
-      weight: initialData?.weight || 0,
+      height: initialData?.height || "",
+      weight: initialData?.weight || "",
       smoking: initialData?.smoking || undefined,
       drinking: initialData?.drinking || undefined,
       foodPreferences: initialData?.foodPreferences || undefined,
@@ -45,7 +57,11 @@ const PersonalInformation = ({
     },
   });
 
-  const [isDifferentlyAbled, setIsDifferentlyAbled] = useState<string | "">("");
+  const heightDataObjects = useMemo(() => generateHeightOptions(), []);
+  const weightDataObjects = useMemo(() => generateWeightOptions(), []);
+
+  const heightValuesList = heightDataObjects.map((h) => h.value);
+  const weightValuesList = weightDataObjects.map((w) => w.value);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 mt-16   items-start gap-10">
@@ -77,18 +93,41 @@ const PersonalInformation = ({
             >
               Height
             </Label>
-            <div className="relative flex items-center w-full max-w-sm">
-              <Input
-                id="height"
-                type="number"
-                placeholder="175"
-                {...register("height")}
-                className="pr-12 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              />
-              <span className="absolute right-3 text-sm font-medium text-muted-foreground select-none pointer-events-none">
-                cm
-              </span>
-            </div>
+            <Controller
+              control={control}
+              name="height"
+              render={({ field }) => (
+                <Combobox
+                  items={heightValuesList}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <ComboboxInput
+                    placeholder="Select Height"
+                    // Intercept presentation display text so it renders "5' 11\"" instead of "71"
+                    value={
+                      heightDataObjects.find((h) => h.value === field.value)
+                        ?.label || ""
+                    }
+                  />
+                  <ComboboxContent>
+                    <ComboboxEmpty>No match found.</ComboboxEmpty>
+                    <ComboboxList>
+                      {(item) => {
+                        const displayLabel =
+                          heightDataObjects.find((h) => h.value === item)
+                            ?.label || item;
+                        return (
+                          <ComboboxItem key={item} value={item}>
+                            {displayLabel}
+                          </ComboboxItem>
+                        );
+                      }}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              )}
+            />
             {errors.height && (
               <p className="text-sm text-red-600">{errors.height.message}</p>
             )}
@@ -101,18 +140,41 @@ const PersonalInformation = ({
             >
               Weight
             </Label>
-            <div className="relative flex items-center w-full max-w-sm">
-              <Input
-                id="weight"
-                type="number"
-                placeholder="70"
-                {...register("weight")}
-                className="pr-12 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              />
-              <span className="absolute right-3 text-sm font-medium text-muted-foreground select-none pointer-events-none">
-                kg
-              </span>
-            </div>
+            <Controller
+              control={control}
+              name="weight"
+              render={({ field }) => (
+                <Combobox
+                  items={weightValuesList}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <ComboboxInput
+                    placeholder="Select Weight"
+                    // Intercept presentation display text so it renders "165 lbs" instead of "165"
+                    value={
+                      weightDataObjects.find((w) => w.value === field.value)
+                        ?.label || ""
+                    }
+                  />
+                  <ComboboxContent>
+                    <ComboboxEmpty>No match found.</ComboboxEmpty>
+                    <ComboboxList>
+                      {(item) => {
+                        const displayLabel =
+                          weightDataObjects.find((w) => w.value === item)
+                            ?.label || item;
+                        return (
+                          <ComboboxItem key={item} value={item}>
+                            {displayLabel}
+                          </ComboboxItem>
+                        );
+                      }}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              )}
+            />
             {errors.weight && (
               <p className="text-sm text-red-600">{errors.weight.message}</p>
             )}

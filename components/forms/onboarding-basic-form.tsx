@@ -16,6 +16,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ImageUploadZone from "@/components/landing/image-upload";
 import { OnboardingFormValues, stepOneBasicSchema } from "@/lib/validation";
+import { formatDate } from "@/helpers/format-date";
 
 type StepOneValues = z.infer<typeof stepOneBasicSchema>;
 
@@ -38,7 +39,7 @@ const BasicInformation = ({ onNext, initialData }: StepOneProps) => {
       fullName: initialData?.fullName || "",
       contact: initialData?.contact || "",
       gender: initialData?.gender || undefined,
-      dob: initialData?.dob || undefined,
+      dob: formatDate(initialData?.dob) as unknown as Date,
     },
   });
 

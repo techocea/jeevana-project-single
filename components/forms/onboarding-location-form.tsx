@@ -2,20 +2,33 @@ import { z } from "zod";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Combobox,
+  ComboboxCollection,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxLabel,
+  ComboboxList,
+  ComboboxSeparator,
+} from "@/components/ui/combobox";
 import Image from "next/image";
 import { Controller, useForm } from "react-hook-form";
-import { StepFourInitialData } from "@/types";
+import { LocationNode, StepFourInitialData } from "@/types";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { OnboardingFormValues, stepFourLocationSchema } from "@/lib/validation";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { LK_DATA } from "@/lib/constants";
 
 type StepFourValues = z.infer<typeof stepFourLocationSchema>;
 
@@ -31,9 +44,10 @@ const LocationInformation = ({
   initialData,
 }: StepFourProps) => {
   const {
-    register,
-    handleSubmit,
     control,
+    watch,
+    setValue,
+    handleSubmit,
     formState: { errors },
   } = useForm<OnboardingFormValues>({
     resolver: zodResolver(stepFourLocationSchema as any),
@@ -44,6 +58,85 @@ const LocationInformation = ({
       residencyStatus: initialData?.residencyStatus || undefined,
     },
   });
+
+  const [countries, setCountries] = useState<LocationNode[]>([]);
+  const [states, setStates] = useState<LocationNode[]>([]);
+  const [cities, setCities] = useState<LocationNode[]>([]);
+
+  const [loadingStates, setLoadingStates] = useState(false);
+  const [loadingCities, setLoadingCities] = useState(false);
+
+  const selectedCountry = watch("country");
+  const selectedState = watch("state");
+
+  const targetCountryNode = countries.find((c) => c.value === selectedCountry);
+  const isSriLanka =
+    targetCountryNode?.isoCode === "LK" || selectedCountry === "Sri Lanka";
+
+  useEffect(() => {
+    fetch("/api/location?type=countries")
+      .then((res) => res.json())
+      .then((data) => setCountries(data))
+      .catch((err) => console.error("Initial load failure:", err));
+  }, []);
+
+  useEffect(() => {
+    if (isSriLanka) {
+      // Load Sri Lanka's districts from local data without hitting the API
+      const lkDistricts = Object.keys(LK_DATA).map((district) => ({
+        value: district,
+        isoCode: district,
+      }));
+      setStates(lkDistricts);
+      setCities([]);
+      return;
+    }
+    if (targetCountryNode?.isoCode) {
+      setLoadingStates(true);
+      fetch(
+        `/api/location?type=states&countryCode=${targetCountryNode.isoCode}`,
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          setStates(data);
+          setCities([]);
+          setLoadingStates(false);
+        })
+        .catch(() => setLoadingStates(false));
+    }
+  }, [selectedCountry, countries, isSriLanka]);
+
+  useEffect(() => {
+    if (!selectedState || !selectedCountry) return;
+
+    if (isSriLanka) {
+      // Load local towns for the selected Sri Lankan district
+      const localTowns = LK_DATA[selectedState] || [];
+      setCities(localTowns.map((town) => ({ value: town })));
+      return;
+    }
+
+    // Fallback: Query the API proxy for other international locations
+    if (targetCountryNode?.isoCode) {
+      const targetStateNode = states.find((s) => s.value === selectedState);
+      if (!targetStateNode?.isoCode) return;
+
+      setLoadingCities(true);
+      fetch(
+        `/api/location?type=cities&countryCode=${targetCountryNode.isoCode}&stateCode=${targetStateNode.isoCode}`,
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          setCities(data);
+          setLoadingCities(false);
+        })
+        .catch(() => setLoadingCities(false));
+    }
+  }, [selectedState, selectedCountry, isSriLanka, states]);
+
+  const countryItemsList = countries.map((c) => c.value);
+  const stateItemsList = states.map((s) => s.value);
+  const cityItemsList = cities.map((c) => c.value);
 
   return (
     <div className="mt-16 w-full flex flex-col md:flex-row-reverse gap-10">
@@ -75,11 +168,32 @@ const LocationInformation = ({
             >
               Country
             </Label>
-            <Input
-              id="country"
-              type="text"
-              placeholder="Enter your country"
-              {...register("country")}
+            <Controller
+              control={control}
+              name="country"
+              render={({ field }) => (
+                <Combobox
+                  items={countryItemsList}
+                  value={field.value}
+                  onValueChange={(val) => {
+                    field.onChange(val);
+                    setValue("state", ""); // Reset dependent selections instantly
+                    setValue("city", "");
+                  }}
+                >
+                  <ComboboxInput placeholder="Select Country" />
+                  <ComboboxContent>
+                    <ComboboxEmpty>No country found.</ComboboxEmpty>
+                    <ComboboxList>
+                      {(item, idx) => (
+                        <ComboboxItem key={idx} value={item}>
+                          {item}
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              )}
             />
             {errors.country && (
               <p className="text-sm text-red-600">{errors.country.message}</p>
@@ -93,11 +207,51 @@ const LocationInformation = ({
             >
               State
             </Label>
-            <Input
-              id="state"
-              type="text"
-              placeholder="Enter your state"
-              {...register("state")}
+            <Controller
+              name="state"
+              control={control}
+              render={({ field }) => (
+                <div className="relative">
+                  <Combobox
+                    items={stateItemsList}
+                    value={field.value}
+                    onValueChange={(val) => {
+                      field.onChange(val);
+                      setValue("city", "");
+                    }}
+                  >
+                    <ComboboxInput
+                      placeholder={
+                        loadingStates
+                          ? "Syncing regional data..."
+                          : isSriLanka
+                            ? "Select District"
+                            : "Select State"
+                      }
+                      disabled={!selectedCountry || loadingStates}
+                      className={cn(
+                        (!selectedCountry || loadingStates) &&
+                          "bg-slate-50 text-slate-400 cursor-not-allowed",
+                      )}
+                    />
+                    <ComboboxContent>
+                      <ComboboxEmpty>No regions found.</ComboboxEmpty>
+                      <ComboboxList>
+                        {(item, idx) => (
+                          <ComboboxItem key={idx} value={item}>
+                            {item}
+                          </ComboboxItem>
+                        )}
+                      </ComboboxList>
+                    </ComboboxContent>
+                  </Combobox>
+                  {loadingStates && (
+                    <div className="absolute right-3 top-3.5 z-50">
+                      <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
+                    </div>
+                  )}
+                </div>
+              )}
             />
             {errors.state && (
               <p className="text-sm text-red-600">{errors.state.message}</p>
@@ -111,11 +265,54 @@ const LocationInformation = ({
             >
               City
             </Label>
-            <Input
-              id="city"
-              type="text"
-              placeholder="Enter your city"
-              {...register("city")}
+            <Controller
+              control={control}
+              name="city"
+              render={({ field }) => (
+                <div className="relative">
+                  <Combobox
+                    items={cityItemsList}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <ComboboxInput
+                      placeholder={
+                        loadingCities ? "Mapping town layout..." : "Select City"
+                      }
+                      disabled={!selectedState || loadingCities}
+                      className={cn(
+                        (!selectedState || loadingCities) &&
+                          "bg-slate-50 text-slate-400 cursor-not-allowed",
+                      )}
+                    />
+                    <ComboboxContent>
+                      <ComboboxEmpty>No locations found.</ComboboxEmpty>
+                      <ComboboxList>
+                        {(group, index) => (
+                          <ComboboxGroup key={index} items={group.items}>
+                            <ComboboxLabel>{group.value}</ComboboxLabel>
+                            <ComboboxCollection>
+                              {(item) => (
+                                <ComboboxItem key={item} value={item}>
+                                  {item}
+                                </ComboboxItem>
+                              )}
+                            </ComboboxCollection>
+                            {index < cityItemsList.length - 1 && (
+                              <ComboboxSeparator />
+                            )}
+                          </ComboboxGroup>
+                        )}
+                      </ComboboxList>
+                    </ComboboxContent>
+                  </Combobox>
+                  {loadingCities && (
+                    <div className="absolute right-3 top-3.5">
+                      <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
+                    </div>
+                  )}
+                </div>
+              )}
             />
             {errors.city && (
               <p className="text-sm text-red-600">{errors.city.message}</p>
