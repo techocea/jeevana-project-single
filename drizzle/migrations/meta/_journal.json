@@ -15,6 +15,13 @@
       "when": 1779609403683,
       "tag": "0001_uneven_norrin_radd",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1780587440672,
+      "tag": "0002_burly_mulholland_black",
+      "breakpoints": true
     }
   ]
 }

@@ -21,6 +21,7 @@ export const stepOneBasicSchema = z.object({
     .max(new Date(), "Date of birth cannot be in the future")
     .nullable()
     .optional(),
+  age: z.number().int().positive().optional(),
 });
 
 // Step 2 Schema: Professional / Cultural Background

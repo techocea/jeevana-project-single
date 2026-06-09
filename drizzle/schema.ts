@@ -3,12 +3,12 @@ import {
   pgTable,
   uuid,
   text,
-  integer,
   timestamp,
   date,
   varchar,
   pgSequence,
   boolean,
+  integer,
 } from "drizzle-orm/pg-core";
 
 export const profileSeq = pgSequence("profile_id_seq", {
@@ -28,7 +28,7 @@ export const users = pgTable("users", {
     .default("INCOMPLETE") // INCOMPLETE, VERIFYING, APPROVED
     .notNull(),
   onboardingStep: varchar("onboarding_step", { length: 20 })
-    .default("PERSONAL") // 'PERSONAL' | 'RELIGION' | 'ACHIEVEMENTS' | 'LOCATION' | 'FINAL'
+    .default("START") // ''START' | 'RELIGION' | 'ACHIEVEMENTS' | 'LOCATION' | 'PERSONAL' | 'COMPLETED'
     .notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -64,6 +64,7 @@ export const profiles = pgTable("profiles", {
   // Final (Step 5)
   height: text("height_cm"),
   weight: text("weight_kg"),
+  age: integer("age"),
   narrative: text("narrative"),
   smoking: text("smoking_habits"), // 'never' | 'occasionally' | 'regularly'
   drinking: text("drinking_habits"), // 'never' | 'occasionally' | 'regularly'

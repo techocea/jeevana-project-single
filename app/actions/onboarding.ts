@@ -40,6 +40,7 @@ export async function syncOnboardingProgressAction(
         contact: payload.contact,
         gender: payload.gender,
         dob: parsedDate,
+        age: payload.age,
         profilePic: payload.profilePic,
       };
     } else if (stepNumber === 2) {
@@ -56,15 +57,15 @@ export async function syncOnboardingProgressAction(
       };
     } else if (stepNumber === 4) {
       updatePayload = {
-        country: payload.country || "Sri Lanka",
+        country: payload.country,
         state: payload.state,
         city: payload.city,
         residencyStatus: payload.residencyStatus,
       };
     } else if (stepNumber === 5) {
       updatePayload = {
-        height: payload.height ? parseInt(payload.height, 10) : null,
-        weight: payload.weight ? parseInt(payload.weight, 10) : null,
+        height: payload.height,
+        weight: payload.weight,
         narrative: payload.narrative,
         smoking: payload.smoking,
         drinking: payload.drinking,

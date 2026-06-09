@@ -29,7 +29,7 @@ const TopProfiles = () => {
                 <div className="flex flex-col md:flex-row md:justify-between items-center w-full p-4 gap-4">
                   <div className="relative w-32 h-32">
                     <Image
-                      src={profile.image}
+                      src={profile.profilePic}
                       alt={profile.narrative}
                       width={128}
                       height={128}

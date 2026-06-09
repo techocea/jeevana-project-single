@@ -21,6 +21,48 @@ export function generateHeightOptions() {
 }
 
 /**
+ * Converts a stored height in centimeters back to feet and inches.
+ * Example: 152.4 -> { feet: 5, inches: 0, formatted: "5' 0\"" }
+ */
+export function convertCmToFeetInches(cm: string | number | null) {
+  if (!cm) {
+    return {
+      feet: 0,
+      inches: 0,
+      formatted: `0' 0"`,
+    };
+  }
+
+  const parsedCm = parseFloat(cm.toString());
+  if (Number.isNaN(parsedCm)) {
+    return {
+      feet: 0,
+      inches: 0,
+      formatted: `0' 0"`,
+    };
+  }
+
+  const totalInches = parsedCm / 2.54;
+  const roundedInches = Math.round(totalInches);
+  const feet = Math.floor(roundedInches / 12);
+  let inches = roundedInches % 12;
+
+  if (inches === 12) {
+    return {
+      feet: feet + 1,
+      inches: 0,
+      formatted: `${feet + 1}' 0"`,
+    };
+  }
+
+  return {
+    feet,
+    inches,
+    formatted: `${feet}' ${inches}"`,
+  };
+}
+
+/**
  * Generates options in 1-lb steps, but saves the value converted to KG.
  * Example: 150 lbs -> saves "68.0" kg to database
  */

@@ -20,6 +20,8 @@ import { formatDate } from "@/helpers/format-date";
 
 type StepOneValues = z.infer<typeof stepOneBasicSchema>;
 
+const ageOptions = Array.from({ length: 43 }, (_, i) => 18 + i);
+
 interface StepOneProps {
   onNext: (data: StepOneValues) => void;
   initialData: StepOneInitialData["initialData"];
@@ -40,6 +42,7 @@ const BasicInformation = ({ onNext, initialData }: StepOneProps) => {
       contact: initialData?.contact || "",
       gender: initialData?.gender || undefined,
       dob: formatDate(initialData?.dob) as unknown as Date,
+      age: initialData?.age || 0,
     },
   });
 
@@ -158,7 +161,7 @@ const BasicInformation = ({ onNext, initialData }: StepOneProps) => {
             )}
           </div>
 
-          <div className="col-span-2 flex flex-col gap-2">
+          <div className="md:col-span-1 col-span-2 flex flex-col gap-2">
             <Label
               htmlFor="dob"
               className="text-sm font-medium text-slate-700 uppercase"
@@ -168,6 +171,41 @@ const BasicInformation = ({ onNext, initialData }: StepOneProps) => {
             <Input id="dob" type="date" {...register("dob")} />
             {errors.dob && (
               <span className="text-sm text-red-600">{errors.dob.message}</span>
+            )}
+          </div>
+
+          <div className="md:col-span-1 col-span-2  flex flex-col gap-2">
+            <Label
+              htmlFor="age"
+              className="text-sm font-medium text-slate-700 uppercase"
+            >
+              Age
+            </Label>
+           <Controller
+              control={control}
+              name="age"
+              render={({ field }) => (
+                <Select
+                  value={field.value ? field.value.toString() : ""}
+                  onValueChange={(value) => field.onChange(parseInt(value))}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select age" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {ageOptions.map((age) => (
+                        <SelectItem value={age.toString()} key={age}>
+                          {age}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.age && (
+              <span className="text-sm text-red-600">{errors.age.message}</span>
             )}
           </div>
 

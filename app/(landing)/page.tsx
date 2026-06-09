@@ -19,8 +19,7 @@ import { SIGN_UP_FEATURES,FAQS } from "@/lib/constants";
 export default function Home() {
   return (
     <main className="w-full">
-      {/* Hero Section spans full screen to showcase background behind floating header */}
-      <section className="relative lg:h-180 h-screen w-full flex flex-col items-center justify-center">
+      <section className="relative md:h-180 h-screen w-full flex flex-col items-center justify-center">
         <Image
           src="/images/hero-bg.png"
           alt="Elegant Sri Lankan bride dressed in traditional white Kandyan sari"

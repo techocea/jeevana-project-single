@@ -45,8 +45,9 @@ const PersonalInformation = ({
   } = useForm<OnboardingFormValues>({
     resolver: zodResolver(stepFivePersonalSchema as any),
     defaultValues: {
-      height: initialData?.height || "",
-      weight: initialData?.weight || "",
+      height: initialData?.height ? String(initialData.height) : undefined,
+      weight: initialData?.weight ? String(initialData.weight) : undefined,
+      age: initialData?.age || 0,
       smoking: initialData?.smoking || undefined,
       drinking: initialData?.drinking || undefined,
       foodPreferences: initialData?.foodPreferences || undefined,
@@ -181,7 +182,6 @@ const PersonalInformation = ({
           </div>
 
           {/* 2. Habits (Smoking & Drinking) */}
-
           <div className="space-y-3">
             <Label className="text-sm font-medium text-slate-700 uppercase">
               Smoking Habits
