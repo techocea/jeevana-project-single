@@ -135,7 +135,7 @@ const SearchMatch = () => {
             SEARCH
           </Button>
 
-          <DrawerContent side="bottom" className="sm:hidden rounded-t-3xl border border-slate-200 bg-white p-6 shadow-xl">
+          <DrawerContent className="sm:hidden rounded-t-3xl border border-slate-200 bg-white p-6 shadow-xl">
             <DrawerHeader>
               <DrawerTitle className="sr-only">Filters for Mobile</DrawerTitle>
             </DrawerHeader>
@@ -208,7 +208,7 @@ const SearchMatch = () => {
               <DrawerClose asChild>
                 <Button variant="outline">Cancel</Button>
               </DrawerClose>
-              <Button type="submit">Done</Button>
+              <Button type="submit">Apply Filters</Button>
             </div>
           </DrawerContent>
         </Drawer>

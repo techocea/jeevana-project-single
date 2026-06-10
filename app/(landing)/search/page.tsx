@@ -51,7 +51,7 @@ const SearchProfiles = async ({ searchParams }: SearchPageProps) => {
 
   return (
     <main className="w-full md:max-w-5xl mx-auto bg-white mt-16 md:my-28 md:pt-10 py-10 px-4 md:pr-10 md:pl-0">
-      <section className="flex flex-col md:flex-row md:items-start">
+      <section className="flex flex-col md:flex-row md:items-start gap-8">
         <div className="flex-1">
           <FilterOptions />
         </div>
