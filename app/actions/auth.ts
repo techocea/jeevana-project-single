@@ -1,6 +1,5 @@
 "use server";
 
-import { createHash } from "crypto";
 import { db } from "@/lib/db";
 import { users } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
@@ -14,7 +13,6 @@ import {
 } from "@/lib/validation";
 import { createClient } from "@/utils/supabase";
 import { z } from "zod";
-import { redirect } from "next/navigation";
 
 export async function registerUser(data: AuthRegisterValues) {
   const parsed = authRegisterSchema.safeParse(data);
@@ -99,7 +97,7 @@ export async function loginUser(data: AuthLoginValues) {
     return { error: "A secure connection error occurred. Please try again." };
   }
 
-  let targetRoute = "/profile";
+  let targetRoute = "/my-matches";
 
   if (!dbUser || dbUser.onboardingStatus === "INCOMPLETE") {
     targetRoute = "/onboarding";

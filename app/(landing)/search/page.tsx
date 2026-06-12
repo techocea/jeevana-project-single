@@ -58,7 +58,7 @@ const SearchProfiles = async ({ searchParams }: SearchPageProps) => {
         <div className="flex-3 flex flex-col items-center gap-6">
           {profiles && profiles.length > 0 ? (
             profiles.map((profile) => (
-              <ProfileCard key={profile.id} {...profile} />
+              <ProfileCard key={profile.profileID} {...profile} />
             ))
           ) : (
             <div className="text-center text-muted-foreground">

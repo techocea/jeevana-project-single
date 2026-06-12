@@ -9,6 +9,7 @@ import {
   pgSequence,
   boolean,
   integer,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 
 export const profileSeq = pgSequence("profile_id_seq", {
@@ -16,14 +17,12 @@ export const profileSeq = pgSequence("profile_id_seq", {
   increment: 1,
 });
 
+export const roleEnum = pgEnum("app_role", ["ADMIN", "STAFF", "USER"]);
+
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
-  profileID: varchar("profile_id", { length: 20 })
-    .default(sql`concat('JV', nextval('profile_id_seq'))`)
-    .notNull()
-    .unique(),
   email: varchar("email", { length: 255 }).notNull().unique(),
-
+  role: roleEnum("role").default("USER").notNull(),
   onboardingStatus: varchar("onboarding_status", { length: 20 })
     .default("INCOMPLETE") // INCOMPLETE, VERIFYING, APPROVED
     .notNull(),
@@ -34,7 +33,10 @@ export const users = pgTable("users", {
 });
 
 export const profiles = pgTable("profiles", {
-  id: uuid("id").primaryKey().defaultRandom(),
+  profileID: varchar("profile_id", { length: 20 })
+    .default(sql`concat('JV', nextval('profile_id_seq'))`)
+    .notNull()
+    .unique(),
   userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
 
   // Basic Info (Step 1)

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { TooltipProvider } from "@/components/ui/tooltip"
 
 export const metadata: Metadata = {
   title: "Dashboard | Jeevana Matrimony",
@@ -13,7 +14,7 @@ export default function DashboardLayout({
 }>) {
   return (
     <div className="min-h-screen bg-background">
-      <main>{children}</main>
+       <TooltipProvider>{children}</TooltipProvider>
     </div>
   );
 }
