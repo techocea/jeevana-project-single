@@ -89,7 +89,7 @@ export interface SearchFilters {
 }
 
 export interface ProfileCardProps {
-  profileId?: string | null;
+  // profileId?: string | null;
   fullName: string | null;
   profilePic: string | null;
   paymentStatus: string | null;

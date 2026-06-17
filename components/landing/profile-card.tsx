@@ -20,7 +20,7 @@ import { convertCmToFeetInches } from "@/helpers/measurement-utils";
 
 export function ProfileCard({
   fullName,
-  profileId,
+  // profileId,
   profilePic,
   paymentStatus,
   age,
@@ -50,7 +50,7 @@ export function ProfileCard({
             </div>
 
             <div className="flex flex-col gap-1">
-              {profileId}
+              {/* {profileId} */}
               <Badge variant={badgeVariant}>{membershipLabel}</Badge>
               <h4 className="text-xl font-newsreader text-black">{fullName}</h4>
               <span className="flex items-center gap-1 -mt-2 text-sm text-muted">

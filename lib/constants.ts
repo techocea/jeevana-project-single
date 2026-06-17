@@ -34,6 +34,59 @@ export const NAVLINKS = [
   },
 ];
 
+export const DASHBOARD_SIDEBAR = {
+  navMain: [
+    {
+      title: "Overview",
+      items: [
+        {
+          title: "Dashboard",
+          url: "/control-panel",
+        },
+      ],
+    },
+    {
+      title: "Operations",
+      items: [
+        {
+          title: "Approval Queues",
+          url: "/control-panel/approval-queues",
+        },
+        {
+          title: "Create Advertisement",
+          url: "/control-panel/create-advertisement",
+        },
+      ],
+    },
+    {
+      title: "Business & Finance",
+      items: [
+        {
+          title: "Transactions",
+          url: "/control-panel/transactions",
+        },
+      ],
+    },
+    {
+      title: "Management",
+      items: [
+        {
+          title: "User Management",
+          url: "/control-panel/user-management",
+        },
+        {
+          title: "Staff Management",
+          url: "/control-panel/staff-management",
+        },
+        {
+          title: "System Settings",
+          url: "/control-panel/system-settings",
+        },
+      ],
+    },
+  ],
+};
+
 export const SIGN_UP_FEATURES = [
   {
     title: "sign up",
