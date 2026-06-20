@@ -101,3 +101,6 @@ export interface ProfileCardProps {
   caste: string | null;
   educationLevel: string | null;
 }
+
+export type TabTypes = "all" | "pending" | "approved" | "rejected";
+export type StatusTypes = "pending" | "approved" | "rejected";

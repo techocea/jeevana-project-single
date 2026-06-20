@@ -20,9 +20,9 @@ const TitleHeader = ({
   isGreeting: boolean;
 }) => {
   return (
-    <div className="flex flex-col gap-2 px-4 lg:px-6">
+    <div className="flex flex-col gap-2">
       <h3 className="text-black">{isGreeting ? greeting() : title}</h3>
-      <p className="text-muted-foreground text-lg">{description}</p>
+      <p className="text-muted-foreground">{description}</p>
     </div>
   );
 };

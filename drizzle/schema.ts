@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   pgTable,
   uuid,
@@ -33,6 +33,7 @@ export const users = pgTable("users", {
 });
 
 export const profiles = pgTable("profiles", {
+  id: uuid("id").primaryKey().defaultRandom(),
   profileID: varchar("profile_id", { length: 20 })
     .default(sql`concat('JV', nextval('profile_id_seq'))`)
     .notNull()
@@ -76,8 +77,8 @@ export const profiles = pgTable("profiles", {
 
   hobbies: text("hobbies").array(),
 
-  status: text("status").default("PENDING"), // 'pending' | 'approved' | 'rejected'
-  paymentStatus: text("payment_status").default("UNPAID"), // 'unpaid' | 'paid'
+  status: text("status").default("pending"), // 'pending' | 'approved' | 'rejected'
+  paymentStatus: text("payment_status").default("paif"), // 'unpaid' | 'paid'
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -93,6 +94,17 @@ export const inquiries = pgTable("inquiries", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export const usersRelations = relations(users, ({ many }) => ({
+  profiles: many(profiles),
+}));
+
+export const profilesRelations = relations(profiles, ({ one }) => ({
+  user: one(users, {
+    fields: [profiles.userId],
+    references: [users.id],
+  }),
+}));
 
 export type User = typeof users.$inferSelect;
 export type Profile = typeof profiles.$inferSelect;

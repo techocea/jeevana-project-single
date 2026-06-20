@@ -48,7 +48,7 @@ const SearchProfiles = async ({ searchParams }: SearchPageProps) => {
   }
 
   const profiles = result.data;
-  console.log(profiles);
+  // console.log(profiles);
 
   return (
     <main className="w-full md:max-w-5xl mx-auto bg-white mt-16 md:my-28 md:pt-10 py-10 px-4 md:pr-10 md:pl-0">

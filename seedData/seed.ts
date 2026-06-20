@@ -30,12 +30,10 @@ async function main() {
       `📦 Found ${jsonProfiles.length} template profiles. Remapping fields...`,
     );
 
-    const seedData = [];
-
     for (const p of jsonProfiles) {
       const mockUserId = crypto.randomUUID();
-
       const mockUserEmail = `${p.full_name.toLowerCase().replace(/\s+/g, "")}@example.com`;
+
       await db
         .insert(users)
         .values({
@@ -46,41 +44,44 @@ async function main() {
         })
         .onConflictDoNothing({ target: users.email });
 
-      seedData.push({
-        userId: mockUserId,
-        createdBy: p.created_by,
-        fullName: p.full_name,
-        contact: p.contact,
-        gender: p.gender,
-        profilePic: p.profile_pic,
-        dob: new Date(p.dob),
-        religion: p.religion,
-        caste: p.caste,
-        motherTongue: p.mother_tongue,
-        educationLevel: p.education_level,
-        profession: p.profession,
-        annualIncomeRange: p.annual_income_range,
-        country: p.country,
-        state: p.state,
-        city: p.city,
-        residencyStatus: p.residency_status,
-        height: p.height_cm,
-        weight: p.weight_kg,
-        age: p.age,
-        narrative: p.narrative,
-        smoking: p.smoking_habits,
-        drinking: p.drinking_habits,
-        foodPreferences: p.food_preferences,
-        isDifferentlyAbled: p.is_differently_abled || false,
-        differentlyAbledDetails: p.differently_abled_details,
-        hobbies: p.hobbies || [],
-        status: p.status || "APPROVED",
-        paymentStatus: p.payment_status || "PAID",
-      });
+      await db
+        .insert(profiles)
+        .values({
+          id: crypto.randomUUID(),
+          userId: mockUserId,
+          createdBy: p.created_by,
+          fullName: p.full_name,
+          contact: p.contact,
+          gender: p.gender,
+          profilePic: p.profile_pic,
+          dob: new Date(p.dob),
+          religion: p.religion,
+          caste: p.caste,
+          motherTongue: p.mother_tongue,
+          educationLevel: p.education_level,
+          profession: p.profession,
+          annualIncomeRange: p.annual_income_range,
+          country: p.country,
+          state: p.state,
+          city: p.city,
+          residencyStatus: p.residency_status,
+          height: p.height_cm,
+          weight: p.weight_kg,
+          age: p.age,
+          narrative: p.narrative,
+          smoking: p.smoking_habits,
+          drinking: p.drinking_habits,
+          foodPreferences: p.food_preferences,
+          isDifferentlyAbled: p.is_differently_abled || false,
+          differentlyAbledDetails: p.differently_abled_details,
+          hobbies: p.hobbies || [],
+          status: p.status || "pending",
+          paymentStatus: p.payment_status || "unpaid",
+        })
+        .returning({ generatedProfileId: profiles.profileID });
     }
 
     console.log("🚀 Inserting match profiles into database...");
-    await db.insert(profiles).values(seedData);
 
     console.log(
       "✨ Seeding completed successfully! You can now test your matching queries.",

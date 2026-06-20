@@ -132,13 +132,13 @@
     @apply text-5xl md:text-8xl font-newsreader tracking-tight text-white md:leading-24;
   }
   p {
-    @apply md:text-lg text-base leading-6 text-accent;
+    @apply text-base leading-6 text-accent;
   }
   h2 {
-    @apply md:text-5xl text-4xl tracking-tight;
+    @apply md:text-5xl text-4xl tracking-tight capitalize;
   }
   h3 {
-    @apply md:text-5xl text-4xl tracking-tight font-normal font-newsreader;
+    @apply text-3xl tracking-tight font-normal font-newsreader capitalize;
   }
   .tagline {
     @apply text-primary uppercase tracking-widest text-xs md:text-sm font-semibold;

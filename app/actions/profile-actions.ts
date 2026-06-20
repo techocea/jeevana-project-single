@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { profiles } from "@/drizzle/schema";
 import { and, eq, gte, lte, desc } from "drizzle-orm";
 import { SearchFilters } from "@/types";
+import { revalidatePath } from "next/cache";
 
 const targetGenderMap: Record<string, string> = {
   bride: "FEMALE",
@@ -90,5 +91,35 @@ export async function getProfilesByFilters(filters: SearchFilters) {
   } catch (error) {
     console.error("[DATABASE_SEARCH_CRASH]:", error);
     return { success: false, data: [], error: "Failed to retrieve profiles." };
+  }
+}
+
+export async function approveProfile(adId: string) {
+  try {
+    await db
+      .update(profiles)
+      .set({ status: "approved" })
+      .where(eq(profiles.profileID, adId));
+
+    revalidatePath("/control-panel");
+    return { success: true };
+  } catch (error) {
+    console.error("[PROFILE_APPROVAL_ERROR]:", error);
+    return { success: false, data: [], error: "Failed to approve profile" };
+  }
+}
+
+export async function rejectProfile(adId: string) {
+  try {
+    await db
+      .update(profiles)
+      .set({ status: "rejected" })
+      .where(eq(profiles.profileID, adId));
+
+    revalidatePath("/control-panel");
+    return { success: true };
+  } catch (error) {
+    console.error("[PROFILE_REJECTED_ERROR]:", error);
+    return { success: false, data: [], error: "Failed to reject profile" };
   }
 }

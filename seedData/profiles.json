@@ -11,7 +11,7 @@
     "mother_tongue": "Hindi",
     "education_level": "Master's in Computer Science",
     "profession": "Senior Software Engineer",
-    "annual_income_range": "$100,000 - $120,000",
+    "annual_income_range": "LKR 100,000 - LKR 120,000",
     "country": "India",
     "state": "Maharashtra",
     "city": "Mumbai",
@@ -26,8 +26,8 @@
     "is_differently_abled": false,
     "differently_abled_details": null,
     "hobbies": ["Coding", "Hiking", "Photography"],
-    "status": "APPROVED",
-    "payment_status": "PAID"
+    "status": "approved",
+    "payment_status": "paid"
   },
   {
     "created_by": "parent",
@@ -41,7 +41,7 @@
     "mother_tongue": "Malayalam",
     "education_level": "Doctorate (PhD) in Biotechnology",
     "profession": "Research Scientist",
-    "annual_income_range": "$90,000 - $110,000",
+    "annual_income_range": "LKR 90,000 - LKR 110,000",
     "country": "United States",
     "state": "California",
     "city": "San Francisco",
@@ -56,8 +56,8 @@
     "is_differently_abled": false,
     "differently_abled_details": null,
     "hobbies": ["Classical Dance", "Reading", "Baking"],
-    "status": "PENDING",
-    "payment_status": "UNPAID"
+    "status": "pending",
+    "payment_status": "unpaid"
   },
   {
     "created_by": "self",
@@ -71,7 +71,7 @@
     "mother_tongue": "English",
     "education_level": "Bachelor of Business Administration",
     "profession": "Product Manager",
-    "annual_income_range": "$130,000 - $150,000",
+    "annual_income_range": "LKR 130,000 - LKR 150,000",
     "country": "Singapore",
     "state": "Central Region",
     "city": "Singapore",
@@ -86,8 +86,8 @@
     "is_differently_abled": false,
     "differently_abled_details": null,
     "hobbies": ["Crossfit", "Wine Tasting", "Traveling"],
-    "status": "APPROVED",
-    "payment_status": "PAID"
+    "status": "approved",
+    "payment_status": "paid"
   },
   {
     "created_by": "sibling",
@@ -101,7 +101,7 @@
     "mother_tongue": "Gujarati",
     "education_level": "Master of Laws (LLM)",
     "profession": "Corporate Lawyer",
-    "annual_income_range": "£70,000 - £85,000",
+    "annual_income_range": "LKR 70,000 - LKR 85,000",
     "country": "United Kingdom",
     "state": "England",
     "city": "London",
@@ -116,7 +116,7 @@
     "is_differently_abled": true,
     "differently_abled_details": "Mild hearing impairment corrected fully with top-tier hearing aids.",
     "hobbies": ["Theater", "Vegan Cooking", "Yoga"],
-    "status": "APPROVED",
-    "payment_status": "PAID"
+    "status": "approved",
+    "payment_status": "paid"
   }
 ]
