@@ -18,10 +18,9 @@ const ApprovalQueuePage = async ({ searchParams }: PageProps) => {
   const resolvedParams = await searchParams;
   const currentStatus = resolvedParams.status || "all";
 
-  const filters = [];
-  if (currentStatus !== "all") {
-    filters.push(eq(profiles.status, currentStatus));
-  }
+  const filters = currentStatus !== "all" 
+    ? [eq(profiles.status, currentStatus as any)]
+    : [];
 
   const data = await db
     .select({
@@ -35,7 +34,7 @@ const ApprovalQueuePage = async ({ searchParams }: PageProps) => {
     })
     .from(profiles)
     .leftJoin(users, eq(profiles.userId, users.id))
-    .where(and(...filters))
+    .where(filters.length > 0 ? and(...filters) : undefined)
     .orderBy(desc(profiles.createdAt));
 
   const sanitizedData = (data ?? []).map((row) => ({

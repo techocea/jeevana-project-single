@@ -1,8 +1,6 @@
 "use server";
 
-import { db } from "@/lib/db";
-import { users } from "@/drizzle/schema";
-import { eq } from "drizzle-orm";
+import { z } from "zod";
 import {
   authLoginSchema,
   authRegisterSchema,
@@ -11,8 +9,12 @@ import {
   type AuthRegisterValues,
   type ForgotPasswordValues,
 } from "@/lib/validation";
+import { db } from "@/lib/db";
+import { eq } from "drizzle-orm";
+import { users } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase";
-import { z } from "zod";
+import { createSupabaseAdminClient } from "@/utils/supabase-admin";
+import { syncOnboardingProgressAction } from "./onboarding";
 
 export async function registerUser(data: AuthRegisterValues) {
   const parsed = authRegisterSchema.safeParse(data);
@@ -42,7 +44,7 @@ export async function registerUser(data: AuthRegisterValues) {
     await db.insert(users).values({
       id: authData.user.id,
       email,
-      onboardingStatus: "INCOMPLETE",
+      onboardingStatus: "INCOMPLETED",
       onboardingStep: "START",
     });
   } catch (dbError: any) {
@@ -99,7 +101,7 @@ export async function loginUser(data: AuthLoginValues) {
 
   let targetRoute = "/my-matches";
 
-  if (!dbUser || dbUser.onboardingStatus === "INCOMPLETE") {
+  if (!dbUser || dbUser.onboardingStatus === "INCOMPLETED") {
     targetRoute = "/onboarding";
   }
 
@@ -131,4 +133,59 @@ export async function requestPasswordReset(data: ForgotPasswordValues) {
     success: true,
     emailSent: found.length > 0,
   };
+}
+
+export async function adminRegisterUser(formData: Record<string, any>) {
+  try {
+    const supabaseAdmin = createSupabaseAdminClient();
+
+    // 1. Generate a temporary random password for the new account
+    const temporaryPassword =
+      "Temp" + Math.random().toString(36).slice(-8) + "!";
+
+    const { data, error } = await supabaseAdmin.auth.admin.createUser({
+      email: formData.email,
+      password: temporaryPassword,
+      email_confirm: true,
+      user_metadata: {
+        fullName: formData.fullName,
+        role: "client",
+      },
+    });
+
+    if (error) throw error;
+    if (!data.user)
+      throw new Error(
+        "Supabase Admin Auth API failed to return a user profile shell.",
+      );
+
+    const targetUserId = data.user.id;
+
+    // 3. Chain directly into your existing onboarding sync action using the new ID!
+    // We pass 1 as the starting step number for the profile initialization
+    const syncResult = await syncOnboardingProgressAction(
+      1,
+      formData,
+      targetUserId,
+    );
+
+    if (!syncResult.success) {
+      throw new Error(
+        syncResult.error || "Auth created, but profile mapping failed.",
+      );
+    }
+
+    return {
+      success: true,
+      targetUserId: targetUserId,
+      temporaryPassword: temporaryPassword,
+      profileId: syncResult.profileId,
+    };
+  } catch (error: any) {
+    console.error("[ADMIN_WORKFLOW_PROVISION_CRASH]:", error);
+    return {
+      success: false,
+      error: error.message || "Administrative profile registration failed.",
+    };
+  }
 }

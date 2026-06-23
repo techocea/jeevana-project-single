@@ -6,18 +6,22 @@ import { createClient } from "@/utils/supabase";
 import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-const NEXT_STEP_POINTER: Record<number, string> = {
+const NEXT_STEP_POINTER = {
   1: "RELIGION",
   2: "ACHIEVEMENTS",
   3: "LOCATION",
   4: "PERSONAL",
   5: "HOBBIES",
   6: "COMPLETED",
-};
+} as const;
+
+type OnboardingStepPointerValue =
+  (typeof NEXT_STEP_POINTER)[keyof typeof NEXT_STEP_POINTER];
 
 export async function syncOnboardingProgressAction(
   stepNumber: number,
   payload: Record<string, any>,
+  targetUserId?: string,
 ) {
   try {
     const supabase = await createClient();
@@ -27,6 +31,13 @@ export async function syncOnboardingProgressAction(
 
     if (!authedUser) throw new Error("Unauthorized mutations rejected");
 
+    let userIdToUpdate = authedUser.id;
+
+    if (targetUserId) {
+      // Security Check: Optional step to check if authedUser has role === 'admin'
+      // if (authedUser.user_metadata?.role !== "admin") throw new Error("Forbidden");
+      userIdToUpdate = targetUserId;
+    }
     let updatePayload: Record<string, any> = {};
 
     if (stepNumber === 1) {
@@ -35,7 +46,7 @@ export async function syncOnboardingProgressAction(
         rawDob && !isNaN(Date.parse(rawDob)) ? new Date(rawDob) : null;
 
       updatePayload = {
-        createdBy: payload.createdBy,
+        createdBy: targetUserId ? "ADMIN" : payload.createdBy,
         fullName: payload.fullName,
         contact: payload.contact,
         gender: payload.gender,
@@ -82,7 +93,7 @@ export async function syncOnboardingProgressAction(
     }
 
     const existingRecord = await db.query.profiles.findFirst({
-      where: and(eq(profiles.userId, authedUser.id)),
+      where: and(eq(profiles.userId, userIdToUpdate)),
     });
 
     let returnedProfileId = existingRecord?.id;
@@ -91,15 +102,14 @@ export async function syncOnboardingProgressAction(
       await db
         .update(profiles)
         .set({ ...updatePayload, updatedAt: new Date() })
-        .where(and(eq(profiles.userId, authedUser.id)));
+        .where(and(eq(profiles.userId, userIdToUpdate)));
     } else {
       const [insertedRow] = await db
         .insert(profiles)
         .values({
-          userId: authedUser.id,
+          userId: userIdToUpdate,
           ...updatePayload,
-          status: "PENDING",
-          paymentStatus: "UNPAID",
+          status: "pending",
         })
         .returning({ id: profiles.id });
 
@@ -110,14 +120,14 @@ export async function syncOnboardingProgressAction(
       returnedProfileId = insertedRow.id;
     }
 
-    const nextProgressString = NEXT_STEP_POINTER[stepNumber] || "COMPLETED";
+    const nextProgressString = NEXT_STEP_POINTER[stepNumber as keyof typeof NEXT_STEP_POINTER] || "COMPLETED";
     await db
       .update(users)
       .set({ onboardingStep: nextProgressString })
       .where(eq(users.id, authedUser.id));
 
     revalidatePath("/onboarding");
-
+    if (targetUserId) revalidatePath("/control-panel");
     return {
       success: true,
       nextStep: stepNumber + 1,

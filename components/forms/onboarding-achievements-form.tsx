@@ -43,7 +43,6 @@ const AchievementsForm = ({ onPrev, onNext, initialData }: StepThreeProps) => {
   const { education_levels, annual_income_ranges } = PERSONAL_DROPDOWNS;
 
   const {
-    register,
     handleSubmit,
     formState: { errors },
     control,
@@ -55,12 +54,6 @@ const AchievementsForm = ({ onPrev, onNext, initialData }: StepThreeProps) => {
       annualIncomeRange: initialData?.annualIncomeRange || undefined,
     },
   });
-
-  //  Flatten all roles into a single string array for the top-level items property
-  // This ensures Shadcn's internal tracking and filtering logic registers every role
-  const allProfessionsFlatList = GROUPS_PROFESSIONS.flatMap(
-    (group) => group.roles,
-  );
 
   return (
     <div className="mt-16 w-full flex flex-col md:flex-row gap-10">
@@ -110,8 +103,6 @@ const AchievementsForm = ({ onPrev, onNext, initialData }: StepThreeProps) => {
                           {level}
                         </SelectItem>
                       ))}
-                      <SelectItem value="MALE">Male</SelectItem>
-                      <SelectItem value="FEMALE">Female</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -147,7 +138,9 @@ const AchievementsForm = ({ onPrev, onNext, initialData }: StepThreeProps) => {
                     <ComboboxList>
                       {(group) => (
                         <ComboboxGroup key={group.category} items={group.roles}>
-                          <ComboboxLabel className="uppercase font-bold text-black">{group.category}</ComboboxLabel>
+                          <ComboboxLabel className="uppercase font-bold text-black">
+                            {group.category}
+                          </ComboboxLabel>
                           <ComboboxCollection>
                             {(item) => (
                               <ComboboxItem key={item} value={item}>

@@ -20,7 +20,7 @@ import { formatDate } from "@/helpers/format-date";
 
 type StepOneValues = z.infer<typeof stepOneBasicSchema>;
 
-const ageOptions = Array.from({ length: 43 }, (_, i) => 18 + i);
+export const ageOptions = Array.from({ length: 43 }, (_, i) => 18 + i);
 
 interface StepOneProps {
   onNext: (data: StepOneValues) => void;
