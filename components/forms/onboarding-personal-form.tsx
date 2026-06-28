@@ -37,7 +37,6 @@ const PersonalInformation = ({
   initialData,
 }: StepFiveProps) => {
   const {
-    register,
     handleSubmit,
     control,
     watch,
@@ -48,8 +47,8 @@ const PersonalInformation = ({
       height: initialData?.height ? String(initialData.height) : undefined,
       weight: initialData?.weight ? String(initialData.weight) : undefined,
       age: initialData?.age || 0,
-      smoking: initialData?.smoking || undefined,
-      drinking: initialData?.drinking || undefined,
+      smoking: initialData?.smoking || "never",
+      drinking: initialData?.drinking || "never",
       foodPreferences: initialData?.foodPreferences || undefined,
       isDifferentlyAbled: initialData?.isDifferentlyAbled || undefined,
       differentlyAbledDetails:
@@ -255,12 +254,12 @@ const PersonalInformation = ({
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="socially" id="d2" />
+                    <RadioGroupItem value="occasionally" id="d2" />
                     <Label
                       htmlFor="d2"
                       className="font-normal text-accent-foreground"
                     >
-                      Socially
+                      Occasionally
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">

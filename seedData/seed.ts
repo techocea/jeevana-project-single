@@ -2,13 +2,15 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as fs from "fs";
 import * as path from "path";
-import { profiles, users } from "@/drizzle/schema";
+import * as schema from "@/drizzle/schema";
+import { eq } from "drizzle-orm";
 import { fileURLToPath } from "url";
 import "dotenv/config";
 
 const connectionString = process.env.DATABASE_URL!;
 const client = postgres(connectionString, { max: 1, prepare: false });
-const db = drizzle(client);
+const db = drizzle(client, { schema });
+const { users, profiles } = schema;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,24 +33,40 @@ async function main() {
     );
 
     for (const p of jsonProfiles) {
-      const mockUserId = crypto.randomUUID();
-      const mockUserEmail = `${p.full_name.toLowerCase().replace(/\s+/g, "")}@example.com`;
+      const mockUserEmail =
+        p.email?.trim().toLowerCase() ||
+        `${p.full_name.toLowerCase().replace(/\s+/g, "")}@example.com`;
 
-      await db
-        .insert(users)
-        .values({
-          id: mockUserId,
+      let userRecord = await db.query.users.findFirst({
+        where: eq(users.email, mockUserEmail),
+      });
+
+      if (!userRecord) {
+        const newUserId = crypto.randomUUID();
+        await db.insert(users).values({
+          id: newUserId,
+          fullName: p.full_name,
           email: mockUserEmail,
-          onboardingStatus: "APPROVED",
+          onboardingStatus: "COMPLETED",
           onboardingStep: "COMPLETED",
-        })
-        .onConflictDoNothing({ target: users.email });
+        });
+
+        userRecord = await db.query.users.findFirst({
+          where: eq(users.email, mockUserEmail),
+        });
+      }
+
+      if (!userRecord) {
+        throw new Error(
+          `Failed to create or retrieve user record for ${mockUserEmail}`,
+        );
+      }
 
       await db
         .insert(profiles)
         .values({
           id: crypto.randomUUID(),
-          userId: mockUserId,
+          userId: userRecord.id,
           createdBy: p.created_by,
           fullName: p.full_name,
           contact: p.contact,
@@ -75,8 +93,9 @@ async function main() {
           isDifferentlyAbled: p.is_differently_abled || false,
           differentlyAbledDetails: p.differently_abled_details,
           hobbies: p.hobbies || [],
+          mailRoutingTarget: p.mail_routing_target || "owner",
+          secondaryEmail: p.secondary_email || null,
           status: p.status || "pending",
-          paymentStatus: p.payment_status || "unpaid",
         })
         .returning({ generatedProfileId: profiles.profileID });
     }

@@ -22,7 +22,6 @@ export function ProfileCard({
   fullName,
   // profileId,
   profilePic,
-  paymentStatus,
   age,
   caste,
   religion,
@@ -31,8 +30,8 @@ export function ProfileCard({
   profession,
   educationLevel,
 }: ProfileCardProps) {
-  const membershipLabel = paymentStatus === "PAID" ? "Elite" : "Verified";
-  const badgeVariant = paymentStatus === "PAID" ? "default" : "secondary";
+  // const membershipLabel = paymentStatus === "PAID" ? "Elite" : "Verified";
+  // const badgeVariant = paymentStatus === "PAID" ? "default" : "secondary";
 
   return (
     <Card className="flex flex-row w-full border-t-4 border-primary shadow-sm">
@@ -51,7 +50,7 @@ export function ProfileCard({
 
             <div className="flex flex-col gap-1">
               {/* {profileId} */}
-              <Badge variant={badgeVariant}>{membershipLabel}</Badge>
+              {/* <Badge variant={badgeVariant}>{membershipLabel}</Badge> */}
               <h4 className="text-xl font-newsreader text-black">{fullName}</h4>
               <span className="flex items-center gap-1 -mt-2 text-sm text-muted">
                 <MapPin size={16} />

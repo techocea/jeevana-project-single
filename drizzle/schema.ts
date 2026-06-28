@@ -52,8 +52,15 @@ export const membershipEnum = pgEnum("membership_plan", [
   "elite",
 ]);
 
+export const mailRoutingEnum = pgEnum("mail_routing", [
+  "owner",
+  "candidate",
+  "both",
+]);
+
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
+  fullName: text("full_name"),
   email: varchar("email", { length: 255 }).notNull().unique(),
   role: roleEnum("role").default("USER").notNull(),
 
@@ -85,12 +92,12 @@ export const profiles = pgTable("profiles", {
   profilePic: text("profile_pic"),
   dob: date("dob", { mode: "date" }),
 
-  // Professional (Step 2)
+  // Religion (Step 2)
   religion: text("religion"),
   caste: text("caste"),
   motherTongue: text("mother_tongue"),
 
-  // Preferences (Step 3)
+  // Career (Step 3)
   educationLevel: text("education_level"),
   profession: text("profession"),
   annualIncomeRange: text("annual_income_range"),
@@ -101,7 +108,7 @@ export const profiles = pgTable("profiles", {
   city: text("city"),
   residencyStatus: text("residency_status"), // citizen, pr, work
 
-  // Final (Step 5)
+  // Personal (Step 5)
   height: text("height_cm"),
   weight: text("weight_kg"),
   age: integer("age"),
@@ -112,8 +119,10 @@ export const profiles = pgTable("profiles", {
   isDifferentlyAbled: boolean("is_differently_abled").default(false),
   differentlyAbledDetails: text("differently_abled_details"),
 
+  //Final
   hobbies: text("hobbies").array(),
-
+  mailRoutingTarget: mailRoutingEnum("mail_routing_target").default("owner"),
+  secondaryEmail: text("secondary_email"),
   status: profileStatusEnum("status").default("pending").notNull(), // 'pending' | 'approved' | 'rejected'
 
   createdAt: timestamp("created_at").defaultNow().notNull(),

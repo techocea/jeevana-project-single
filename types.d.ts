@@ -1,3 +1,17 @@
+export type TabTypes = "all" | "pending" | "approved" | "rejected";
+export type StatusTypes = "pending" | "approved" | "rejected";
+export type GenderTypes = "male" | "female";
+export type CreatedByTypes =
+  | "self"
+  | "parent"
+  | "guardian"
+  | "sibling"
+  | "friend";
+export type ResindencyTypes = "CITIZEN" | "PR" | "WORK";
+export type BadHabitTypes = "never" | "occasionally" | "regularly";
+export type FoodHabitTypes = "vegetarian" | "non-vegetarian" | "vegan";
+export type MailRoutingTargetTypes = "owner" | "candidate" | "both";
+
 export interface StepConfig {
   id: number;
   tagline: string;
@@ -9,13 +23,47 @@ export interface ProgressBarHeaderProps {
   steps: StepConfig[];
 }
 
+export interface AdminCreateAdFormValues {
+  userId: string;
+  createdBy: CreatedByTypes;
+  profilePic: string;
+  fullName: string;
+  contact: string;
+  gender: GenderTypes;
+  dob: Date;
+  age: number;
+  religion: string;
+  caste: string;
+  motherTongue: string;
+  educationLevel: string;
+  profession: string;
+  annualIncomeRange: string;
+  country: string;
+  state: string;
+  city: string;
+  residencyStatus: ResindencyTypes;
+  height: string | undefined;
+  weight: string | undefined;
+  age: number;
+  smoking: BadHabitTypes;
+  drinking: BadHabitTypes;
+  foodPreferences: FoodHabitTypes;
+  isDifferentlyAbled: boolean;
+  differentlyAbledDetails: string;
+  narrative: string;
+  hobbies: string[];
+  status: StatusTypes;
+  mailRoutingTarget: MailRoutingTargetTypes;
+  secondaryEmail?: string;
+}
+
 export interface StepOneInitialData {
   initialData: {
-    createdBy?: "self" | "parent" | "guardian" | "sibling" | "friend";
+    createdBy?: CreatedByTypes;
     profilePic?: string;
     fullName?: string;
     contact?: string;
-    gender?: "MALE" | "FEMALE";
+    gender?: GenderTypes;
     dob?: Date;
     age?: number;
   };
@@ -42,7 +90,7 @@ export interface StepFourInitialData {
     country?: string;
     state?: string;
     city?: string;
-    residencyStatus?: "CITIZEN" | "PR" | "WORK";
+    residencyStatus?: ResindencyTypes;
   };
 }
 
@@ -51,9 +99,9 @@ export interface StepFiveInitialData {
     height?: string | number;
     weight?: string | number;
     age?: number;
-    smoking?: "never" | "occasionally" | "regularly";
-    drinking?: "never" | "socially" | "regularly";
-    foodPreferences?: "vegetarian" | "non-vegetarian" | "vegan";
+    smoking?: BadHabitTypes;
+    drinking?: BadHabitTypes;
+    foodPreferences?: FoodHabitTypes;
     isDifferentlyAbled?: boolean;
     differentlyAbledDetails?: string;
     narrative?: string;
@@ -92,7 +140,7 @@ export interface ProfileCardProps {
   // profileId?: string | null;
   fullName: string | null;
   profilePic: string | null;
-  paymentStatus: string | null;
+  // paymentStatus: string | null;
   age: number | null;
   height: string | number | null;
   country: string | null;
@@ -101,6 +149,3 @@ export interface ProfileCardProps {
   caste: string | null;
   educationLevel: string | null;
 }
-
-export type TabTypes = "all" | "pending" | "approved" | "rejected";
-export type StatusTypes = "pending" | "approved" | "rejected";

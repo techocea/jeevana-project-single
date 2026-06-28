@@ -6,19 +6,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from "@/components/ui/combobox";
 import Image from "next/image";
 import { useForm, Controller } from "react-hook-form";
 import { StepTwoInitialData } from "@/types";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -39,7 +30,6 @@ const ReligionInformation = ({ onPrev, onNext, initialData }: StepTwoProps) => {
     watch,
     control,
     setValue,
-    register,
     handleSubmit,
     formState: { errors },
   } = useForm<OnboardingFormValues>({

@@ -14,7 +14,7 @@ export const stepOneBasicSchema = z.object({
     .max(20)
     .nullable()
     .optional(),
-  gender: z.enum(["MALE", "FEMALE"]).nullable(),
+  gender: z.enum(["male", "female"]).nullable(),
   profilePic: z.url("Invalid image path location").nullable(),
   dob: z.coerce
     .date()
@@ -57,7 +57,10 @@ export const stepFivePersonalSchema = z.object({
     .nullable()
     .optional(),
   smoking: z.enum(["never", "occasionally", "regularly"]).nullable().optional(),
-  drinking: z.enum(["never", "socially", "regularly"]).nullable().optional(),
+  drinking: z
+    .enum(["never", "occasionally", "regularly"])
+    .nullable()
+    .optional(),
   foodPreferences: z
     .enum(["vegetarian", "non-vegetarian", "vegan"])
     .nullable()

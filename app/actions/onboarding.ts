@@ -120,11 +120,13 @@ export async function syncOnboardingProgressAction(
       returnedProfileId = insertedRow.id;
     }
 
-    const nextProgressString = NEXT_STEP_POINTER[stepNumber as keyof typeof NEXT_STEP_POINTER] || "COMPLETED";
+    const nextProgressString =
+      NEXT_STEP_POINTER[stepNumber as keyof typeof NEXT_STEP_POINTER] ||
+      "COMPLETED";
     await db
       .update(users)
       .set({ onboardingStep: nextProgressString })
-      .where(eq(users.id, authedUser.id));
+      .where(eq(users.id, userIdToUpdate));
 
     revalidatePath("/onboarding");
     if (targetUserId) revalidatePath("/control-panel");
@@ -139,6 +141,100 @@ export async function syncOnboardingProgressAction(
     return {
       success: false,
       error: error.message || "Progress transmission failed",
+    };
+  }
+}
+
+export async function createAdminProfileAction(
+  payload: Record<string, any>,
+  targetUserId: string,
+) {
+  try {
+    if (!targetUserId) {
+      throw new Error("A registered user must be selected before saving.");
+    }
+
+    const parsedDate =
+      payload.dob && !isNaN(Date.parse(payload.dob))
+        ? new Date(payload.dob)
+        : null;
+
+    const profilePayload = {
+      userId: targetUserId,
+      createdBy: payload.createdBy,
+      fullName: payload.fullName,
+      contact: payload.contact,
+      gender: payload.gender,
+      dob: parsedDate,
+      age: payload.age,
+      profilePic: payload.profilePic,
+      religion: payload.religion,
+      caste: payload.caste,
+      motherTongue: payload.motherTongue,
+      educationLevel: payload.educationLevel,
+      profession: payload.profession,
+      annualIncomeRange: payload.annualIncomeRange,
+      country: payload.country,
+      state: payload.state,
+      city: payload.city,
+      residencyStatus: payload.residencyStatus,
+      height: payload.height,
+      weight: payload.weight,
+      narrative: payload.narrative,
+      smoking: payload.smoking,
+      drinking: payload.drinking,
+      foodPreferences: payload.foodPreferences,
+      isDifferentlyAbled:
+        payload.isDifferentlyAbled === true ||
+        payload.isDifferentlyAbled === "yes",
+      differentlyAbledDetails: payload.differentlyAbledDetails,
+      hobbies: Array.isArray(payload.hobbies) ? payload.hobbies : [],
+      mailRoutingTarget: payload.mailRoutingTarget,
+      secondaryEmail: payload.secondaryEmail,
+      status: payload.status || "pending",
+      updatedAt: new Date(),
+    };
+
+    const existingRecord = await db.query.profiles.findFirst({
+      where: and(eq(profiles.userId, targetUserId)),
+    });
+
+    let profileId: string | undefined;
+
+    if (existingRecord) {
+      await db
+        .update(profiles)
+        .set(profilePayload)
+        .where(and(eq(profiles.userId, targetUserId)));
+      profileId = existingRecord.id;
+    } else {
+      const [insertedRow] = await db
+        .insert(profiles)
+        .values(profilePayload)
+        .returning({ id: profiles.id });
+
+      if (!insertedRow) {
+        throw new Error("Failed to create the profile record.");
+      }
+      profileId = insertedRow.id;
+    }
+
+    await db
+      .update(users)
+      .set({ onboardingStatus: "COMPLETED", onboardingStep: "COMPLETED" })
+      .where(eq(users.id, targetUserId));
+
+    revalidatePath("/control-panel");
+
+    return {
+      success: true,
+      profileId,
+    };
+  } catch (error: any) {
+    console.error("[ADMIN_PROFILE_CREATE_CRASH]:", error);
+    return {
+      success: false,
+      error: error.message || "Profile creation failed.",
     };
   }
 }

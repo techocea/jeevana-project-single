@@ -147,8 +147,8 @@ const BasicInformation = ({ onNext, initialData }: StepOneProps) => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectItem value="MALE">Male</SelectItem>
-                      <SelectItem value="FEMALE">Female</SelectItem>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>

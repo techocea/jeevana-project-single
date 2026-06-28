@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { profiles } from "@/drizzle/schema";
-import { and, eq, gte, lte, desc } from "drizzle-orm";
+import { profiles, users } from "@/drizzle/schema";
+import { and, eq, gte, lte, desc, ilike } from "drizzle-orm";
 import { SearchFilters } from "@/types";
 import { revalidatePath } from "next/cache";
 
@@ -12,6 +12,28 @@ const targetGenderMap: Record<string, string> = {
   female: "FEMALE",
   male: "MALE",
 };
+
+export async function getUsersByEmail(query: string) {
+  try {
+    const registeredUsers = await db
+      .select({
+        id: users.id,
+        email: users.email,
+      })
+      .from(users)
+      .where(ilike(users.email, `%${query}%`))
+      .limit(5);
+
+    return { success: true, data: registeredUsers };
+  } catch (error) {
+    console.error("[DATABASE_SEARCH_REGISTERED_USERS_CRASH]:", error);
+    return {
+      success: false,
+      data: [],
+      error: "Failed to retrieve registered users.",
+    };
+  }
+}
 
 export async function getProfilesByFilters(filters: SearchFilters) {
   try {
