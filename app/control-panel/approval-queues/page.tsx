@@ -1,12 +1,12 @@
 import TitleHeader from "@/components/dashboard/title-header";
-import { DataTable } from "@/components/dashboard/data-table";
-import ApprovalQueueTabs from "@/components/dashboard/approval-queue-tabs";
 import { eq, and, desc } from "drizzle-orm";
 import { profiles, users } from "@/drizzle/schema";
 import { db } from "@/lib/db";
 import { columns } from "./columns";
-import { StatusTypes } from "@/types";
+import { ProfileStatusTypes } from "@/types";
 import { approveProfile, rejectProfile } from "@/app/actions/profile-actions";
+import { DataTable } from "./data-table";
+import ApprovalQueueTabs from "./approval-queue-tabs";
 
 export const dynamic = "force-dynamic";
 
@@ -18,8 +18,8 @@ const ApprovalQueuePage = async ({ searchParams }: PageProps) => {
   const resolvedParams = await searchParams;
   const currentStatus = resolvedParams.status || "all";
 
-  const filters = currentStatus !== "all" 
-    ? [eq(profiles.status, currentStatus as any)]
+  const filters = currentStatus !== "all"
+    ? [eq(profiles.status, currentStatus as ProfileStatusTypes)]
     : [];
 
   const data = await db
@@ -39,7 +39,7 @@ const ApprovalQueuePage = async ({ searchParams }: PageProps) => {
 
   const sanitizedData = (data ?? []).map((row) => ({
     ...row,
-    status: (row.status ?? "pending") as StatusTypes,
+    status: (row.status ?? "pending") as ProfileStatusTypes,
   }));
 
   if (!sanitizedData) {

@@ -1,15 +1,9 @@
 "use client";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { StatusTypes } from "@/types";
+import { ProfileStatusTypes } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
-import { Ban, Check, Dot, Eye, MoreHorizontal, X } from "lucide-react";
+import { Ban, Dot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/helpers/format-date";
 
@@ -20,7 +14,7 @@ export type AdvertisementTable = {
   caste: string | null;
   createdAt: string | Date | undefined;
   email: string | null;
-  status: StatusTypes;
+  status: ProfileStatusTypes;
 };
 
 export const columns: ColumnDef<AdvertisementTable>[] = [
@@ -42,7 +36,7 @@ export const columns: ColumnDef<AdvertisementTable>[] = [
       return (
         <div className="flex flex-col gap-0.5">
           <span className="font-semibold text-black">{name}</span>
-          <span className="text-xs text-muted-foreground">{email}</span>
+          <span className="text-xs text-muted-foreground italic">Created By:{" "}{email}</span>
         </div>
       );
     },
@@ -69,7 +63,7 @@ export const columns: ColumnDef<AdvertisementTable>[] = [
             <span className="text-black">{caste}</span>
           </Badge>
           <p className="italic text-muted-foreground text-xs">
-            Created:{" "}
+            Created On:{" "}
             {safeDate && !isNaN(safeDate.getTime())
               ? formatDate(safeDate)
               : "N/A"}
@@ -116,7 +110,7 @@ export const columns: ColumnDef<AdvertisementTable>[] = [
       return (
         <div className="flex items-center gap-1 justify-end">
           {row.original.status === "approved" ||
-          row.original.status === "rejected" ? (
+            row.original.status === "rejected" ? (
             <Button
               variant="outline"
               className="border-destructive hover:bg-destructive/50"

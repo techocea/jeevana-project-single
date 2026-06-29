@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { createContactInquiry } from "@/app/actions/contact";
+import { createContactInquiry } from "@/app/actions/contact-actions";
 import { contactFormSchema, ContactFormValues } from "@/lib/validation";
 
 const ContactForm = () => {

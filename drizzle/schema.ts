@@ -37,7 +37,6 @@ export const profileStatusEnum = pgEnum("profile_status", [
   "rejected",
 ]);
 export const userStatusEnum = pgEnum("user_status", [
-  "pending",
   "active",
   "flagged",
   "suspended",
@@ -71,7 +70,7 @@ export const users = pgTable("users", {
     .default("START")
     .notNull(),
 
-  status: userStatusEnum("user_status").default("pending").notNull(),
+  status: userStatusEnum("user_status").default("active").notNull(),
   membership: membershipEnum("membership_plan").default("free_tier").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

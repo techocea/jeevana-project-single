@@ -1,16 +1,18 @@
-export type TabTypes = "all" | "pending" | "approved" | "rejected";
-export type StatusTypes = "pending" | "approved" | "rejected";
-export type GenderTypes = "male" | "female";
 export type CreatedByTypes =
   | "self"
   | "parent"
   | "guardian"
   | "sibling"
   | "friend";
+export type GenderTypes = "male" | "female";
 export type ResindencyTypes = "CITIZEN" | "PR" | "WORK";
+export type UserStatusTypes = "active" | "flagged" | "suspended";
 export type BadHabitTypes = "never" | "occasionally" | "regularly";
-export type FoodHabitTypes = "vegetarian" | "non-vegetarian" | "vegan";
+export type TabTypes = "all" | "pending" | "approved" | "rejected";
 export type MailRoutingTargetTypes = "owner" | "candidate" | "both";
+export type ProfileStatusTypes = "pending" | "approved" | "rejected";
+export type FoodHabitTypes = "vegetarian" | "non-vegetarian" | "vegan";
+export type MembershipTypes = "free_tier" | "classical" | "heritage" | "elite";
 
 export interface StepConfig {
   id: number;
@@ -52,7 +54,7 @@ export interface AdminCreateAdFormValues {
   differentlyAbledDetails: string;
   narrative: string;
   hobbies: string[];
-  status: StatusTypes;
+  status: ProfileStatusTypes;
   mailRoutingTarget: MailRoutingTargetTypes;
   secondaryEmail?: string;
 }

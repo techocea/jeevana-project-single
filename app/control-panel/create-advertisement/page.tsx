@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRightLeft, UserCheck } from "lucide-react";
 import UserProfileSearch from "@/components/dashboard/user-profile-search";
 import { useRouter } from "next/navigation";
-import { createAdminProfileAction } from "@/app/actions/onboarding";
+import { createAdminProfileAction } from "@/app/actions/onboarding-actions";
 
 const CreateAdPage = () => {
   const router = useRouter();
@@ -81,7 +81,7 @@ const CreateAdPage = () => {
         return;
       }
       setSubmitSuccess("Advertisement profile saved successfully.");
-      router.refresh();
+      router.push("/control-panel/approval-queues");
     } catch (error) {
       console.error("[ADMIN_AD_SUBMIT_ERROR]:", error);
       setSubmitError("An unexpected error occurred while saving the profile.");

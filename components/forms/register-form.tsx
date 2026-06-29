@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { authRegisterSchema, type AuthRegisterValues } from "@/lib/validation";
-import { registerUser } from "@/app/actions/auth";
+import { registerUser } from "@/app/actions/auth-actions";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -46,7 +46,7 @@ const RegisterForm = () => {
         }
       }
     } catch (error) {
-     setServerError("An unexpected error occurred during signup.");
+      setServerError("An unexpected error occurred during signup.");
     }
   };
 

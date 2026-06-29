@@ -14,7 +14,7 @@ import { eq } from "drizzle-orm";
 import { users } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase";
 import { createSupabaseAdminClient } from "@/utils/supabase-admin";
-import { syncOnboardingProgressAction } from "./onboarding";
+import { syncOnboardingProgressAction } from "./onboarding-actions";
 
 export async function registerUser(data: AuthRegisterValues) {
   const parsed = authRegisterSchema.safeParse(data);

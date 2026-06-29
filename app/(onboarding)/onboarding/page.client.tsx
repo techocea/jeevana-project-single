@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { ONBOARDING_STEPS } from "@/lib/constants";
 import BasicInformation from "@/components/forms/onboarding-basic-form";
 import ProgressBarHeader from "@/components/landing/progress-bar-header";
-import { syncOnboardingProgressAction } from "@/app/actions/onboarding";
+import { syncOnboardingProgressAction } from "@/app/actions/onboarding-actions";
 import HobbiesSelector from "@/components/forms/onboarding-hobbies-form";
 import PersonalInformation from "@/components/forms/onboarding-personal-form";
 import ReligionInformation from "@/components/forms/onboarding-religion-form";
