@@ -41,9 +41,7 @@ export const userStatusEnum = pgEnum("user_status", [
   "flagged",
   "suspended",
 ]);
-//  pending - grace period to make the payment and continue
-//  flagged - after completion of the full process, so later if wanted they can create a another profile
-//  suspended - cannot work furthur
+
 export const membershipEnum = pgEnum("membership_plan", [
   "free_tier",
   "classical",

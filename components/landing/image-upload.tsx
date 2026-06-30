@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState, useRef } from "react";
 import { Camera, Loader2, Upload } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/utils/supabase-client";
+import { Input } from "../ui/input";
 
 interface ImageUploadZoneProps {
   value?: string | null;
@@ -67,7 +68,7 @@ const ImageUploadZone = ({ value, onChange }: ImageUploadZoneProps) => {
         />
       )}
 
-      <input
+      <Input
         type="file"
         ref={fileInputRef}
         onChange={handleFileChange}

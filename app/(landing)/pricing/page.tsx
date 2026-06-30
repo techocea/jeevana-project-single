@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Card,
   CardHeader,
@@ -29,11 +28,10 @@ const PricingPage = () => {
             {PRICING_PACKAGES.map((pkg) => (
               <Card
                 key={pkg.id}
-                className={`relative overflow-visible shadow-lg flex flex-col p-6 ${
-                  pkg.id === 2
+                className={`relative overflow-visible shadow-lg flex flex-col p-6 ${pkg.id === 2
                     ? "bg-primary text-black md:scale-105"
                     : "bg-background"
-                }`}
+                  }`}
               >
                 {pkg.id === 2 ? (
                   <div className="absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-secondary px-4 py-1.5 text-xs font-semibold text-white shadow-sm uppercase">
@@ -66,11 +64,10 @@ const PricingPage = () => {
                       return (
                         <li
                           key={idx}
-                          className={`text-sm flex items-center gap-2 ${
-                            isFirstCardLastItem
+                          className={`text-sm flex items-center gap-2 ${isFirstCardLastItem
                               ? "text-muted-foreground/70"
                               : ""
-                          }`}
+                            }`}
                         >
                           <span>
                             {isFirstCardLastItem ? (
@@ -130,7 +127,7 @@ const PricingPage = () => {
                     <feature.icon className="h-6 w-6" />
                   </div>
                   <div className="flex-1">
-                   <h3 className="text-black font-medium text-lg capitalize">
+                    <h3 className="text-black font-medium text-lg capitalize">
                       {feature.title}
                     </h3>
                     <p className="text-sm text-slate-600">

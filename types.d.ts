@@ -1,3 +1,13 @@
+declare module "@tanstack/react-table" {
+  interface TableMeta<TData extends RowData> {
+    onUserFlag?: (userId: string) => void;
+    onUserSuspend?: (userId: string) => void;
+    onUserReactivate?: (userId: string) => void;
+    onApprove?: (userId: string) => void;
+    onReject?: (userId: string) => void;
+  }
+}
+
 export type CreatedByTypes =
   | "self"
   | "parent"

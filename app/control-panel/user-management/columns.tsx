@@ -16,14 +16,6 @@ export type UsersTable = {
   status: UserStatusTypes;
 };
 
-declare module "@tanstack/react-table" {
-  interface TableMeta<TData extends RowData> {
-    onUserFlag?: (userId: string) => void;
-    onUserSuspend?: (userId: string) => void;
-    onUserReactivate?: (userId: string) => void;
-  }
-}
-
 export const columns: ColumnDef<UsersTable>[] = [
   {
     accessorKey: "fullName",
@@ -73,8 +65,10 @@ export const columns: ColumnDef<UsersTable>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex flex-col gap-0.5 text-sm">
-          <Badge className="flex items-center gap-0.5 bg-input">
-            <span className="text-black">{row.original.membership}</span>
+          <Badge className="flex items-center gap-0.5 bg-input w-2/3">
+            <span className="text-black">
+              {row.original.membership.replace("_", " ").toUpperCase()}
+            </span>
           </Badge>
         </div>
       );

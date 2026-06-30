@@ -36,7 +36,8 @@ export async function proxy(request: NextRequest) {
 
   const isAccessingProtectedRoute =
     request.nextUrl.pathname.startsWith("/onboarding") ||
-    request.nextUrl.pathname.startsWith("/dashboard");
+    request.nextUrl.pathname.startsWith("/control-panel") ||
+    request.nextUrl.pathname.startsWith("/my-dashboard");
 
   const isAccessingAuthRoute = request.nextUrl.pathname.startsWith("/auth");
 
@@ -47,6 +48,9 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  // const paymentStatus = user?.user_metadata?.payment_status;
+  // if(paymentStatus != "paid")
+
   if (user && isAccessingAuthRoute) {
     return NextResponse.redirect(new URL("/onboarding", request.url));
   }
@@ -55,7 +59,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+  matcher: ["/my-dashboard/:path*", "/control-panel/:path*"],
 };

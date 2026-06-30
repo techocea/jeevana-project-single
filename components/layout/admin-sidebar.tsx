@@ -18,10 +18,10 @@ import {
 import Image from "next/image";
 import { Label } from "../ui/label";
 import { usePathname } from "next/navigation";
-import { DASHBOARD_SIDEBAR } from "@/lib/constants";
+import { ADMIN_DASHBOARD_SIDEBAR } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
 
   return (
@@ -48,7 +48,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
-            {DASHBOARD_SIDEBAR.navMain.map((item) => (
+            {ADMIN_DASHBOARD_SIDEBAR.navMain.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <Label className="font-medium my-4 uppercase text-muted">
                   {item.title}

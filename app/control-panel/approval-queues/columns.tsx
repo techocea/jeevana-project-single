@@ -36,7 +36,9 @@ export const columns: ColumnDef<AdvertisementTable>[] = [
       return (
         <div className="flex flex-col gap-0.5">
           <span className="font-semibold text-black">{name}</span>
-          <span className="text-xs text-muted-foreground italic">Created By:{" "}{email}</span>
+          <span className="text-xs text-muted-foreground italic">
+            Created By: {email}
+          </span>
         </div>
       );
     },

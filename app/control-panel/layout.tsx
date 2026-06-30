@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { SiteHeader } from "@/components/layout/site-header";
-import { AppSidebar } from "@/components/layout/app-sidebar";
+import { AdminSidebar } from "@/components/layout/admin-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -25,7 +25,7 @@ export default function DashboardLayout({
             } as React.CSSProperties
           }
         >
-          <AppSidebar variant="inset" />
+          <AdminSidebar variant="inset" />
           <SidebarInset>
             <SiteHeader />
             {children}

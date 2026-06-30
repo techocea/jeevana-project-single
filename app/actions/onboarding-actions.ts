@@ -15,8 +15,8 @@ const NEXT_STEP_POINTER = {
   6: "COMPLETED",
 } as const;
 
-type OnboardingStepPointerValue =
-  (typeof NEXT_STEP_POINTER)[keyof typeof NEXT_STEP_POINTER];
+// type OnboardingStepPointerValue =
+//   (typeof NEXT_STEP_POINTER)[keyof typeof NEXT_STEP_POINTER];
 
 export async function syncOnboardingProgressAction(
   stepNumber: number,
@@ -46,7 +46,7 @@ export async function syncOnboardingProgressAction(
         rawDob && !isNaN(Date.parse(rawDob)) ? new Date(rawDob) : null;
 
       updatePayload = {
-        createdBy: targetUserId ? "ADMIN" : payload.createdBy,
+        createdBy: payload.createdBy,
         fullName: payload.fullName,
         contact: payload.contact,
         gender: payload.gender,
@@ -148,6 +148,7 @@ export async function syncOnboardingProgressAction(
 export async function createAdminProfileAction(
   payload: Record<string, any>,
   targetUserId: string,
+  profileIdToUpdate?: string,
 ) {
   try {
     if (!targetUserId) {
@@ -195,18 +196,15 @@ export async function createAdminProfileAction(
       updatedAt: new Date(),
     };
 
-    const existingRecord = await db.query.profiles.findFirst({
-      where: and(eq(profiles.userId, targetUserId)),
-    });
+    let finalProfileId: string;
 
-    let profileId: string | undefined;
-
-    if (existingRecord) {
+    if (profileIdToUpdate) {
       await db
         .update(profiles)
         .set(profilePayload)
-        .where(and(eq(profiles.userId, targetUserId)));
-      profileId = existingRecord.id;
+        .where(eq(profiles.id, profileIdToUpdate));
+
+      finalProfileId = profileIdToUpdate;
     } else {
       const [insertedRow] = await db
         .insert(profiles)
@@ -216,7 +214,7 @@ export async function createAdminProfileAction(
       if (!insertedRow) {
         throw new Error("Failed to create the profile record.");
       }
-      profileId = insertedRow.id;
+      finalProfileId = insertedRow.id;
     }
 
     await db
@@ -228,7 +226,7 @@ export async function createAdminProfileAction(
 
     return {
       success: true,
-      profileId,
+      profileId: finalProfileId,
     };
   } catch (error: any) {
     console.error("[ADMIN_PROFILE_CREATE_CRASH]:", error);

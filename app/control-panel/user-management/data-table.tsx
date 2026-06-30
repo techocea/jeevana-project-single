@@ -7,6 +7,7 @@ import {
   ColumnFiltersState,
   getFilteredRowModel,
   useReactTable,
+  getPaginationRowModel,
 } from "@tanstack/react-table";
 
 import {
@@ -19,6 +20,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -43,6 +45,7 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     meta,
     state: {
       columnFilters,
@@ -51,6 +54,13 @@ export function DataTable<TData, TValue>({
       },
     },
   });
+
+  const pageIndex = table.getState().pagination.pageIndex;
+  const pageSize = table.getState().pagination.pageSize;
+  const totalRows = table.getFilteredRowModel().rows.length;
+
+  const startRow = totalRows === 0 ? 0 : pageIndex * pageSize + 1;
+  const endRow = Math.min((pageIndex + 1) * pageSize, totalRows);
 
   return (
     <div>
@@ -113,6 +123,33 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
+      </div>
+      <div className="flex items-center justify-between py-4">
+        <div className="text-xs font-normal text-muted font-sans">
+          Showing{" "}
+          <span className="font-semibold text-muted">
+            {startRow}-{endRow}
+          </span>{" "}
+          of <span className="font-semibold text-muted">{totalRows} rows</span>
+        </div>
+        <div className="flex gap-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   );

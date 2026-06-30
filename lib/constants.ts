@@ -13,6 +13,9 @@ import {
   Ban,
   Check,
   RefreshCw,
+  HeartPlus,
+  User,
+  Settings,
 } from "lucide-react";
 
 export const NAVLINKS = [
@@ -38,7 +41,7 @@ export const NAVLINKS = [
   },
 ];
 
-export const DASHBOARD_SIDEBAR = {
+export const ADMIN_DASHBOARD_SIDEBAR = {
   navMain: [
     {
       title: "Overview",
@@ -78,10 +81,10 @@ export const DASHBOARD_SIDEBAR = {
           title: "User Management",
           url: "/control-panel/user-management",
         },
-        {
-          title: "Staff Management",
-          url: "/control-panel/staff-management",
-        },
+        // {
+        //   title: "Staff Management",
+        //   url: "/control-panel/staff-management",
+        // },
         {
           title: "System Settings",
           url: "/control-panel/system-settings",
@@ -90,6 +93,28 @@ export const DASHBOARD_SIDEBAR = {
     },
   ],
 };
+export const USER_DASHBOARD_SIDEBAR = [
+  {
+    title: "My Profile",
+    icon: User,
+    url: "/my-dashboard",
+  },
+  {
+    title: "Best Proposals",
+    icon: HeartPlus,
+    url: "/my-dashboard/best-proposals",
+  },
+  {
+    title: "Verify Account",
+    icon: ShieldCheck,
+    url: "/my-dashboard/verify-account",
+  },
+  {
+    title: "Advanced Settings",
+    icon: Settings,
+    url: "/my-dashboard/settings",
+  },
+];
 
 export const SIGN_UP_FEATURES = [
   {
@@ -573,6 +598,14 @@ export const STATUS_ACTIONS = {
     },
   ],
   flagged: [
+    {
+      icon: RefreshCw,
+      color: "text-emerald-500 border-emerald-200 hover:bg-emerald-50",
+      action: "onUserReactivate",
+      label: "Reactivate",
+    },
+  ],
+  suspended: [
     {
       icon: RefreshCw,
       color: "text-emerald-500 border-emerald-200 hover:bg-emerald-50",

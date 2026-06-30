@@ -1,10 +1,14 @@
 import { DataTable } from "./data-table";
 import TitleHeader from "@/components/dashboard/title-header";
 import { db } from "@/lib/db";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, ne } from "drizzle-orm";
 import { users } from "@/drizzle/schema";
 import { columns } from "./columns";
-import { flagUser, reactivateUser, suspendUser } from "@/app/actions/users-actions";
+import {
+  flagUser,
+  reactivateUser,
+  suspendUser,
+} from "@/app/actions/users-actions";
 import UserManagementTabs from "./user-management-tabs";
 import { UserStatusTypes } from "@/types";
 
@@ -18,10 +22,11 @@ const UserManagementPage = async ({ searchParams }: PageProps) => {
   const resolvedParams = await searchParams;
   const currentStatus = resolvedParams.status || "all";
 
-  const filters =
-    currentStatus !== "all"
-      ? [eq(users.status, currentStatus as UserStatusTypes)]
-      : [];
+  const filters = [ne(users.role, "ADMIN")];
+
+  if (currentStatus !== "all") {
+    filters.push(eq(users.status, currentStatus as UserStatusTypes));
+  }
 
   const data = await db
     .select({
@@ -33,7 +38,7 @@ const UserManagementPage = async ({ searchParams }: PageProps) => {
       createdAt: users.createdAt,
     })
     .from(users)
-    .where(filters.length > 0 ? and(...filters) : undefined)
+    .where(and(...filters))
     .orderBy(desc(users.createdAt));
 
   const sanitizedData = (data ?? []).map((row) => ({
@@ -51,7 +56,6 @@ const UserManagementPage = async ({ searchParams }: PageProps) => {
     "use server";
     await flagUser(id);
   };
-
 
   const handleUserSuspend = async (id: string) => {
     "use server";
