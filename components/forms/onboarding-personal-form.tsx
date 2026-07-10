@@ -26,7 +26,7 @@ import {
 type StepFiveValues = z.infer<typeof stepFivePersonalSchema>;
 
 interface StepFiveProps {
-  onPrev: () => void;
+  onPrev?: () => void;
   onNext: (data: StepFiveValues) => void;
   initialData: StepFiveInitialData["initialData"];
 }

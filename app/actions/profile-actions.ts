@@ -4,14 +4,12 @@ import { db } from "@/lib/db";
 import { profiles, users } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase";
 import { and, eq, gte, lte, desc, ilike } from "drizzle-orm";
-import { SearchFilters } from "@/types";
+import { Profile, SearchFilters } from "@/types";
 import { revalidatePath } from "next/cache";
 
 const targetGenderMap: Record<string, string> = {
-  bride: "FEMALE",
-  groom: "MALE",
-  female: "FEMALE",
-  male: "MALE",
+  bride: "female",
+  groom: "male",
 };
 
 export async function getUsersByEmail(query: string) {
@@ -179,5 +177,55 @@ export async function rejectProfile(adId: string) {
   } catch (error) {
     console.error("[PROFILE_REJECTED_ERROR]:", error);
     return { success: false, data: [], error: "Failed to reject profile" };
+  }
+}
+
+export async function updateProfile(
+  profileId: string,
+  updateData: Partial<Profile>,
+) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user: authedUser },
+    } = await supabase.auth.getUser();
+
+    if (!authedUser) {
+      return {
+        success: false,
+        error: "Not authenticated",
+      };
+    }
+
+    // Verify ownership
+    const profile = await db.query.profiles.findFirst({
+      where: eq(profiles.id, profileId),
+    });
+
+    if (profile?.userId !== authedUser.id) {
+      return {
+        success: false,
+        error: "Unauthorized",
+      };
+    }
+
+    // Update profile
+    await db
+      .update(profiles)
+      .set({ ...updateData, updatedAt: new Date() })
+      .where(eq(profiles.id, profileId));
+
+    revalidatePath("/my-dashboard");
+
+    return {
+      success: true,
+      data: "Profile updated successfully",
+    };
+  } catch (error) {
+    console.error("[UPDATE_PROFILE_ERROR]:", error);
+    return {
+      success: false,
+      error: "Failed to update profile",
+    };
   }
 }

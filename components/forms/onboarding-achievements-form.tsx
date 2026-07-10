@@ -34,7 +34,7 @@ import { GROUPS_PROFESSIONS, PERSONAL_DROPDOWNS } from "@/lib/constants";
 type StepThreeValues = z.infer<typeof stepThreeAchievementsSchema>;
 
 interface StepThreeProps {
-  onPrev: () => void;
+  onPrev?: () => void;
   onNext: (data: StepThreeValues) => void;
   initialData: StepThreeInitialData["initialData"];
 }

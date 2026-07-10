@@ -35,6 +35,42 @@ export interface ProgressBarHeaderProps {
   steps: StepConfig[];
 }
 
+export interface Profile {
+  createdBy?: CreatedByTypes;
+  profilePic?: string;
+  fullName?: string;
+  contact?: string;
+  gender?: GenderTypes;
+  dob?: Date;
+  age?: number;
+  religion?: string;
+  caste?: string;
+  motherTongue?: string;
+  educationLevel?: string;
+  profession?: string;
+  annualIncomeRange?: string;
+  country?: string;
+  state?: string;
+  city?: string;
+  residencyStatus?: ResindencyTypes;
+  height?: string | undefined;
+  weight?: string | undefined;
+  age?: number;
+  smoking?: BadHabitTypes;
+  drinking?: BadHabitTypes;
+  foodPreferences?: FoodHabitTypes;
+  isDifferentlyAbled?: boolean;
+  differentlyAbledDetails?: string;
+  narrative?: string;
+  foodPreferences?: FoodHabitTypes;
+  isDifferentlyAbled?: boolean;
+  differentlyAbledDetails?: string;
+  narrative?: string;
+  hobbies?: string[];
+  status?: ProfileStatusTypes;
+  mailRoutingTarget?: MailRoutingTargetTypes;
+  secondaryEmail?: string;
+}
 export interface AdminCreateAdFormValues {
   userId: string;
   createdBy: CreatedByTypes;

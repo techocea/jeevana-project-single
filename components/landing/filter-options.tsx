@@ -49,7 +49,12 @@ type FilterFormValues = {
   hobbies: string[];
 };
 
-const FilterOptions = () => {
+type FilterOptionsProps = {
+  mode?: "search" | "dashboard";
+};
+
+const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
+  const isDashboard = mode === "dashboard";
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -108,9 +113,9 @@ const FilterOptions = () => {
         const data = await response.json();
         const normalized = Array.isArray(data)
           ? data.map((item: any) => ({
-              value: item.value,
-              isoCode: item.isoCode,
-            }))
+            value: item.value,
+            isoCode: item.isoCode,
+          }))
           : [];
         const complete = normalized.some((item) => item.isoCode === "LK")
           ? normalized
@@ -156,9 +161,9 @@ const FilterOptions = () => {
         const data = await response.json();
         const normalized = Array.isArray(data)
           ? data.map((item: any) => ({
-              value: item.value,
-              isoCode: item.isoCode,
-            }))
+            value: item.value,
+            isoCode: item.isoCode,
+          }))
           : [];
         setStates(normalized);
       } catch (error) {
@@ -277,7 +282,9 @@ const FilterOptions = () => {
   return (
     <>
       {/* Mobile Filter Button */}
-      <div className="md:hidden mb-4 justify-end flex">
+      <div
+        className={`${mode == "search" ? "md:hidden" : "mb-2 justify-end flex"}`}
+      >
         <Button
           type="button"
           onClick={() => setDrawerOpen(true)}
@@ -290,7 +297,13 @@ const FilterOptions = () => {
       </div>
 
       {/* Desktop Filter Card */}
-      <Card className="hidden md:block rounded-none border-r border-primary p-2 w-full ml-0">
+      <Card
+        className={
+          isDashboard
+            ? "hidden"
+            : "hidden md:block rounded-none border-r border-primary p-2 w-full ml-0"
+        }
+      >
         <CardHeader className="justify-start">
           <div className="flex items-center justify-center gap-2 mb-4">
             <SlidersHorizontal size={24} className="text-primary" />
@@ -309,7 +322,13 @@ const FilterOptions = () => {
 
       {/* Mobile Drawer */}
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <DrawerContent className="md:hidden rounded-t-3xl border border-slate-200 bg-white p-4">
+        <DrawerContent
+          className={
+            isDashboard
+              ? "rounded-t-3xl border border-slate-200 bg-white p-4 max-w-3xl mx-auto"
+              : "md:hidden rounded-t-3xl border border-slate-200 bg-white p-4"
+          }
+        >
           <DrawerHeader>
             <DrawerTitle className="flex items-center gap-2 justify-start text-2xl font-medium font-newsreader text-black">
               <SlidersHorizontal size={24} className="text-primary" />

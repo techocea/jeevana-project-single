@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 type StepTwoValues = z.infer<typeof stepTwoReligionSchema>;
 
 interface StepTwoProps {
-  onPrev: () => void;
+  onPrev?: () => void;
   onNext: (data: StepTwoValues) => void;
   initialData: StepTwoInitialData["initialData"];
 }
@@ -126,7 +126,7 @@ const ReligionInformation = ({ onPrev, onNext, initialData }: StepTwoProps) => {
                     className={cn(
                       "w-full",
                       !selectedReligion &&
-                        "bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed",
+                      "bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed",
                     )}
                   >
                     <SelectValue

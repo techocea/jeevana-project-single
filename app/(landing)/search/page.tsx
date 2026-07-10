@@ -3,7 +3,7 @@ import FilterOptions from "@/components/landing/filter-options";
 import { ProfileCard } from "@/components/landing/profile-card";
 import { SearchFilters } from "@/types";
 
-type SearchPageProps = {
+type PageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
@@ -33,10 +33,13 @@ const normalizeSearchFilters = (
   hobbies: getSearchValue(searchParams.hobbies),
 });
 
-const SearchProfiles = async ({ searchParams }: SearchPageProps) => {
+const SearchProfiles = async ({ searchParams }: PageProps) => {
   const resolvedSearchParams = await searchParams;
   const filters = normalizeSearchFilters(resolvedSearchParams);
   const result = await getProfilesByFilters(filters);
+
+  const profiles = result.data;
+  // console.log(profiles);
 
   if (!result.success) {
     return (
@@ -47,9 +50,6 @@ const SearchProfiles = async ({ searchParams }: SearchPageProps) => {
     );
   }
 
-  const profiles = result.data;
-  // console.log(profiles);
-
   return (
     <main className="w-full md:max-w-5xl mx-auto bg-white mt-16 md:my-28 md:pt-10 py-10 px-4 md:pr-10 md:pl-0">
       <section className="flex flex-col md:flex-row md:items-start gap-8">
@@ -57,9 +57,9 @@ const SearchProfiles = async ({ searchParams }: SearchPageProps) => {
           <FilterOptions />
         </div>
         <div className="flex-3 flex flex-col items-center gap-6">
-          {profiles && profiles.length > 0 ? (
+          {profiles.length > 0 ? (
             profiles.map((profile) => (
-              <ProfileCard key={profile.userId} {...profile} />
+              <ProfileCard key={profile.id} {...profile} />
             ))
           ) : (
             <div className="text-center text-muted-foreground">

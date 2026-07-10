@@ -10,7 +10,7 @@ type StepSixValues = z.infer<typeof stepSixHobbiesSchema>;
 
 interface StepSixProps {
   initialData: Record<string, any>;
-  onPrev: () => void;
+  onPrev?: () => void;
   onNext: (data: StepSixValues) => void;
 }
 

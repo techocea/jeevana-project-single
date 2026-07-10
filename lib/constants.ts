@@ -16,6 +16,7 @@ import {
   HeartPlus,
   User,
   Settings,
+  LucideLayoutDashboard,
 } from "lucide-react";
 
 export const NAVLINKS = [
@@ -93,11 +94,17 @@ export const ADMIN_DASHBOARD_SIDEBAR = {
     },
   ],
 };
+
 export const USER_DASHBOARD_SIDEBAR = [
+  {
+    title: "Overview",
+    icon: LucideLayoutDashboard,
+    url: "/my-dashboard",
+  },
   {
     title: "My Profile",
     icon: User,
-    url: "/my-dashboard",
+    url: "/my-dashboard/my-profile",
   },
   {
     title: "Best Proposals",

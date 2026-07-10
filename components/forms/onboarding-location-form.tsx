@@ -33,7 +33,7 @@ import { LK_DATA } from "@/lib/constants";
 type StepFourValues = z.infer<typeof stepFourLocationSchema>;
 
 interface StepFourProps {
-  onPrev: () => void;
+  onPrev?: () => void;
   onNext: (data: StepFourValues) => void;
   initialData: StepFourInitialData["initialData"];
 }
@@ -231,7 +231,7 @@ const LocationInformation = ({
                       disabled={!selectedCountry || loadingStates}
                       className={cn(
                         (!selectedCountry || loadingStates) &&
-                          "bg-slate-50 text-slate-400 cursor-not-allowed",
+                        "bg-slate-50 text-slate-400 cursor-not-allowed",
                       )}
                     />
                     <ComboboxContent>
@@ -282,7 +282,7 @@ const LocationInformation = ({
                       disabled={!selectedState || loadingCities}
                       className={cn(
                         (!selectedState || loadingCities) &&
-                          "bg-slate-50 text-slate-400 cursor-not-allowed",
+                        "bg-slate-50 text-slate-400 cursor-not-allowed",
                       )}
                     />
                     <ComboboxContent>
