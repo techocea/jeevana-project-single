@@ -4,9 +4,8 @@ import { db } from "@/lib/db";
 import { Profile, profiles, users } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase";
 import { and, eq, gte, lte, desc, ilike } from "drizzle-orm";
-import { InitialProfileData, SearchFilters } from "@/types";
+import { SearchFilters } from "@/types";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 const targetGenderMap: Record<string, string> = {
   bride: "female",
@@ -62,6 +61,41 @@ export async function getCurrentUserProfile() {
     return { success: true, data: profile };
   } catch (error) {
     console.error("[CURRENT_PROFILE_FETCH_ERROR]:", error);
+    return {
+      success: false,
+      data: null,
+      error: "Failed to retrieve profile details.",
+    };
+  }
+}
+
+export async function getUserProfile(profileId: string) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user: authedUser },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (error || !authedUser) {
+      return {
+        success: false,
+        data: null,
+        error: "Unable to resolve the current user.",
+      };
+    }
+
+    const profile = await db.query.profiles.findFirst({
+      where: eq(profiles.id, profileId),
+    });
+
+    if (!profile) {
+      return { success: false, data: null, error: "Profile not found." };
+    }
+
+    return { success: true, data: profile };
+  } catch (error) {
+    console.error("[USER_PROFILE_FETCH_ERROR]:", error);
     return {
       success: false,
       data: null,
@@ -151,12 +185,12 @@ export async function getProfilesByFilters(filters: SearchFilters) {
   }
 }
 
-export async function approveProfile(adId: string) {
+export async function approveProfile(id: string) {
   try {
     await db
       .update(profiles)
       .set({ status: "approved" })
-      .where(eq(profiles.profileID, adId));
+      .where(eq(profiles.id, id));
 
     revalidatePath("/control-panel");
     return { success: true };
@@ -166,12 +200,12 @@ export async function approveProfile(adId: string) {
   }
 }
 
-export async function rejectProfile(adId: string) {
+export async function rejectProfile(id: string) {
   try {
     await db
       .update(profiles)
       .set({ status: "rejected" })
-      .where(eq(profiles.profileID, adId));
+      .where(eq(profiles.id, id));
 
     revalidatePath("/control-panel");
     return { success: true };

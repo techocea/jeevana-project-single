@@ -28,7 +28,7 @@ export default function DashboardLayout({
           <AdminSidebar variant="inset" />
           <SidebarInset>
             <SiteHeader />
-            {children}
+            <main className="min-h-screen px-6 py-8 lg:px-10">{children}</main>
           </SidebarInset>
         </SidebarProvider>
       </TooltipProvider>

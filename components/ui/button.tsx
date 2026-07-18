@@ -14,6 +14,10 @@ const buttonVariants = cva(
           "border-border bg-background shadow-xs hover:bg-primary text-black hover:text-white aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:
           "bg-secondary text-white hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+        view:
+          "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 hover:bg-blue-100 aria-expanded:bg-blue-100 aria-expanded:text-blue-800",
+        approved:
+          "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 hover:bg-emerald-100",
         ghost:
           "bg-muted-foreground text-black aria-expanded:bg-muted aria-expanded:text-foreground",
         destructive:

@@ -20,7 +20,6 @@ const EditProfilePage = async ({ params }: PageProps) => {
         redirect("/auth?mode=login");
     }
 
-    // Fetch profile by ID
     const profile = await db.query.profiles.findFirst({
         where: eq(profiles.id, profileId),
     });
@@ -29,7 +28,6 @@ const EditProfilePage = async ({ params }: PageProps) => {
         redirect("/my-dashboard");
     }
 
-    // Verify user owns this profile
     if (profile.userId !== authedUser.id) {
         redirect("/my-dashboard");
     }

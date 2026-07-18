@@ -13,9 +13,9 @@ const ApprovalQueueTabs = ({ currentStatus }: { currentStatus: string }) => {
     const params = new URLSearchParams(searchParams.toString());
 
     if (value === "all") {
-      params.delete("status"); 
+      params.delete("status");
     } else {
-      params.set("status", value); 
+      params.set("status", value);
     }
 
     router.push(`${pathname}?${params.toString()}`);
@@ -25,7 +25,7 @@ const ApprovalQueueTabs = ({ currentStatus }: { currentStatus: string }) => {
     <Tabs
       value={currentStatus}
       onValueChange={handleTabChange}
-      className="w-100"
+      className="w-auto"
     >
       <TabsList>
         <TabsTrigger value="all">All</TabsTrigger>

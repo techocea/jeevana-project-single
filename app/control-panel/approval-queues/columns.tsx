@@ -3,12 +3,14 @@
 import { Badge } from "@/components/ui/badge";
 import { ProfileStatusTypes } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
-import { Ban, Dot } from "lucide-react";
+import { Ban, Check, Dot, Eye, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/helpers/format-date";
+import Link from "next/link";
 
 export type AdvertisementTable = {
-  adId: string;
+  id: string;
+  profileId: string;
   fullName: string | null;
   religion: string | null;
   caste: string | null;
@@ -19,11 +21,11 @@ export type AdvertisementTable = {
 
 export const columns: ColumnDef<AdvertisementTable>[] = [
   {
-    accessorKey: "adId",
-    header: "AD ID",
+    accessorKey: "profileId",
+    header: "PROFILE ID",
     cell: ({ row }) => (
       <span className="font-mono font-medium text-muted-foreground">
-        #{row.getValue("adId")}
+        #{row.getValue("profileId")}
       </span>
     ),
   },
@@ -102,7 +104,7 @@ export const columns: ColumnDef<AdvertisementTable>[] = [
     accessorKey: "actions",
     header: "ACTIONS",
     cell: ({ row, table }) => {
-      const ad = row.original;
+      const profile = row.original;
 
       const meta = table.options.meta as {
         onApprove?: (id: string) => void;
@@ -113,25 +115,34 @@ export const columns: ColumnDef<AdvertisementTable>[] = [
         <div className="flex items-center gap-1 justify-end">
           {row.original.status === "approved" ||
             row.original.status === "rejected" ? (
-            <Button
-              variant="outline"
-              className="border-destructive hover:bg-destructive/50"
-            >
-              <Ban size={16} className="text-destructive" />
-            </Button>
+            <>
+              <Button variant={"view"} asChild>
+                <Link href={`/control-panel/approval-queues/${profile.id}/view`}>
+                  <Eye size={16} />
+                </Link>
+              </Button>
+              <Button variant="destructive">
+                <Ban size={16} className="text-destructive" />
+              </Button>
+            </>
           ) : (
             <>
+              <Button variant={"view"} asChild>
+                <Link href={`/control-panel/approval-queues/${profile.id}/view`}>
+                  <Eye size={16} />
+                </Link>
+              </Button>
               <Button
-                variant={"secondary"}
-                onClick={() => meta?.onApprove?.(ad.adId)}
+                variant={"approved"}
+                onClick={() => meta?.onApprove?.(profile.id)}
               >
-                Approve
+                <Check />
               </Button>
               <Button
                 variant={"destructive"}
-                onClick={() => meta?.onReject?.(ad.adId)}
+                onClick={() => meta?.onReject?.(profile.id)}
               >
-                Reject
+                <X />
               </Button>
             </>
           )}

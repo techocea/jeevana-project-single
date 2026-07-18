@@ -99,7 +99,7 @@ export async function loginUser(data: AuthLoginValues) {
     return { error: "A secure connection error occurred. Please try again." };
   }
 
-  let targetRoute = "/my-matches";
+  let targetRoute = "/my-dashboard";
 
   if (!dbUser || dbUser.onboardingStatus === "INCOMPLETED") {
     targetRoute = "/onboarding";

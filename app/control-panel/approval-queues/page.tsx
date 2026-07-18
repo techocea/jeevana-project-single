@@ -16,15 +16,18 @@ interface PageProps {
 
 const ApprovalQueuePage = async ({ searchParams }: PageProps) => {
   const resolvedParams = await searchParams;
+
   const currentStatus = resolvedParams.status || "all";
 
-  const filters = currentStatus !== "all"
-    ? [eq(profiles.status, currentStatus as ProfileStatusTypes)]
-    : [];
+  const filters =
+    currentStatus !== "all"
+      ? [eq(profiles.status, currentStatus as ProfileStatusTypes)]
+      : [];
 
   const data = await db
     .select({
-      adId: profiles.profileID,
+      id: profiles.id,
+      profileId: profiles.profileID,
       fullName: profiles.fullName,
       religion: profiles.religion,
       caste: profiles.caste,
@@ -58,17 +61,17 @@ const ApprovalQueuePage = async ({ searchParams }: PageProps) => {
     await rejectProfile(id);
   };
 
+
   return (
     <div className="flex flex-1 flex-col">
-      <div className="@container/main flex flex-1 flex-col gap-2 px-4 lg:px-6">
-        <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-          <TitleHeader
-            isGreeting={false}
-            title="advertisement hub"
-            description="Review and manage matrimonial advertisement listings"
-          />
-
+      <div className="@container/main flex flex-1 flex-col gap-2">
+        <div className="flex flex-col gap-4 md:gap-6">
           <div className="flex items-center justify-between w-full">
+            <TitleHeader
+              isGreeting={false}
+              title="advertisement hub"
+              description="Review and manage matrimonial advertisement listings"
+            />
             <ApprovalQueueTabs currentStatus={currentStatus} />
           </div>
 
