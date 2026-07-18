@@ -18,7 +18,6 @@ import {
   ComboboxList,
   ComboboxSeparator,
 } from "@/components/ui/combobox";
-import Image from "next/image";
 import { Controller, useForm } from "react-hook-form";
 import { LocationNode, StepFourInitialData } from "@/types";
 import { Label } from "@/components/ui/label";
@@ -29,6 +28,7 @@ import { OnboardingFormValues, stepFourLocationSchema } from "@/lib/validation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { LK_DATA } from "@/lib/constants";
+import Image from "next/image";
 
 type StepFourValues = z.infer<typeof stepFourLocationSchema>;
 
@@ -36,19 +36,22 @@ interface StepFourProps {
   onPrev?: () => void;
   onNext: (data: StepFourValues) => void;
   initialData: StepFourInitialData["initialData"];
+  variant?: "onboarding" | "inline";
 }
 
 const LocationInformation = ({
-  onPrev,
   onNext,
+  onPrev,
   initialData,
+  variant = "onboarding",
 }: StepFourProps) => {
+  const isInline = variant === "inline";
   const {
     control,
     watch,
     setValue,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<OnboardingFormValues>({
     resolver: zodResolver(stepFourLocationSchema as any),
     defaultValues: {
@@ -62,13 +65,11 @@ const LocationInformation = ({
   const [countries, setCountries] = useState<LocationNode[]>([]);
   const [states, setStates] = useState<LocationNode[]>([]);
   const [cities, setCities] = useState<LocationNode[]>([]);
-
   const [loadingStates, setLoadingStates] = useState(false);
   const [loadingCities, setLoadingCities] = useState(false);
 
   const selectedCountry = watch("country");
   const selectedState = watch("state");
-
   const targetCountryNode = countries.find((c) => c.value === selectedCountry);
   const isSriLanka =
     targetCountryNode?.isoCode === "LK" || selectedCountry === "Sri Lanka";
@@ -82,7 +83,6 @@ const LocationInformation = ({
 
   useEffect(() => {
     if (isSriLanka) {
-      // Load Sri Lanka's districts from local data without hitting the API
       const lkDistricts = Object.keys(LK_DATA).map((district) => ({
         value: district,
         isoCode: district,
@@ -110,13 +110,11 @@ const LocationInformation = ({
     if (!selectedState || !selectedCountry) return;
 
     if (isSriLanka) {
-      // Load local towns for the selected Sri Lankan district
       const localTowns = LK_DATA[selectedState] || [];
       setCities(localTowns.map((town) => ({ value: town })));
       return;
     }
 
-    // Fallback: Query the API proxy for other international locations
     if (targetCountryNode?.isoCode) {
       const targetStateNode = states.find((s) => s.value === selectedState);
       if (!targetStateNode?.isoCode) return;
@@ -139,24 +137,33 @@ const LocationInformation = ({
   const cityItemsList = cities.map((c) => c.value);
 
   return (
-    <div className="mt-16 w-full flex flex-col md:flex-row-reverse gap-10">
-      <div className="flex-1 flex items-center justify-center w-full">
-        <div className="overflow-hidden rounded-md flex flex-col items-center justify-center max-w-full w-full min-h-64 h-full relative">
-          <div className="absolute inset-0 bg-linear-to-b from-black/50 via-black/40 to-black z-10" />
-          <Image
-            src="/images/step-3-img.png"
-            alt=""
-            fill
-            priority
-            className="object-cover"
-          />
-          <p className="absolute bottom-10 left-4 z-20 right-4 text-lg italic text-white font-newsreader">
-            "Success is most meaningful when shared with someone who understands
-            your journey."
-          </p>
+    <div
+      className={
+        variant === "inline"
+          ? "w-full"
+          : "mt-16 w-full flex flex-col md:flex-row-reverse gap-10"
+      }
+    >
+      {variant === "onboarding" ? (
+        <div className="flex-1 flex items-center justify-center w-full">
+          <div className="overflow-hidden rounded-md flex flex-col items-center justify-center max-w-full w-full min-h-64 h-full relative">
+            <div className="absolute inset-0 bg-linear-to-b from-black/50 via-black/40 to-black z-10" />
+            <Image
+              src="/images/step-3-img.png"
+              alt=""
+              fill
+              priority
+              className="object-cover"
+            />
+
+            <p className="absolute bottom-10 left-4 z-20 right-4 text-lg italic text-white font-newsreader">
+              "Success is most meaningful when shared with someone who
+              understands your journey."
+            </p>
+          </div>
         </div>
-      </div>
-      <div className="flex-1">
+      ) : null}
+      <div className={variant === "inline" ? "w-full" : "flex-1"}>
         <form
           onSubmit={handleSubmit(onNext)}
           className="space-y-2 grid grid-cols-1 md:grid-cols-2 gap-4"
@@ -177,7 +184,7 @@ const LocationInformation = ({
                   value={field.value}
                   onValueChange={(val) => {
                     field.onChange(val);
-                    setValue("state", ""); // Reset dependent selections instantly
+                    setValue("state", "");
                     setValue("city", "");
                   }}
                 >
@@ -352,28 +359,39 @@ const LocationInformation = ({
             )}
           </div>
 
-          {/* {serverError ? (
-            <p className="text-sm text-red-600">{serverError}</p>
-          ) : null} */}
-
-          <div className="justify-between flex w-full col-span-2">
-            <Button
-              size="lg"
-              onClick={onPrev}
-              variant="link"
-              className="w-fit uppercase rounded-xl py-3 pr-5 -ml-3"
-            >
-              <ArrowLeft />
-              Back
-            </Button>
-            <Button
-              size="lg"
-              type="submit"
-              variant="secondary"
-              className="w-fit uppercase rounded-xl py-3 px-5"
-            >
-              Next Step <ArrowRight />
-            </Button>
+          <div className="w-full col-span-2 mt-4">
+            {variant === "onboarding" ? (
+              <div className="flex items-center justify-between">
+                <Button
+                  size="lg"
+                  onClick={onPrev}
+                  variant="link"
+                  className="w-fit uppercase rounded-xl py-3 pr-5 -ml-3"
+                >
+                  <ArrowLeft />
+                  Back
+                </Button>
+                <Button
+                  size="lg"
+                  type="submit"
+                  variant="secondary"
+                  disabled={isSubmitting}
+                >
+                  Next Step <ArrowRight />
+                </Button>
+              </div>
+            ) : (
+              <div className="justify-end flex">
+                <Button
+                  size="lg"
+                  type="submit"
+                  variant="default"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Saving..." : "Save Changes"}
+                </Button>
+              </div>
+            )}
           </div>
         </form>
       </div>

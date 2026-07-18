@@ -1,11 +1,12 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { profiles, users } from "@/drizzle/schema";
+import { Profile, profiles, users } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase";
 import { and, eq, gte, lte, desc, ilike } from "drizzle-orm";
-import { Profile, SearchFilters } from "@/types";
+import { InitialProfileData, SearchFilters } from "@/types";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 const targetGenderMap: Record<string, string> = {
   bride: "female",
@@ -197,7 +198,6 @@ export async function updateProfile(
       };
     }
 
-    // Verify ownership
     const profile = await db.query.profiles.findFirst({
       where: eq(profiles.id, profileId),
     });
@@ -209,17 +209,17 @@ export async function updateProfile(
       };
     }
 
-    // Update profile
-    await db
+    const [updatedProfile] = await db
       .update(profiles)
       .set({ ...updateData, updatedAt: new Date() })
-      .where(eq(profiles.id, profileId));
+      .where(eq(profiles.id, profileId))
+      .returning();
 
     revalidatePath("/my-dashboard");
 
     return {
       success: true,
-      data: "Profile updated successfully",
+      data: updatedProfile,
     };
   } catch (error) {
     console.error("[UPDATE_PROFILE_ERROR]:", error);

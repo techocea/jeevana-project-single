@@ -35,7 +35,7 @@ export interface ProgressBarHeaderProps {
   steps: StepConfig[];
 }
 
-export interface Profile {
+export interface InitialProfileData {
   createdBy?: CreatedByTypes;
   profilePic?: string;
   fullName?: string;
@@ -71,6 +71,7 @@ export interface Profile {
   mailRoutingTarget?: MailRoutingTargetTypes;
   secondaryEmail?: string;
 }
+
 export interface AdminCreateAdFormValues {
   userId: string;
   createdBy: CreatedByTypes;

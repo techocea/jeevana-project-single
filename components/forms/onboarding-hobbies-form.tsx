@@ -9,19 +9,25 @@ import { OnboardingFormValues, stepSixHobbiesSchema } from "@/lib/validation";
 type StepSixValues = z.infer<typeof stepSixHobbiesSchema>;
 
 interface StepSixProps {
-  initialData: Record<string, any>;
   onPrev?: () => void;
   onNext: (data: StepSixValues) => void;
+  initialData: Record<string, any>;
+  variant?: "onboarding" | "inline";
 }
 
-const HobbiesSelector = ({ initialData, onPrev, onNext }: StepSixProps) => {
-  const { hobbies } = PERSONAL_DROPDOWNS;
+const HobbiesSelector = ({
+  onNext,
+  onPrev,
+  initialData,
+  variant = "onboarding",
+}: StepSixProps) => {
 
+  const { hobbies } = PERSONAL_DROPDOWNS;
   const {
     handleSubmit,
     setValue,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<OnboardingFormValues>({
     resolver: zodResolver(stepSixHobbiesSchema as any),
     defaultValues: {
@@ -42,7 +48,7 @@ const HobbiesSelector = ({ initialData, onPrev, onNext }: StepSixProps) => {
 
   return (
     <form onSubmit={handleSubmit(onNext)} className="space-y-8">
-      <div className="space-y-3 my-16">
+      <div className={variant === "inline" ? "space-y-3" : "space-y-3 my-16"}>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {hobbies.map((hobby) => {
             const isSelected = currentSelectedHobbies.includes(hobby.label);
@@ -76,26 +82,39 @@ const HobbiesSelector = ({ initialData, onPrev, onNext }: StepSixProps) => {
         )}
       </div>
 
-      {/* Button Row Action Strip Bar */}
-      <div className="justify-between flex w-full col-span-2">
-        <Button
-          size="lg"
-          onClick={onPrev}
-          variant="link"
-          className="w-fit uppercase rounded-xl py-3 pr-5 -ml-4"
-        >
-          <ArrowLeft />
-          Back
-        </Button>
-        <Button
-          size="lg"
-          type="submit"
-          variant="secondary"
-          className="w-fit uppercase rounded-xl py-3 px-5"
-        >
-          Publish Ad
-          <ArrowRight />
-        </Button>
+      <div className="w-full col-span-2 mt-4">
+        {variant === "onboarding" ? (
+          <div className="flex items-center justify-between">
+            <Button
+              size="lg"
+              onClick={onPrev}
+              variant="link"
+              className="w-fit uppercase rounded-xl py-3 pr-5 -ml-3"
+            >
+              <ArrowLeft />
+              Back
+            </Button>
+            <Button
+              size="lg"
+              type="submit"
+              variant="secondary"
+              disabled={isSubmitting}
+            >
+              Next Step <ArrowRight />
+            </Button>
+          </div>
+        ) : (
+          <div className="justify-end flex">
+            <Button
+              size="lg"
+              type="submit"
+              variant="default"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
+        )}
       </div>
     </form>
   );

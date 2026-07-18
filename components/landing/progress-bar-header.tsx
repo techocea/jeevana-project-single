@@ -8,7 +8,7 @@ const ProgressBarHeader = ({ currentStep, steps }: ProgressBarHeaderProps) => {
   const progressPercentage = (currentStep / steps.length) * 100;
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4 md:max-w-5xl mx-auto w-full">
+    <div className="flex flex-col items-center justify-center gap-4 md:max-w-5xl mx-auto w-full mb-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between w-full">
         <div className="flex flex-col gap-2">
           <p className="tagline">{currentStepData.tagline}</p>

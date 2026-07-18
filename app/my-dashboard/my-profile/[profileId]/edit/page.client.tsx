@@ -11,14 +11,14 @@ import { ArrowLeft } from "lucide-react";
 // Import form components for each step
 import BasicInformationForm from "@/components/forms/onboarding-basic-form";
 import ReligionForm from "@/components/forms/onboarding-religion-form";
-import CareerForm from "@/components/forms/onboarding-personal-form"; // or career step
+import AchievementsForm from "@/components/forms/onboarding-achievements-form"; // or career step
 import LocationForm from "@/components/forms/onboarding-location-form";
 import PersonalForm from "@/components/forms/onboarding-personal-form";
 import HobbiesForm from "@/components/forms/onboarding-hobbies-form";
-import { Profile } from "@/types";
+import { InitialProfileData } from "@/types";
 
 interface EditProfileProps {
-    initialData: Profile;
+    initialData: InitialProfileData;
     profileId: string;
 }
 
@@ -32,25 +32,16 @@ const EditProfile = ({ initialData, profileId }: EditProfileProps) => {
     const handleSaveStep = async (stepData: any) => {
         setIsSaving(true);
         try {
-            const result = await updateProfile(profileId, stepData);
-            if (result.success) {
-                // Show success toast
-                console.log("Step saved successfully");
-            }
-        } catch (error) {
-            console.error("Error saving profile:", error);
-        } finally {
-            setIsSaving(false);
-        }
-    };
+            const sanitizedData = { ...stepData };
 
-    const handleSaveAll = async () => {
-        setIsSaving(true);
-        try {
-            // Collect all form data and save
-            const result = await updateProfile(profileId, initialData);
+            if (sanitizedData.dob) {
+                sanitizedData.dob = new Date(sanitizedData.dob);
+            }
+
+            const result = await updateProfile(profileId, sanitizedData);
             if (result.success) {
-                router.push("/my-dashboard");
+                router.refresh();
+                console.log("Step saved successfully:", result.data);
             }
         } catch (error) {
             console.error("Error saving profile:", error);
@@ -60,33 +51,22 @@ const EditProfile = ({ initialData, profileId }: EditProfileProps) => {
     };
 
     return (
-        <main className="min-h-screen bg-white px-6 py-8 lg:px-10">
+        <main className="">
             <div className="mx-auto max-w-4xl">
                 {/* Header */}
                 <div className="mb-8 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <Button
-                            variant="ghost"
-                            onClick={() => router.back()}
-                            className="p-0"
-                        >
+                        <Button variant="outline" onClick={() => router.back()}>
                             <ArrowLeft size={20} />
                         </Button>
                         <h1 className="text-2xl font-semibold text-slate-950">
                             Edit Profile
                         </h1>
                     </div>
-                    <Button
-                        onClick={handleSaveAll}
-                        disabled={isSaving}
-                        className="bg-blue-600 text-white"
-                    >
-                        {isSaving ? "Saving..." : "Save Changes"}
-                    </Button>
                 </div>
 
                 {/* Tabs for different sections */}
-                <div className="mb-8 flex gap-2 overflow-x-auto border-b border-slate-200">
+                <div className="mb-2 bg-white rounded-lg flex gap-2 overflow-x-auto border-b border-slate-200 p-2">
                     {[
                         { id: "basic", label: "Basic Info" },
                         { id: "religion", label: "Religion" },
@@ -99,7 +79,7 @@ const EditProfile = ({ initialData, profileId }: EditProfileProps) => {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
                             className={`px-4 py-2 text-sm font-medium whitespace-nowrap ${activeTab === tab.id
-                                ? "border-b-2 border-blue-600 text-blue-600"
+                                ? "border-b-2 border-primary text-primary"
                                 : "text-muted"
                                 }`}
                         >
@@ -112,36 +92,42 @@ const EditProfile = ({ initialData, profileId }: EditProfileProps) => {
                 <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
                     {activeTab === "basic" && (
                         <BasicInformationForm
+                            variant="inline"
                             initialData={initialData}
                             onNext={handleSaveStep}
                         />
                     )}
                     {activeTab === "religion" && (
                         <ReligionForm
+                            variant="inline"
                             initialData={initialData}
                             onNext={handleSaveStep}
                         />
                     )}
                     {activeTab === "career" && (
-                        <CareerForm
+                        <AchievementsForm
+                            variant="inline"
                             initialData={initialData}
                             onNext={handleSaveStep}
                         />
                     )}
                     {activeTab === "location" && (
                         <LocationForm
+                            variant="inline"
                             initialData={initialData}
                             onNext={handleSaveStep}
                         />
                     )}
                     {activeTab === "personal" && (
                         <PersonalForm
+                            variant="inline"
                             initialData={initialData}
                             onNext={handleSaveStep}
                         />
                     )}
                     {activeTab === "hobbies" && (
                         <HobbiesForm
+                            variant="inline"
                             initialData={initialData}
                             onNext={handleSaveStep}
                         />
@@ -149,7 +135,7 @@ const EditProfile = ({ initialData, profileId }: EditProfileProps) => {
                 </div>
             </div>
         </main>
-    )
-}
+    );
+};
 
-export default EditProfile
+export default EditProfile;

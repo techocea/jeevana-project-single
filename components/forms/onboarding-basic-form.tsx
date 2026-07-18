@@ -25,9 +25,15 @@ export const ageOptions = Array.from({ length: 43 }, (_, i) => 18 + i);
 interface StepOneProps {
   onNext: (data: StepOneValues) => void;
   initialData: StepOneInitialData["initialData"];
+  variant?: "onboarding" | "inline";
 }
 
-const BasicInformation = ({ onNext, initialData }: StepOneProps) => {
+const BasicInformation = ({
+  onNext,
+  initialData,
+  variant = "onboarding",
+}: StepOneProps) => {
+
   const {
     register,
     control,
@@ -47,7 +53,12 @@ const BasicInformation = ({ onNext, initialData }: StepOneProps) => {
   });
 
   return (
-    <div className="mt-16 w-full flex flex-col md:flex-row gap-10">
+    <div
+      className={
+        variant === "inline" ? "w-full" : "w-full flex flex-col md:flex-row gap-10"
+      }
+    >
+      {/* {variant === "inline" ? ( */}
       <div className="flex-1 flex items-center justify-center w-full">
         <Controller
           control={control}
@@ -57,7 +68,8 @@ const BasicInformation = ({ onNext, initialData }: StepOneProps) => {
           )}
         />
       </div>
-      <div className="flex-1">
+      {/* ) : null} */}
+      <div className={variant === "inline" ? "w-full mt-6" : "flex-1"}>
         <form
           onSubmit={handleSubmit(onNext)}
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
@@ -174,14 +186,14 @@ const BasicInformation = ({ onNext, initialData }: StepOneProps) => {
             )}
           </div>
 
-          <div className="md:col-span-1 col-span-2  flex flex-col gap-2">
+          <div className="md:col-span-1 col-span-2 flex flex-col gap-2">
             <Label
               htmlFor="age"
               className="text-sm font-medium text-slate-700 uppercase"
             >
               Age
             </Label>
-           <Controller
+            <Controller
               control={control}
               name="age"
               render={({ field }) => (
@@ -209,20 +221,16 @@ const BasicInformation = ({ onNext, initialData }: StepOneProps) => {
             )}
           </div>
 
-          {/* {serverError ? (
-            <p className="text-sm text-red-600">{serverError}</p>
-          ) : null} */}
-
-          <div className="justify-end flex w-full col-span-2">
-            <Button
-              size="lg"
-              type="submit"
-              variant="secondary"
-              className="w-fit uppercase rounded-xl py-3 px-5"
-              disabled={isSubmitting}
-            >
-              Next Step <ArrowRight />
-            </Button>
+          <div className="justify-end flex w-full col-span-2 mt-4">
+            {variant === "onboarding" ? (
+              <Button size="lg" type="submit" variant="secondary" disabled={isSubmitting}>
+                Next Step <ArrowRight />
+              </Button>
+            ) : (
+              <Button size="lg" type="submit" variant="default" disabled={isSubmitting}>
+                {isSubmitting ? "Saving..." : "Save Changes"}
+              </Button>
+            )}
           </div>
         </form>
       </div>

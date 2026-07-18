@@ -28,7 +28,9 @@ export default function MyDashboardLayout({
           <UserSidebar variant="inset" />
           <SidebarInset>
             <SiteHeader />
-            {children}
+            <main className="min-h-screen bg-linear-to-br from-transparent to-primary/45 px-6 py-8 lg:px-10">
+              {children}
+            </main>
           </SidebarInset>
         </SidebarProvider>
       </TooltipProvider>

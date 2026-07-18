@@ -62,7 +62,7 @@ export default async function ProfilePage() {
         }
     };
     return (
-        <main className="min-h-screen bg-linear-to-br from-transparent to-primary/45 px-6 py-8 lg:px-10">
+        <main className="">
             <div className="mx-auto max-w-6xl">
                 {/* Page Title */}
                 <h1 className="mb-8 text-2xl font-semibold text-slate-950">
@@ -242,8 +242,6 @@ const renderField = (
         displayValue = "Not specified";
     } else if (typeof value === "boolean") {
         displayValue = value ? "Yes" : "No";
-    } else if (value instanceof Date) {
-        displayValue = new Date(value).toLocaleDateString("en-GB");
     } else {
         displayValue = String(value);
     }
