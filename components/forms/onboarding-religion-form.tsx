@@ -58,7 +58,7 @@ const ReligionInformation = ({
       className={
         variant === "inline"
           ? "w-full"
-          : "mt-16 w-full flex flex-col md:flex-row gap-10"
+          : "w-full flex flex-col md:flex-row gap-10"
       }
     >
       {variant === "onboarding" ? (

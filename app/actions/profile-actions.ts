@@ -196,7 +196,7 @@ export async function approveProfile(id: string) {
     return { success: true };
   } catch (error) {
     console.error("[PROFILE_APPROVAL_ERROR]:", error);
-    return { success: false, data: [], error: "Failed to approve profile" };
+    return { success: false, error: "Failed to approve profile" };
   }
 }
 
@@ -211,7 +211,7 @@ export async function rejectProfile(id: string) {
     return { success: true };
   } catch (error) {
     console.error("[PROFILE_REJECTED_ERROR]:", error);
-    return { success: false, data: [], error: "Failed to reject profile" };
+    return { success: false, error: "Failed to reject profile" };
   }
 }
 

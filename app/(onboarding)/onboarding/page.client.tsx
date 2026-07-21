@@ -12,6 +12,7 @@ import PersonalInformation from "@/components/forms/onboarding-personal-form";
 import ReligionInformation from "@/components/forms/onboarding-religion-form";
 import LocationInformation from "@/components/forms/onboarding-location-form";
 import AchievementsForm from "@/components/forms/onboarding-achievements-form";
+import PartnerPreferences from "@/components/forms/partner-preferences-form";
 
 interface OnboardingClientProps {
   initialDbData: Record<string, any> | null;
@@ -22,6 +23,7 @@ const OnboardingPageClient = ({
   initialDbData,
   savedStep,
 }: OnboardingClientProps) => {
+
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<number>(savedStep);
   const [initialData, setInitialData] =
@@ -106,6 +108,13 @@ const OnboardingPageClient = ({
       )}
       {currentStep === 6 && (
         <HobbiesSelector
+          initialData={initialData}
+          onPrev={onPrev}
+          onNext={onNext}
+        />
+      )}
+      {currentStep === 7 && (
+        <PartnerPreferences
           initialData={initialData}
           onPrev={onPrev}
           onNext={onNext}

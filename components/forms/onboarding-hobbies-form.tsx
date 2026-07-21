@@ -48,7 +48,7 @@ const HobbiesSelector = ({
 
   return (
     <form onSubmit={handleSubmit(onNext)} className="space-y-8">
-      <div className={variant === "inline" ? "space-y-3" : "space-y-3 my-16"}>
+      <div className="space-y-3">
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {hobbies.map((hobby) => {
             const isSelected = currentSelectedHobbies.includes(hobby.label);

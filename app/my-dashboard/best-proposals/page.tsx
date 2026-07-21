@@ -48,7 +48,7 @@ const BestProposalsPage = async ({ searchParams }: PageProps) => {
     }
 
     return (
-        <main className="min-h-screen bg-linear-to-br from-transparent to-primary/45 p-4 lg:p-10">
+        <main className="w-full">
             <section className="flex flex-col gap-8">
                 <FilterOptions mode="dashboard" />
                 <div className="flex-1 flex flex-col items-center gap-6 -mt-6 lg:mt-0">

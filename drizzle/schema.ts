@@ -22,6 +22,7 @@ export const onboardingEnum = pgEnum("onboarding_status", [
   "INCOMPLETED",
   "COMPLETED",
 ]);
+
 export const onboardingStepEnum = pgEnum("onboarding_step", [
   "START",
   "RELIGION",
@@ -29,13 +30,22 @@ export const onboardingStepEnum = pgEnum("onboarding_step", [
   "LOCATION",
   "PERSONAL",
   "HOBBIES",
+  "PREFERENCES",
   "COMPLETED",
 ]);
+
 export const profileStatusEnum = pgEnum("profile_status", [
   "pending",
   "approved",
   "rejected",
 ]);
+
+export const maritalStatusEnum = pgEnum("marital_status", [
+  "never_married",
+  "divorced",
+  "widowed",
+]);
+
 export const userStatusEnum = pgEnum("user_status", [
   "active",
   "flagged",
@@ -121,6 +131,25 @@ export const profiles = pgTable("profiles", {
   mailRoutingTarget: mailRoutingEnum("mail_routing_target").default("owner"),
   secondaryEmail: text("secondary_email"),
   status: profileStatusEnum("status").default("pending").notNull(), // 'pending' | 'approved' | 'rejected'
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const partnerPreferences = pgTable("partner_preferences", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
+  minAge: integer("min_age").default(18),
+  maxAge: integer("max_age").default(50),
+  maritalStatus: maritalStatusEnum("marital_status").default("never_married"),
+  educationLevels: text("preferred_education_levels").array(),
+  professions: text("preferred_professions").array(),
+  annualIncomeRanges: text("preferred_annual_income_ranges").array(),
+  // lookingFor: text("looking_for"),
+  // religions: text("preferred_religions").array(),
+  // castes: text("preferred_castes").array(),
+  // countries: text("preferred_countries").array(),
+  // states: text("preferred_states").array(),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

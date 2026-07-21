@@ -12,15 +12,15 @@ import {
   GraduationCap,
   ChevronRight,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { ProfileCardProps } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "../ui/card";
 import { convertCmToFeetInches } from "@/helpers/measurement-utils";
+import Link from "next/link";
 
 export function ProfileCard({
+  id,
   fullName,
-  // profileId,
   profilePic,
   age,
   caste,
@@ -110,9 +110,9 @@ export function ProfileCard({
               <Bookmark size={18} />
             </Button>
           </div>
-          <Button variant="link">
+          <Link href={`/my-dashboard/best-proposals/${id}`} className="text-primary flex items-center gap-2">
             View Profile <ChevronRight />
-          </Button>
+          </Link>
         </div>
       </CardContent>
     </Card>

@@ -219,6 +219,21 @@ export const RELIGIONS_AND_CASTES: Record<string, string[]> = {
   Islam: ["Sunni", "Shia", "Moor", "Malay", "Other"],
 };
 
+export const MARITAL_STATUSES = [
+  {
+    label: "Never Married",
+    value: "never_married",
+  },
+  {
+    label: "Divorced",
+    value: "divorced",
+  },
+  {
+    label: "Widowed",
+    value: "widowed",
+  },
+];
+
 export const MOTHER_TONGUES = [
   "Sinhala",
   "Tamil",
@@ -342,6 +357,11 @@ export const ONBOARDING_STEPS: StepConfig[] = [
     id: 6,
     title: "Hobbies & Interests",
     tagline: "tell us what you love",
+  },
+  {
+    id: 7,
+    title: "Partner Preferences",
+    tagline: "select your preferences",
   },
 ];
 

@@ -73,6 +73,20 @@ export const stepSixHobbiesSchema = z.object({
   hobbies: z.array(z.string()).min(1, "Please select at least one hobby"),
 });
 
+export const stepSevenPreferencesSchema = z.object({
+  minAge: z.string().optional(),
+  maxAge: z.string().optional(),
+  maritalStatus: z.string(),
+  educationLevels: z.array(z.string()).default([]),
+  professions: z.array(z.string()).default([]),
+  annualIncomeRanges: z.array(z.string()).default([]),
+  // lookingFor: z.string().optional(),
+  // religions: z.array(z.string()).default([]),
+  // castes: z.array(z.string()).default([]),
+  // countries: z.array(z.string()).default([]),
+  // states: z.array(z.string()).default([]),
+});
+
 export const contactFormSchema = z.object({
   fullName: z.string().min(2, { message: "Full name is required" }),
   email: z.email({ message: "Enter a valid email address" }),
@@ -81,6 +95,7 @@ export const contactFormSchema = z.object({
 });
 
 export const authRegisterSchema = z.object({
+  fullName: z.string().min(2, { message: "Full name is required" }),
   email: z.email({ message: "Enter a valid email address" }),
   password: z
     .string()
@@ -101,7 +116,8 @@ export const completeOnboardingSchema = stepOneBasicSchema
   .merge(stepThreeAchievementsSchema)
   .merge(stepFourLocationSchema)
   .merge(stepFivePersonalSchema)
-  .merge(stepSixHobbiesSchema);
+  .merge(stepSixHobbiesSchema)
+  .merge(stepSevenPreferencesSchema);
 
 export type OnboardingFormValues = z.infer<typeof completeOnboardingSchema>;
 export type ContactFormValues = z.infer<typeof contactFormSchema>;

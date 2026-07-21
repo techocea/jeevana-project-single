@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { users, profiles } from "@/drizzle/schema";
+import { users, profiles, partnerPreferences } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase";
 import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -12,7 +12,8 @@ const NEXT_STEP_POINTER = {
   3: "LOCATION",
   4: "PERSONAL",
   5: "HOBBIES",
-  6: "COMPLETED",
+  6: "PREFERENCES",
+  7: "COMPLETED",
 } as const;
 
 // type OnboardingStepPointerValue =
@@ -34,8 +35,6 @@ export async function syncOnboardingProgressAction(
     let userIdToUpdate = authedUser.id;
 
     if (targetUserId) {
-      // Security Check: Optional step to check if authedUser has role === 'admin'
-      // if (authedUser.user_metadata?.role !== "admin") throw new Error("Forbidden");
       userIdToUpdate = targetUserId;
     }
     let updatePayload: Record<string, any> = {};
@@ -90,50 +89,100 @@ export async function syncOnboardingProgressAction(
       updatePayload = {
         hobbies: Array.isArray(payload.hobbies) ? payload.hobbies : [],
       };
+    } else if (stepNumber === 7) {
+      // Capture Step 7 values into updatePayload explicitly
+      updatePayload = {
+        minAge: payload.minAge ? Number(payload.minAge) : 18,
+        maxAge: payload.maxAge ? Number(payload.maxAge) : 50,
+        maritalStatus: payload.maritalStatus || "never_married",
+        educationLevels: Array.isArray(payload.educationLevels)
+          ? payload.educationLevels
+          : [],
+        professions: Array.isArray(payload.professions)
+          ? payload.professions
+          : [],
+        annualIncomeRanges: Array.isArray(payload.annualIncomeRanges)
+          ? payload.annualIncomeRanges
+          : [],
+      };
     }
 
-    const existingRecord = await db.query.profiles.findFirst({
-      where: and(eq(profiles.userId, userIdToUpdate)),
-    });
+    let returnedProfileId = "";
 
-    let returnedProfileId = existingRecord?.id;
+    if (stepNumber <= 6) {
+      const existingRecord = await db.query.profiles.findFirst({
+        where: eq(profiles.userId, userIdToUpdate),
+      });
 
-    if (existingRecord) {
-      await db
-        .update(profiles)
-        .set({ ...updatePayload, updatedAt: new Date() })
-        .where(and(eq(profiles.userId, userIdToUpdate)));
-    } else {
-      const [insertedRow] = await db
-        .insert(profiles)
-        .values({
+      if (existingRecord) {
+        await db
+          .update(profiles)
+          .set({ ...updatePayload, updatedAt: new Date() })
+          .where(eq(profiles.userId, userIdToUpdate));
+        returnedProfileId = existingRecord.id;
+      } else {
+        const [insertedRow] = await db
+          .insert(profiles)
+          .values({
+            userId: userIdToUpdate,
+            ...updatePayload,
+            status: "pending",
+          })
+          .returning({ id: profiles.id });
+
+        if (!insertedRow)
+          throw new Error("Failed to capture returned inserted row ID.");
+        returnedProfileId = insertedRow.id;
+      }
+    } else if (stepNumber === 7) {
+      const existingPrefs = await db.query.partnerPreferences.findFirst({
+        where: eq(partnerPreferences.userId, userIdToUpdate),
+      });
+
+      if (existingPrefs) {
+        await db
+          .update(partnerPreferences)
+          .set({ ...updatePayload, updatedAt: new Date() })
+          .where(eq(partnerPreferences.userId, userIdToUpdate));
+      } else {
+        await db.insert(partnerPreferences).values({
           userId: userIdToUpdate,
-          ...updatePayload,
-          status: "pending",
-        })
-        .returning({ id: profiles.id });
-
-      if (!insertedRow) {
-        throw new Error("Failed to capture returned inserted row ID.");
+          maxAge: updatePayload.maxAge,
+          minAge: updatePayload.minAge,
+          maritalStatus: updatePayload.maritalStatus,
+          educationLevels: updatePayload.educationLevels,
+          professions: updatePayload.professions,
+          annualIncomeRanges: updatePayload.annualIncomeRanges,
+        });
       }
 
-      returnedProfileId = insertedRow.id;
+      // Fetch the user's profile ID to maintain the return signature intact
+      const userProfile = await db.query.profiles.findFirst({
+        where: eq(profiles.userId, userIdToUpdate),
+      });
+      returnedProfileId = userProfile?.id || "";
     }
 
     const nextProgressString =
       NEXT_STEP_POINTER[stepNumber as keyof typeof NEXT_STEP_POINTER] ||
       "COMPLETED";
+
+    const isFinished = nextProgressString === "COMPLETED";
+
     await db
       .update(users)
-      .set({ onboardingStep: nextProgressString })
+      .set({
+        onboardingStep: nextProgressString,
+        onboardingStatus: isFinished ? "COMPLETED" : "INCOMPLETED",
+      })
       .where(eq(users.id, userIdToUpdate));
 
     revalidatePath("/onboarding");
-    if (targetUserId) revalidatePath("/control-panel");
+
     return {
       success: true,
       nextStep: stepNumber + 1,
-      isFinished: nextProgressString === "COMPLETED",
+      isFinished,
       profileId: returnedProfileId,
     };
   } catch (error: any) {

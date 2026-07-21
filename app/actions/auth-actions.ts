@@ -27,6 +27,7 @@ export async function registerUser(data: AuthRegisterValues) {
   }
 
   const email = parsed.data.email.trim().toLowerCase();
+  const fullName = parsed.data.fullName.trim();
   const password = parsed.data.password;
 
   const supabase = await createClient();
@@ -43,6 +44,7 @@ export async function registerUser(data: AuthRegisterValues) {
   try {
     await db.insert(users).values({
       id: authData.user.id,
+      fullName,
       email,
       onboardingStatus: "INCOMPLETED",
       onboardingStep: "START",

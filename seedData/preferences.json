@@ -1,0 +1,134 @@
+[
+  {
+    "min_age": 22,
+    "max_age": 30,
+
+    "marital_status": "never_married",
+
+    "preferred_education_levels": ["Bachelor's", "Master's"],
+    "preferred_professions": [
+      "Software Engineer",
+      "Data Scientist",
+      "Product Manager"
+    ],
+    "preferred_annual_income_ranges": ["10-15 LPA", "15-20 LPA", "20-30 LPA"]
+  },
+  {
+    "min_age": 25,
+    "max_age": 33,
+
+    "marital_status": "never_married",
+
+    "preferred_education_levels": ["Master's", "Doctorate (PhD)"],
+    "preferred_professions": [
+      "Doctor",
+      "Research Scientist",
+      "Software Engineer"
+    ],
+    "preferred_annual_income_ranges": ["$100k-$150k", "$150k-$200k", "30+ LPA"]
+  },
+  {
+    "min_age": 24,
+    "max_age": 32,
+
+    "marital_status": "never_married",
+
+    "preferred_education_levels": ["Bachelor's", "Master's", "MBA"],
+    "preferred_professions": [
+      "Investment Banker",
+      "Financial Analyst",
+      "Consultant"
+    ],
+    "preferred_annual_income_ranges": ["$80k-$120k", "$120k-$180k"]
+  },
+  {
+    "min_age": 38,
+    "max_age": 52,
+
+    "marital_status": "divorced",
+
+    "preferred_education_levels": ["Master's", "Professional Degree"],
+    "preferred_professions": [
+      "Business Owner",
+      "Executive",
+      "Chartered Accountant"
+    ],
+    "preferred_annual_income_ranges": ["£60k-£90k", "£90k+", "20-30 LPA"]
+  },
+  {
+    "min_age": 25,
+    "max_age": 32,
+
+    "marital_status": "never_married",
+
+    "preferred_education_levels": ["Master's", "Bachelor's Tech"],
+    "preferred_professions": ["Civil Engineer", "Architect", "UX Designer"],
+    "preferred_annual_income_ranges": ["7-10 LPA", "10-15 LPA"]
+  },
+  {
+    "min_age": 24,
+    "max_age": 32,
+
+    "marital_status": "never_married",
+
+    "preferred_education_levels": ["Doctorate (PhD)", "Master's"],
+    "preferred_professions": [
+      "Professor",
+      "BioTech Researcher",
+      "Data Analyst"
+    ],
+    "preferred_annual_income_ranges": ["$90k-$130k", "$130k-$160k"]
+  },
+  {
+    "min_age": 25,
+    "max_age": 30,
+
+    "marital_status": "never_married",
+
+    "preferred_education_levels": ["MBA", "Master's Design"],
+    "preferred_professions": [
+      "Marketing Director",
+      "Fashion Designer",
+      "HR Manager"
+    ],
+    "preferred_annual_income_ranges": ["12-18 LPA", "18-25 LPA"]
+  },
+  {
+    "min_age": 24,
+    "max_age": 30,
+
+    "marital_status": "never_married",
+
+    "preferred_education_levels": ["Bachelor's", "Master's"],
+    "preferred_professions": ["Pharmacist", "Dentist", "Software Engineer"],
+    "preferred_annual_income_ranges": ["£45k-£65k", "£65k-£85k"]
+  },
+  {
+    "min_age": 28,
+    "max_age": 35,
+
+    "marital_status": "never_married",
+
+    "preferred_education_levels": ["Master's", "Doctorate"],
+    "preferred_professions": [
+      "Attorney",
+      "Legal Consultant",
+      "Senior Software Engineer"
+    ],
+    "preferred_annual_income_ranges": ["25-40 LPA", "$110k-$150k"]
+  },
+  {
+    "min_age": 27,
+    "max_age": 32,
+
+    "marital_status": "never_married",
+
+    "preferred_education_levels": ["Bachelor's", "Master's"],
+    "preferred_professions": [
+      "Government Officer",
+      "Bank Manager",
+      "Mechanical Engineer"
+    ],
+    "preferred_annual_income_ranges": ["8-12 LPA", "12-15 LPA"]
+  }
+]

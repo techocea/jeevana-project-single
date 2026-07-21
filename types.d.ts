@@ -23,6 +23,7 @@ export type MailRoutingTargetTypes = "owner" | "candidate" | "both";
 export type ProfileStatusTypes = "pending" | "approved" | "rejected";
 export type FoodHabitTypes = "vegetarian" | "non-vegetarian" | "vegan";
 export type MembershipTypes = "free_tier" | "classical" | "heritage" | "elite";
+export type MaritalStatusTypes = "never_married" | "divorced" | "widowed";
 
 export interface StepConfig {
   id: number;
@@ -157,6 +158,22 @@ export interface StepFiveInitialData {
   };
 }
 
+export interface StepSevenInitialData {
+  initialData: {
+    minAge?: string;
+    maxAge?: string;
+    lookingFor?: string;
+    maritalStatus?: string;
+    religions?: string[];
+    castes?: string[];
+    countries?: string[];
+    states?: string[];
+    professions?: string[];
+    educationLevels?: string[];
+    annualIncomeRanges?: string[];
+  };
+}
+
 export interface LocationNode {
   value: string;
   isoCode?: string;
@@ -186,7 +203,7 @@ export interface SearchFilters {
 }
 
 export interface ProfileCardProps {
-  // profileId?: string | null;
+  id: string;
   fullName: string | null;
   profilePic: string | null;
   // paymentStatus: string | null;

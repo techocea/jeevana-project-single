@@ -54,10 +54,11 @@ type FilterOptionsProps = {
 };
 
 const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
-  const isDashboard = mode === "dashboard";
-  const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const isDashboard = mode === "dashboard";
 
   const [countries, setCountries] = useState<LocationNode[]>([]);
   const [states, setStates] = useState<LocationNode[]>([]);

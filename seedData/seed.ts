@@ -9,8 +9,9 @@ import "dotenv/config";
 
 const connectionString = process.env.DATABASE_URL!;
 const client = postgres(connectionString, { max: 1, prepare: false });
+
 const db = drizzle(client, { schema });
-const { users, profiles } = schema;
+const { users, profiles, partnerPreferences } = schema;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,22 +21,26 @@ async function main() {
 
   try {
     console.log("🧹 Clearing existing data from profiles and users...");
+    await db.delete(partnerPreferences);
     await db.delete(profiles);
     await db.delete(users);
     console.log("✅ Existing data cleared successfully.");
 
-    const filePath = path.join(__dirname, "profiles.json");
-    const rawData = fs.readFileSync(filePath, "utf-8");
-    const jsonProfiles = JSON.parse(rawData);
+    const profilesPath = path.join(__dirname, "profiles.json");
+    const jsonProfiles = JSON.parse(fs.readFileSync(profilesPath, "utf-8"));
 
-    console.log(
-      `📦 Found ${jsonProfiles.length} template profiles. Remapping fields...`,
+    const preferencesPath = path.join(__dirname, "preferences.json");
+    const jsonPreferences = JSON.parse(
+      fs.readFileSync(preferencesPath, "utf-8"),
     );
 
-    for (const p of jsonProfiles) {
-      const mockUserEmail =
-        p.email?.trim().toLowerCase() ||
-        `${p.full_name.toLowerCase().replace(/\s+/g, "")}@example.com`;
+    console.log(
+      `📦 Found ${jsonProfiles.length} template profiles. Remapping and seeding...`,
+    );
+
+    for (let i = 0; i < jsonProfiles.length; i++) {
+      const p = jsonProfiles[i];
+      const mockUserEmail = p.email?.trim().toLowerCase();
 
       let userRecord = await db.query.users.findFirst({
         where: eq(users.email, mockUserEmail),
@@ -58,7 +63,7 @@ async function main() {
 
       if (!userRecord) {
         throw new Error(
-          `Failed to create or retrieve user record for ${mockUserEmail}`,
+          `Fatal: Failed to establish or resolve User Record context for: ${mockUserEmail}`,
         );
       }
 
@@ -98,9 +103,31 @@ async function main() {
           status: p.status || "pending",
         })
         .returning({ generatedProfileId: profiles.profileID });
-    }
 
-    console.log("🚀 Inserting match profiles into database...");
+      const matchedPref = jsonPreferences[i];
+
+      if (matchedPref) {
+        await db.insert(partnerPreferences).values({
+          id: crypto.randomUUID(),
+          userId: userRecord.id,
+          minAge: matchedPref.min_age,
+          maxAge: matchedPref.max_age,
+          // lookingFor: matchedPref.looking_for,
+          maritalStatus: matchedPref.marital_status,
+          // religions: matchedPref.preferred_religions,
+          // castes: matchedPref.preferred_castes,
+          // countries: matchedPref.preferred_countries,
+          // states: matchedPref.preferred_states,
+          educationLevels: matchedPref.preferred_education_levels,
+          professions: matchedPref.preferred_professions,
+          annualIncomeRanges: matchedPref.preferred_annual_income_ranges,
+        });
+      }
+
+      console.log(
+        `✅ Fully seeded: Profile and preferences context for [${p.full_name}]`,
+      );
+    }
 
     console.log(
       "✨ Seeding completed successfully! You can now test your matching queries.",

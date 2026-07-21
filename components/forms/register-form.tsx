@@ -62,6 +62,24 @@ const RegisterForm = () => {
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-2">
           <Label
+            htmlFor="fullName"
+            className="text-sm font-medium text-slate-700 uppercase"
+          >
+            Full Name
+          </Label>
+          <Input
+            id="fullName"
+            type="text"
+            placeholder="John Doe"
+            {...register("fullName")}
+          />
+          {errors.fullName && (
+            <p className="text-sm text-red-600">{errors.fullName.message}</p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <Label
             htmlFor="email"
             className="text-sm font-medium text-slate-700 uppercase"
           >

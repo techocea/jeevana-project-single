@@ -1,12 +1,13 @@
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
     approveProfile,
     getUserProfile,
+    rejectProfile,
 } from "@/app/actions/profile-actions";
-import { Check, X } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { getStatusBadge } from "@/helpers/get-status-badge";
+import { ProfileActionsButtons } from "@/components/dashboard/profile-actions-buttons";
 
 interface PageProps {
     params: Promise<{ profileId: string }>;
@@ -37,36 +38,9 @@ const ViewProfilePage = async ({ params }: PageProps) => {
         ? profile.hobbies.join(", ")
         : profile.hobbies || "Not specified";
 
-    const getStatusBadge = (status: string) => {
-        switch (status) {
-            case "approved":
-                return (
-                    <Badge className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 hover:bg-emerald-100">
-                        {status}
-                    </Badge>
-                );
-            case "approved":
-                return (
-                    <Badge className="bg-emerald-100 text-emerald-800 border border-emerald-800  dark:bg-emerald-900/30 dark:text-emerald-400 hover:bg-emerald-100">
-                        {status}
-                    </Badge>
-                );
-            case "rejected":
-                return (
-                    <Badge className="bg-rose-100 text-rose-800 border border-rose-800 dark:bg-rose-900/30 dark:text-rose-400 hover:bg-rose-100">
-                        {status}
-                    </Badge>
-                );
-            case "pending":
-                return (
-                    <Badge className="bg-amber-100 text-amber-800 border border-amber-800 dark:bg-amber-900/30 dark:text-amber-400 hover:bg-amber-100">
-                        {status}
-                    </Badge>
-                );
-            default:
-                null;
-        }
-    };
+    const approveAction = approveProfile.bind(null, profileId);
+    const rejectAction = rejectProfile.bind(null, profileId);
+
     return (
         <main className="">
             <div className="mx-auto max-w-6xl">
@@ -105,26 +79,7 @@ const ViewProfilePage = async ({ params }: PageProps) => {
                                     </div>
                                 </div>
                             </div>
-                            {/* <div>
-                                <Button
-                                    variant={"approved"}
-                                    onClick={async (id: string) => {
-                                        "use server";
-                                        await approveProfile(id);
-                                    }}
-                                >
-                                    <Check /> Approve
-                                </Button>
-                                <Button
-                                    variant={"destructive"}
-                                    onClick={async () => {
-                                        "use server";
-                                        await handleReject(profileId);
-                                    }}
-                                >
-                                    <X /> Reject
-                                </Button>
-                            </div> */}
+                            <ProfileActionsButtons profileId={profileId} />
                         </div>
                     </div>
                 </div>
