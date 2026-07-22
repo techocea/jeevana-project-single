@@ -22,7 +22,7 @@ const UserManagementPage = async ({ searchParams }: PageProps) => {
   const resolvedParams = await searchParams;
   const currentStatus = resolvedParams.status || "all";
 
-  const filters = [ne(users.role, "ADMIN")];
+  const filters = [ne(users.role, "admin")];
 
   if (currentStatus !== "all") {
     filters.push(eq(users.status, currentStatus as UserStatusTypes));

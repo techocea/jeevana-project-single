@@ -278,12 +278,8 @@
           "name": "profiles_user_id_users_id_fk",
           "tableFrom": "profiles",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -293,9 +289,7 @@
         "profiles_profile_id_unique": {
           "name": "profiles_profile_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "profile_id"
-          ]
+          "columns": ["profile_id"]
         }
       },
       "policies": {},
@@ -356,9 +350,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -370,11 +362,7 @@
     "public.app_role": {
       "name": "app_role",
       "schema": "public",
-      "values": [
-        "ADMIN",
-        "STAFF",
-        "USER"
-      ]
+      "values": ["admin", "STAFF", "USER"]
     }
   },
   "schemas": {},
