@@ -71,6 +71,12 @@ export interface InitialProfileData {
   status?: ProfileStatusTypes;
   mailRoutingTarget?: MailRoutingTargetTypes;
   secondaryEmail?: string;
+  minAge?: string;
+  maxAge?: string;
+  maritalStatus?: string;
+  professions?: string[];
+  educationLevels?: string[];
+  annualIncomeRanges?: string[];
 }
 
 export interface AdminCreateAdFormValues {
@@ -163,13 +169,13 @@ export interface StepSevenInitialData {
     minAge?: string;
     maxAge?: string;
     lookingFor?: string;
-    maritalStatus?: string;
-    religions?: string[];
-    castes?: string[];
-    countries?: string[];
-    states?: string[];
-    professions?: string[];
-    educationLevels?: string[];
+    maritalStatus?: string | null;
+    // religions?: string[];
+    // castes?: string[];
+    // countries?: string[];
+    // states?: string[];
+    professions?: string[] | null;
+    educationLevels?: string[] | null;
     annualIncomeRanges?: string[];
   };
 }

@@ -5,8 +5,19 @@ import { SectionCards } from "@/components/dashboard/section-cards";
 import data from "./data.json";
 import TitleHeader from "@/components/dashboard/title-header";
 import { columns } from "./approval-queues/columns";
+import { createClient } from "@/utils/supabase";
+import { redirect } from "next/navigation";
 
-export default function Page() {
+export default async function ControlPanelDashboard() {
+  // const supabase = await createClient();
+  // const {
+  //   data: { user },
+  // } = await supabase.auth.getUser();
+
+  // if (!user || user.user_metadata?.role !== "admin") {
+  //   redirect("/admin");
+  // }
+
   return (
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col gap-2">

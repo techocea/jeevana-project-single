@@ -43,7 +43,8 @@ const OnboardingPageClient = ({
       }
 
       if (result.isFinished) {
-        router.push(`/pricing?profileId=${result.profileId}`);
+        // router.push(`/pricing?profileId=${result.profileId}`);
+        router.push(`/my-dashboard/my-profile`);
       } else {
         setCurrentStep((prev) => prev + 1);
       }

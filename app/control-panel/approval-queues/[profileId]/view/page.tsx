@@ -17,6 +17,8 @@ const ViewProfilePage = async ({ params }: PageProps) => {
     const { profileId } = await params;
     const result = await getUserProfile(profileId);
 
+    console.log("ADMIN VIEW PROFILE DATA:", result.data);
+
     if (!result.success || !result.data) {
         return (
             <div className="min-h-screen flex items-center justify-center px-4 py-20">
@@ -37,9 +39,6 @@ const ViewProfilePage = async ({ params }: PageProps) => {
     const hobbies = Array.isArray(profile.hobbies)
         ? profile.hobbies.join(", ")
         : profile.hobbies || "Not specified";
-
-    const approveAction = approveProfile.bind(null, profileId);
-    const rejectAction = rejectProfile.bind(null, profileId);
 
     return (
         <main className="">
@@ -172,6 +171,33 @@ const ViewProfilePage = async ({ params }: PageProps) => {
                     )}
                 </div>
 
+                {/* Partner Preferences Section */}
+                <div className="mb-8 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+                    <div className="mb-6 pb-4 flex items-center justify-between border-b border-muted-foreground/50">
+                        <h2 className="text-lg font-semibold text-slate-950">
+                            Partner Preferences Details
+                        </h2>
+                    </div>
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                        {renderField("Partner Preferred Min Age", profile.minAge)}
+                        {renderField("Partner Preferred Max Age", profile.maxAge)}
+                        {renderField("Partner's Marriage Status Should be", profile.maritalStatus)}
+                        {renderField("Partner's Education Status Should be", profile.educationLevels)}
+                        {renderField("Partner's Job Status Should be", profile.professions)}
+                        {renderField("Partner's Annual Income Should be", profile.annualIncomeRanges)}
+                    </div>
+                    {profile.isDifferentlyAbled && profile.differentlyAbledDetails && (
+                        <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
+                            <p className="text-xs font-medium uppercase text-muted">
+                                Accessibility Details
+                            </p>
+                            <p className="mt-2 text-sm font-semibold text-slate-900">
+                                {profile.differentlyAbledDetails}
+                            </p>
+                        </div>
+                    )}
+                </div>
+
                 {/* Final Details Section */}
                 <div className="mb-8 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
                     <div className="mb-6 pb-4 flex items-center justify-between border-b border-muted-foreground/50">
@@ -203,7 +229,7 @@ const ViewProfilePage = async ({ params }: PageProps) => {
 
 const renderField = (
     label: string,
-    value: string | number | boolean | null | undefined,
+    value: string | string[] | number | boolean | null | undefined,
 ) => {
     let displayValue = "Not specified";
     if (value === null || value === undefined) {

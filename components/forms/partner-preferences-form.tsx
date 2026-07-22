@@ -55,10 +55,10 @@ const PartnerPreferences = ({
         defaultValues: {
             minAge: initialData?.minAge || "",
             maxAge: initialData?.maxAge || "",
-            maritalStatus: initialData?.maritalStatus || "",
-            professions: initialData?.professions || [],
-            educationLevels: initialData?.educationLevels || [],
-            annualIncomeRanges: initialData?.annualIncomeRanges || [],
+            maritalStatus: initialData?.maritalStatus ?? "never_married",
+            educationLevels: initialData?.educationLevels ?? [],
+            professions: initialData?.professions ?? [],
+            annualIncomeRanges: initialData?.annualIncomeRanges ?? [],
             // lookingFor: initialData?.lookingFor || "",
             // religions: initialData?.religions || [],
             // castes: initialData?.castes || [],
@@ -203,7 +203,7 @@ const PartnerPreferences = ({
         <form onSubmit={handleSubmit(onNext)} className="space-y-6">
             <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                    <Label className="text-sm font-medium text-slate-700 uppercase">
+                    <Label htmlFor="minAge" className="text-sm font-medium text-slate-700 uppercase">
                         Min Age Required
                     </Label>
                     <Input
@@ -211,11 +211,12 @@ const PartnerPreferences = ({
                         placeholder="18"
                         type="number"
                         min={18}
+                        id="minAge"
                     />
                 </div>
 
                 <div className="space-y-2">
-                    <Label className="text-sm font-medium text-slate-700 uppercase">
+                    <Label htmlFor="maxAge" className="text-sm font-medium text-slate-700 uppercase">
                         Max Age Required
                     </Label>
                     <Input
@@ -223,6 +224,7 @@ const PartnerPreferences = ({
                         placeholder="50"
                         type="number"
                         min={18}
+                        id="minAge"
                     />
                 </div>
 
@@ -322,8 +324,8 @@ const PartnerPreferences = ({
                             size="lg"
                             type="submit"
                             variant="default"
-                            disabled={isSubmitting}
-                            className="min-w-[140px]"
+                            disabled={isSubmitting || !isDirty}
+                            className="min-w-35"
                         >
                             {isSubmitting ? (
                                 <span className="flex items-center gap-2">

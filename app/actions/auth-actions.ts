@@ -16,6 +16,58 @@ import { createClient } from "@/utils/supabase";
 import { createSupabaseAdminClient } from "@/utils/supabase-admin";
 import { syncOnboardingProgressAction } from "./onboarding-actions";
 
+export async function loginAdmin(data: AuthLoginValues) {
+  const parsed = authLoginSchema.safeParse(data);
+
+  if (!parsed.success) {
+    return {
+      error: "Validation failed",
+      fields: z.treeifyError(parsed.error).errors,
+    };
+  }
+
+  const email = parsed.data.email.trim().toLowerCase();
+  const password = parsed.data.password;
+
+  const supabase = await createClient();
+
+  const { data: authData, error: authError } =
+    await supabase.auth.signInWithPassword({ email, password });
+
+  if (authError || !authData.user) {
+    return { error: "Invalid admin email or password." };
+  }
+
+  try {
+    const [dbUser] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, authData.user.id))
+      .limit(1);
+
+    const roleFromMetadata = authData.user.user_metadata?.role;
+    const roleFromTable = (dbUser as any)?.role; // Typecast if role column exists in schema
+
+    const isAdmin = roleFromTable === "admin" || roleFromMetadata === "admin";
+
+    if (!isAdmin) {
+      await supabase.auth.signOut();
+      return {
+        error: "Access denied. You do not have administrative privileges.",
+      };
+    }
+
+    return {
+      success: true,
+      targetRoute: "/control-panel",
+    };
+  } catch (error) {
+    console.error("[ADMIN_LOGIN_FAILURE]:", error);
+    await supabase.auth.signOut();
+    return { error: "A secure verification error occurred. Please try again." };
+  }
+}
+
 export async function registerUser(data: AuthRegisterValues) {
   const parsed = authRegisterSchema.safeParse(data);
 
@@ -87,6 +139,7 @@ export async function loginUser(data: AuthLoginValues) {
     return { error: "Invalid email or password." };
   }
 
+  await supabase.auth.refreshSession();
   let dbUser;
   try {
     const [fetchedUser] = await db
@@ -103,7 +156,11 @@ export async function loginUser(data: AuthLoginValues) {
 
   let targetRoute = "/my-dashboard";
 
-  if (!dbUser || dbUser.onboardingStatus === "INCOMPLETED") {
+  if (
+    !dbUser ||
+    dbUser.role === "user" ||
+    dbUser.onboardingStatus === "INCOMPLETED"
+  ) {
     targetRoute = "/onboarding";
   }
 

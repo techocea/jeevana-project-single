@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { profiles } from "@/drizzle/schema";
+import { partnerPreferences, profiles } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase";
@@ -20,25 +20,34 @@ const EditProfilePage = async ({ params }: PageProps) => {
         redirect("/auth?mode=login");
     }
 
-    const profile = await db.query.profiles.findFirst({
-        where: eq(profiles.id, profileId),
-    });
+    const joinedResult = await db
+        .select()
+        .from(profiles)
+        .leftJoin(
+            partnerPreferences,
+            eq(profiles.userId, partnerPreferences.userId),
+        )
+        .where(eq(profiles.id, profileId));
 
-    if (!profile) {
+    if (!joinedResult || joinedResult.length === 0) {
         redirect("/my-dashboard");
     }
 
-    if (profile.userId !== authedUser.id) {
+    const row = joinedResult[0];
+
+    if (row.profiles.userId !== authedUser.id) {
         redirect("/my-dashboard");
     }
+
+    const flatProfileData = {
+        ...row.profiles,
+        ...(row.partner_preferences || {}),
+    };
+
+    // console.log("Flattened user profile & preferences:", flatProfileData);
 
     return (
-        <EditProfile
-            initialData={
-                profile as unknown as Parameters<typeof EditProfile>[0]["initialData"]
-            }
-            profileId={profileId}
-        />
+        <EditProfile initialData={flatProfileData as any} profileId={profileId} />
     );
 };
 

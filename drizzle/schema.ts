@@ -17,7 +17,7 @@ export const profileSeq = pgSequence("profile_id_seq", {
   increment: 1,
 });
 
-export const roleEnum = pgEnum("app_role", ["ADMIN", "STAFF", "USER"]);
+export const roleEnum = pgEnum("app_role", ["admin", "staff", "user"]);
 export const onboardingEnum = pgEnum("onboarding_status", [
   "INCOMPLETED",
   "COMPLETED",
@@ -69,7 +69,7 @@ export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   fullName: text("full_name"),
   email: varchar("email", { length: 255 }).notNull().unique(),
-  role: roleEnum("role").default("USER").notNull(),
+  role: roleEnum("role").default("user").notNull(),
 
   onboardingStatus: onboardingEnum("onboarding_status")
     .default("INCOMPLETED")

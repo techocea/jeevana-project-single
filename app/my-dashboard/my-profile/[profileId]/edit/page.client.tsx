@@ -5,17 +5,17 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 import { updateProfile } from "@/app/actions/profile-actions";
-import { formatDate } from "@/helpers/format-date";
 import { ArrowLeft } from "lucide-react";
 
 // Import form components for each step
+import { InitialProfileData } from "@/types";
 import BasicInformationForm from "@/components/forms/onboarding-basic-form";
 import ReligionForm from "@/components/forms/onboarding-religion-form";
 import AchievementsForm from "@/components/forms/onboarding-achievements-form"; // or career step
 import LocationForm from "@/components/forms/onboarding-location-form";
 import PersonalForm from "@/components/forms/onboarding-personal-form";
 import HobbiesForm from "@/components/forms/onboarding-hobbies-form";
-import { InitialProfileData } from "@/types";
+import PartnerPreferences from "@/components/forms/partner-preferences-form";
 
 interface EditProfileProps {
   initialData: InitialProfileData;
@@ -25,7 +25,7 @@ interface EditProfileProps {
 const EditProfile = ({ initialData, profileId }: EditProfileProps) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<
-    "basic" | "religion" | "career" | "location" | "personal" | "hobbies"
+    "basic" | "religion" | "career" | "location" | "personal" | "hobbies" | "partner_preferences"
   >("basic");
 
   const handleSaveStep = async (stepData: any) => {
@@ -70,15 +70,15 @@ const EditProfile = ({ initialData, profileId }: EditProfileProps) => {
             { id: "location", label: "Location" },
             { id: "personal", label: "Personal" },
             { id: "hobbies", label: "Hobbies" },
+            { id: "partner_preferences", label: "Partner Preferences" },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`px-4 py-2 text-sm font-medium whitespace-nowrap cursor-pointer ${
-                activeTab === tab.id
-                  ? "border-b-2 border-primary text-primary"
-                  : "text-muted hover:text-primary hover:border-b-2 delay-100 transition-colors"
-              }`}
+              className={`px-4 py-2 text-sm font-medium whitespace-nowrap cursor-pointer ${activeTab === tab.id
+                ? "border-b-2 border-primary text-primary"
+                : "text-muted hover:text-primary hover:border-b-2 delay-100 transition-colors"
+                }`}
             >
               {tab.label}
             </button>
@@ -124,6 +124,13 @@ const EditProfile = ({ initialData, profileId }: EditProfileProps) => {
           )}
           {activeTab === "hobbies" && (
             <HobbiesForm
+              variant="inline"
+              initialData={initialData}
+              onNext={handleSaveStep}
+            />
+          )}
+          {activeTab === "partner_preferences" && (
+            <PartnerPreferences
               variant="inline"
               initialData={initialData}
               onNext={handleSaveStep}

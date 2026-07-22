@@ -1,11 +1,12 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { Profile, profiles, users } from "@/drizzle/schema";
+import { partnerPreferences, profiles, users } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase";
 import { and, eq, gte, lte, desc, ilike } from "drizzle-orm";
 import { SearchFilters } from "@/types";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 const targetGenderMap: Record<string, string> = {
   bride: "female",
@@ -85,15 +86,31 @@ export async function getUserProfile(profileId: string) {
       };
     }
 
-    const profile = await db.query.profiles.findFirst({
-      where: eq(profiles.id, profileId),
-    });
+    const joinedResult = await db
+      .select()
+      .from(profiles)
+      .leftJoin(
+        partnerPreferences,
+        eq(profiles.userId, partnerPreferences.userId),
+      )
+      .where(eq(profiles.id, profileId));
 
-    if (!profile) {
-      return { success: false, data: null, error: "Profile not found." };
+    if (!joinedResult || joinedResult.length === 0) {
+      redirect("/control-panel/approval-queues");
     }
 
-    return { success: true, data: profile };
+    const row = joinedResult[0];
+
+    if (row.profiles.userId !== authedUser.id) {
+      redirect("/control-panel/approval-queues");
+    }
+
+    const flatProfileData = {
+      ...row.profiles,
+      ...(row.partner_preferences || {}),
+    };
+
+    return { success: true, data: flatProfileData };
   } catch (error) {
     console.error("[USER_PROFILE_FETCH_ERROR]:", error);
     return {
@@ -215,9 +232,12 @@ export async function rejectProfile(id: string) {
   }
 }
 
+export type CombinedUpdateInput = Partial<typeof profiles.$inferInsert> &
+  Partial<typeof partnerPreferences.$inferInsert>;
+
 export async function updateProfile(
   profileId: string,
-  updateData: Partial<Profile>,
+  updateData: CombinedUpdateInput,
 ) {
   try {
     const supabase = await createClient();
@@ -232,28 +252,83 @@ export async function updateProfile(
       };
     }
 
-    const profile = await db.query.profiles.findFirst({
+    const currentProfile = await db.query.profiles.findFirst({
       where: eq(profiles.id, profileId),
     });
 
-    if (profile?.userId !== authedUser.id) {
-      return {
-        success: false,
-        error: "Unauthorized",
-      };
+    if (!currentProfile) {
+      return { success: false, error: "Profile not found" };
     }
 
-    const [updatedProfile] = await db
-      .update(profiles)
-      .set({ ...updateData, updatedAt: new Date() })
-      .where(eq(profiles.id, profileId))
-      .returning();
+    if (currentProfile.userId !== authedUser.id) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    const {
+      // --- Partner Preference Fields ---
+      minAge,
+      maxAge,
+      maritalStatus,
+      educationLevels,
+      professions,
+      annualIncomeRanges,
+
+      // --- Immutable/System Fields (Ignored from update data for security) ---
+      id,
+      profileID,
+      userId,
+      createdAt,
+      updatedAt,
+
+      // --- Everything else belongs to the Profile Table ---
+      ...profilePayload
+    } = updateData;
+
+    const preferencesPayload = {
+      minAge,
+      maxAge,
+      maritalStatus,
+      educationLevels,
+      professions,
+      annualIncomeRanges,
+    };
+
+    const finalData = await db.transaction(async (tx) => {
+      const [updatedProfile] = await tx
+        .update(profiles)
+        .set({
+          ...profilePayload,
+          updatedAt: new Date(),
+        })
+        .where(eq(profiles.id, profileId))
+        .returning();
+
+      if (!currentProfile.userId) {
+        return {
+          success: false,
+          error: "Profile is not linked to a valid user account",
+        };
+      }
+      // Update partner preferences linked by the verified user ID
+      const [updatedPreferences] = await tx
+        .update(partnerPreferences)
+        .set(preferencesPayload)
+        .where(eq(partnerPreferences.userId, currentProfile.userId))
+        .returning();
+
+      // Re-stitch them together for a flat object response
+      return {
+        ...updatedProfile,
+        ...updatedPreferences,
+      };
+    });
 
     revalidatePath("/my-dashboard");
+    revalidatePath(`/my-dashboard/my-profile/${profileId}/edit`);
 
     return {
       success: true,
-      data: updatedProfile,
+      data: finalData,
     };
   } catch (error) {
     console.error("[UPDATE_PROFILE_ERROR]:", error);

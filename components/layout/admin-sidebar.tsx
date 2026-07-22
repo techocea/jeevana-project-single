@@ -21,7 +21,9 @@ import { usePathname } from "next/navigation";
 import { ADMIN_DASHBOARD_SIDEBAR } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
-export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AdminSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
 
   return (
@@ -55,26 +57,32 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
                 </Label>
                 {item.items?.length ? (
                   <SidebarMenuSub>
-                    {item.items.map((item) => (
-                      <SidebarMenuSubItem key={item.title}>
-                        <SidebarMenuSubButton
-                          asChild
-                          isActive={pathname.startsWith(item.url)}
-                        >
-                          <Link
-                            href={item.url}
-                            className={cn(
-                              "uppercase",
-                              pathname === item.url
-                                ? "font-semibold"
-                                : "text-muted",
-                            )}
+                    {item.items.map((subItem) => {
+                      const isCurrentActive =
+                        subItem.url === "/control-panel"
+                          ? pathname === subItem.url
+                          : pathname.startsWith(subItem.url);
+                      return (
+                        <SidebarMenuSubItem key={subItem.title}>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={isCurrentActive}
                           >
-                            {item.title}
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    ))}
+                            <Link
+                              href={subItem.url}
+                              className={cn(
+                                "uppercase",
+                                pathname === subItem.url
+                                  ? "font-bold"
+                                  : "text-muted",
+                              )}
+                            >
+                              {subItem.title}
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      );
+                    })}
                   </SidebarMenuSub>
                 ) : null}
               </SidebarMenuItem>
