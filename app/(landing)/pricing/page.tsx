@@ -13,24 +13,24 @@ import { PRICING_PACKAGES, PRICING_FEATURES } from "@/lib/constants";
 
 const PricingPage = () => {
   return (
-    <main className="w-full pb-24 bg-white">
-      <section className="pt-24 px-6 lg:px-20">
-        <div className="flex flex-col items-center justify-center">
-          <div className="md:max-w-2xl w-full mx-auto flex flex-col text-center gap-4">
+    <main className="w-full bg-white">
+      <section className="mt-12 py-10 px-6 lg:py-20 lg:px-0">
+        <div className="md:max-w-5xl w-full mx-auto flex flex-col items-center justify-center">
+          <div className="md:max-w-2xl w-full mx-auto flex flex-col text-center gap-2">
             <h3 className="text-black capitalize">find your soulmate</h3>
-            <p>
+            <p className="text-muted-foreground">
               Curated connections and heritage-first matchmaking, tailored to
               the legacy you wish to build together.
             </p>
           </div>
 
-          <div className="w-full mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="w-full mt-12 grid grid-cols-1 sm:grid-cols-2 gap-12">
             {PRICING_PACKAGES.map((pkg) => (
               <Card
                 key={pkg.id}
                 className={`relative overflow-visible shadow-lg flex flex-col p-6 ${pkg.id === 2
-                    ? "bg-primary text-black md:scale-105"
-                    : "bg-background"
+                  ? "bg-primary text-black md:scale-105"
+                  : "bg-background"
                   }`}
               >
                 {pkg.id === 2 ? (
@@ -65,8 +65,8 @@ const PricingPage = () => {
                         <li
                           key={idx}
                           className={`text-sm flex items-center gap-2 ${isFirstCardLastItem
-                              ? "text-muted-foreground/70"
-                              : ""
+                            ? "text-muted-foreground/70"
+                            : ""
                             }`}
                         >
                           <span>
@@ -104,14 +104,14 @@ const PricingPage = () => {
         </div>
       </section>
 
-      <section className="pt-24 px-6">
+      <section className="py-10 px-6 lg:py-20 lg:px-0">
         <div className="md:max-w-5xl mx-auto flex flex-col md:flex-row-reverse items-center justify-between gap-10">
           <div className="flex-1 flex flex-col gap-4 md:max-w-lg w-full">
             <span className="tagline">invest in forever</span>
             <h3 className="text-black capitalize italic">
               Every union begins with an intentional step.
             </h3>
-            <p className="text-justify">
+            <p className="text-justify text-base text-muted-foreground">
               At Jeevana, we believe that premium matchmaking is about more than
               just data. It’s about understanding the nuances of lifestyle,
               values, and vision. Our plans are designed to give you the degree
@@ -130,7 +130,7 @@ const PricingPage = () => {
                     <h3 className="text-black font-medium text-lg capitalize">
                       {feature.title}
                     </h3>
-                    <p className="text-sm text-slate-600">
+                    <p className="text-sm md:text-base text-muted-foreground">
                       {feature.description}
                     </p>
                   </div>

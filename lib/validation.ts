@@ -90,7 +90,7 @@ export const stepSevenPreferencesSchema = z.object({
 export const contactFormSchema = z.object({
   fullName: z.string().min(2, { message: "Full name is required" }),
   email: z.email({ message: "Enter a valid email address" }),
-  interest: z.enum(["general", "partnership", "feedback", "membership"]),
+  interest: z.enum(["partnership", "feedback", "create_advertisement"]),
   message: z.string().min(10, { message: "Message is required" }),
 });
 

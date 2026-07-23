@@ -9,7 +9,7 @@ interface Orientation {
 
 const CTA = ({ orientation }: Orientation) => {
   return orientation === "horizontal" ? (
-    <Card className="max-w-6xl lg:rounded-[3rem] bg-black rounded-3xl p-10 lg:p-16 flex items-center justify-center relative overflow-hidden">
+    <Card className="md:max-w-5xl w-full lg:rounded-[3rem] bg-black rounded-3xl p-10 lg:p-16 flex items-center justify-center relative overflow-hidden">
       <div className="pointer-events-none absolute -right-24 top-24 h-96 w-120 -translate-y-1/2 rounded-full bg-linear-to-r from-primary/20 to-transparent blur-3xl" />
       <CardContent className="flex flex-col lg:flex-row items-center text-center lg:text-left lg:justify-between ">
         <div className="lg:flex-2 flex flex-col">
@@ -34,7 +34,7 @@ const CTA = ({ orientation }: Orientation) => {
       </CardContent>
     </Card>
   ) : (
-    <Card className="max-w-6xl lg:rounded-[3rem] bg-black rounded-3xl p-10 lg:p-16 flex items-center justify-center relative overflow-hidden">
+    <Card className="md:max-w-5xl w-full lg:rounded-[3rem] bg-black rounded-3xl p-10 lg:p-16 flex items-center justify-center relative overflow-hidden">
       <div className="pointer-events-none absolute left-1/2  top-0 h-96 w-200 -translate-x-1/2 rounded-full bg-linear-to-r from-primary/20 to-transparent blur-3xl" />
       <CardContent className="flex flex-col items-center text-center justify-center gap-4">
         <h3 className="text-white">Begin Your Curated Journey</h3>

@@ -40,7 +40,7 @@ const Header = () => {
     <header
       className={`${headerWrapperStyles} z-50 transition-all duration-500 ease-in-out`}
     >
-    <div className="mx-auto flex h-16 md:max-w-5xl items-center justify-center">
+      <div className="mx-auto flex h-16 md:max-w-5xl items-center justify-center">
         <nav className="flex items-center justify-between w-full">
           <div>
             <Image

@@ -69,7 +69,7 @@ const ContactForm = () => {
       className="mx-auto w-full max-w-2xl rounded-3xl border border-slate-200 bg-white px-6 p-8 shadow-md"
     >
       <div className="space-y-6">
-        <h3 className="text-3xl font-regular text-black">Send an Inquiry</h3>
+        <h3 className="text-3xl font-regular text-black text-center pb-4">Send an Inquiry</h3>
         <div className="-mt-4">
           {serverError ? (
             <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -146,10 +146,9 @@ const ContactForm = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectItem value="general">General Inquiry</SelectItem>
                       <SelectItem value="partnership">Partnership</SelectItem>
                       <SelectItem value="feedback">Feedback</SelectItem>
-                      <SelectItem value="membership">Membership</SelectItem>
+                      <SelectItem value="create_advertisment">Create Advertisment</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>

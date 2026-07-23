@@ -8,14 +8,14 @@ import { SERVICE_PROMISES } from "@/lib/constants";
 const AboutPage = () => {
   return (
     <main className="w-full">
-      <section className="py-28 px-6 bg-foreground">
-        <div className="md:max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10">
+      <section className="mt-12 py-10 px-6 lg:py-20 lg:px-0 bg-foreground">
+        <div className="md:max-w-5xl w-full mx-auto flex flex-col md:flex-row items-center justify-between gap-10">
           <div className="flex-1 flex flex-col gap-4 md:max-w-lg w-full">
             <span className="tagline">our philosophy</span>
             <h3 className="text-black capitalize italic">
               The Editorial Curator of Life Partnerships.
             </h3>
-            <p className="text-justify">
+            <p className="text-justify text-muted-foreground">
               At Jeevana, we believe finding a soulmate isn't a game of
               algorithms, but a craft of intuition. We treat every profile as a
               story, and every match as a curated masterpiece.
@@ -24,7 +24,7 @@ const AboutPage = () => {
 
           <div className="flex-2 flex relative max-w-sm w-full min-h-100 md:min-h-120">
             <Image
-              src="/images/about-img-1.png"
+              src="/images/about-img.jpg"
               alt="About Jeevana matchmaking process"
               fill
               sizes="(max-width: 768px) 100vw, 40vw"
@@ -42,14 +42,14 @@ const AboutPage = () => {
         </div>
       </section>
 
-      <section className="py-28 px-6 bg-white">
+      <section className="py-10 px-6 lg:py-20 lg:px-0 bg-white">
         <div className="md:max-w-5xl mx-auto flex flex-col md:flex-row-reverse items-center justify-between gap-10">
           <div className="flex-1 flex flex-col gap-4 md:max-w-lg w-full">
             <span className="tagline">our heritage</span>
             <h3 className="text-black capitalize italic">
               Born from Tradition, Refined by Discretion.
             </h3>
-            <p className="text-justify">
+            <p className="text-justify text-muted-foreground">
               Jeevana was founded on the principles of traditional matchmaking,
               where trust was the currency and reputation was everything. We
               have digitized this legacy without losing the human touch that
@@ -75,13 +75,13 @@ const AboutPage = () => {
         </div>
       </section>
 
-      <section className="py-28 px-6 lg:px-20 bg-foreground">
-        <div className="flex flex-col items-center justify-center">
-          <div className="md:max-w-2xl w-full mx-auto flex flex-col text-center gap-4">
+      <section className="py-10 px-6 lg:py-20 lg:px-0 bg-foreground">
+        <div className="md:max-w-5xl w-full mx-auto flex flex-col items-center justify-center">
+          <div className="md:max-w-2xl w-full mx-auto flex flex-col text-center gap-2">
             <h3 className="text-black capitalize">
               the manual curation process
             </h3>
-            <p>
+            <p className="text-center text-muted-foreground">
               Unlike modern platforms that rely on cold code, our curators spend
               hours understanding the aspirations of every member.
             </p>
@@ -91,32 +91,28 @@ const AboutPage = () => {
             {SERVICE_PROMISES.map((promise) => (
               <Card
                 key={promise.id}
-                className={`flex flex-col gap-4 p-6 ${
-                  promise.id === 2 ? "bg-primary text-secondary" : "bg-white"
-                }`}
+                className={`flex flex-col gap-4 p-6 ${promise.id === 2 ? "bg-primary text-secondary" : "bg-white"
+                  }`}
               >
                 <CardContent className="p-0 flex flex-col">
                   <promise.icon className="h-8 w-8 text-secondary" />
                   <div className="flex flex-col gap-2 my-4">
                     <h4
-                      className={`text-lg font-semibold ${
-                        promise.id === 2 ? "text-secondary" : "text-accent"
-                      }`}
+                      className={`text-lg font-semibold ${promise.id === 2 ? "text-secondary" : "text-accent"
+                        }`}
                     >
                       {promise.title}
                     </h4>
                     <p
-                      className={`text-sm ${
-                        promise.id === 2 ? "text-secondary" : "text-accent"
-                      }`}
+                      className={`text-sm ${promise.id === 2 ? "text-secondary" : "text-accent"
+                        }`}
                     >
                       {promise.description}
                     </p>
                   </div>
                   <p
-                    className={`text-4xl ${
-                      promise.id === 2 ? "text-secondary" : "text-accent"
-                    } opacity-30 font-semibold`}
+                    className={`text-4xl ${promise.id === 2 ? "text-secondary" : "text-accent"
+                      } opacity-30 font-semibold`}
                   >
                     0{promise.id}
                   </p>
@@ -127,7 +123,7 @@ const AboutPage = () => {
         </div>
       </section>
 
-      <section className="py-28 px-6 lg:px-20 bg-white">
+      {/* <section className="py-28 px-6 lg:px-20 bg-white">
         <div className="flex flex-col items-center justify-center">
           <div className="md:max-w-2xl w-full mx-auto flex flex-col items-center text-center gap-4">
             <span>
@@ -159,9 +155,9 @@ const AboutPage = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      <section className="py-10 px-6 lg:p-20 bg-foreground">
+      <section className="py-10 lg:py-20 flex items-center justify-center mx-auto w-full bg-foreground">
         <CTA orientation="vertical" />
       </section>
     </main>

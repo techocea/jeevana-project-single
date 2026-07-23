@@ -14,7 +14,7 @@ import CTA from "@/components/landing/call-to-action";
 import SearchMatch from "@/components/landing/search-match";
 import TopProfiles from "@/components/landing/top-profiles";
 import ExploreCommunities from "@/components/landing/explore-communities";
-import { SIGN_UP_FEATURES,FAQS } from "@/lib/constants";
+import { SIGN_UP_FEATURES, FAQS } from "@/lib/constants";
 
 export default function Home() {
   return (
@@ -32,7 +32,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-linear-to-b from-black/50 via-black/40 to-black z-10" />
 
         {/* Hero Copywriting */}
-        <div className="relative pt-24 lg:pt-0 z-20 w-full max-w-3xl px-6 flex flex-col items-center justify-center gap-6 text-center">
+        <div className="relative -mt-24 lg:mt-16 z-20 w-full max-w-3xl px-6 flex flex-col items-center justify-center gap-6 text-center">
           <span className="tagline">THE EDITORIAL CURATOR OF UNION</span>
           <h1 className="title">
             Where Sri Lankan <span className="italic">Stories Begin</span>
@@ -53,12 +53,12 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-10 px-6 lg:p-20 bg-white">
+      <section className="py-10 lg:py-20 flex items-center justify-center mx-auto w-full bg-white">
         <CTA orientation="horizontal" />
       </section>
 
-      <section className="py-10 px-6 lg:p-20 bg-background">
-        <div className="flex flex-col items-center justify-center w-full">
+      <section className="py-10 px-6 lg:py-20 lg:px-0 bg-background">
+        <div className="flex flex-col items-center justify-center md:max-w-5xl w-full mx-auto">
           <div className="flex items-center justify-center text-center md:text-left md:justify-between w-full">
             <div className="flex flex-col gap-4">
               <span className="tagline">featured selections</span>
@@ -90,8 +90,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-10 px-6 lg:p-20 bg-black">
-        <div className="flex flex-col items-center justify-center">
+      <section className="py-10 px-6 lg:py-20 lg:px-0 bg-black">
+        <div className="flex flex-col items-center justify-center md:max-w-5xl w-full mx-auto">
           <div className="flex flex-col text-center gap-4">
             <span className="tagline">THE FABRIC OF SRI LANKA</span>
             <h3 className="text-white capitalize">explore our communities</h3>
@@ -101,15 +101,15 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-10 px-6 lg:p-20 bg-background">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-10">
-          <div className=" flex flex-col gap-4">
+      <section className="py-10 px-6 lg:py-20 lg:px-0 bg-background">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:max-w-5xl w-full mx-auto">
+          <div className="flex flex-col gap-2">
             <span className="tagline">the journey</span>
             <h3 className="text-black capitalize">
-              find your <span className="text-primary italic">special</span>{" "}
+              find your <span className="text-primary italic pr-2">special</span>{" "}
               someone
             </h3>
-            <p>
+            <p className="text-muted-foreground">
               Our curated approach ensures that every connection is meaningful
               and every conversation is respected.
             </p>
@@ -123,7 +123,7 @@ export default function Home() {
                     <h3 className="text-black font-medium text-lg capitalize">
                       {feature.title}
                     </h3>
-                    <p className="text-sm">{feature.description}</p>
+                    <p className="text-sm text-muted-foreground">{feature.description}</p>
                   </div>
                 </div>
               ))}

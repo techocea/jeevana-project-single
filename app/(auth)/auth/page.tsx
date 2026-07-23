@@ -15,8 +15,8 @@ const AuthPage = async ({ searchParams }: AuthPageProps) => {
 
   return (
     <main className="w-full">
-      <section className="py-10 px-6 lg:px-20">
-        <div className="flex flex-col items-start gap-8">
+      <section className="py-10 px-6 lg:py-20 lg:px-0">
+        <div className="md:max-w-5xl mx-auto flex flex-col items-start gap-8">
           <div>
             <Button
               variant="link"

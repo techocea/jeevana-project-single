@@ -329,18 +329,6 @@ export const PRICING_PACKAGES = [
       "Verified badge on profile",
     ],
   },
-  {
-    id: 3,
-    name: "Elite",
-    description: "Full concierge service for selective families.",
-    price: "LKR 9,999",
-    inclusions: [
-      "Dedicated matchmaker",
-      "Bespoke intro sequences",
-      "Background verification service",
-      "Exclusive Elite events access",
-    ],
-  },
 ];
 
 export const ONBOARDING_STEPS: StepConfig[] = [
