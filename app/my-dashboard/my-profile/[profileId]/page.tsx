@@ -2,12 +2,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { getCurrentUserProfile } from "@/app/actions/profile-actions";
+import { getUserProfile } from "@/app/actions/profile-actions";
 import { Pen } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { getStatusBadge } from "@/helpers/get-status-badge";
 
-export default async function ProfilePage() {
-    const result = await getCurrentUserProfile();
+interface PageProps {
+    params: Promise<{ profileId: string }>;
+}
+
+const ProfilePage = async ({ params }: PageProps) => {
+    const { profileId } = await params;
+    const result = await getUserProfile(profileId);
+
+    // console.log("PROFILE VIEW PROFILE DATA:", result.data);
 
     if (!result.success || !result.data) {
         return (
@@ -31,36 +39,6 @@ export default async function ProfilePage() {
         ? profile.hobbies.join(", ")
         : profile.hobbies || "Not specified";
 
-    const getStatusBadge = (status: string) => {
-        switch (status) {
-            case "approved":
-                return (
-                    <Badge className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 hover:bg-emerald-100">
-                        {status}
-                    </Badge>
-                );
-            case "approved":
-                return (
-                    <Badge className="bg-emerald-100 text-emerald-800 border border-emerald-800  dark:bg-emerald-900/30 dark:text-emerald-400 hover:bg-emerald-100">
-                        {status}
-                    </Badge>
-                );
-            case "rejected":
-                return (
-                    <Badge className="bg-rose-100 text-rose-800 border border-rose-800 dark:bg-rose-900/30 dark:text-rose-400 hover:bg-rose-100">
-                        {status}
-                    </Badge>
-                );
-            case "pending":
-                return (
-                    <Badge className="bg-amber-100 text-amber-800 border border-amber-800 dark:bg-amber-900/30 dark:text-amber-400 hover:bg-amber-100">
-                        {status}
-                    </Badge>
-                );
-            default:
-                null;
-        }
-    };
     return (
         <main className="">
             <div className="mx-auto max-w-6xl">
@@ -103,7 +81,7 @@ export default async function ProfilePage() {
                                 </div>
                             </div>
                             <div>
-                                <Link href={`/my-dashboard/my-profile/${profile.id}/edit`}>
+                                <Link href={`/my-dashboard/my-profile/${profileId}/edit`}>
                                     <Button
                                         variant="outline"
                                         className="h-10 px-6 text-sm font-medium"
@@ -204,6 +182,42 @@ export default async function ProfilePage() {
                     )}
                 </div>
 
+                {/* Partner Preferences Section */}
+                <div className="mb-8 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+                    <div className="mb-6 pb-4 flex items-center justify-between border-b border-muted-foreground/50">
+                        <h2 className="text-lg font-semibold text-slate-950">
+                            Partner Preferences Details
+                        </h2>
+                    </div>
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                        {renderField("Partner Preferred Min Age", profile.minAge)}
+                        {renderField("Partner Preferred Max Age", profile.maxAge)}
+                        {renderField(
+                            "Partner's Marriage Status Should be",
+                            profile.maritalStatus,
+                        )}
+                        {renderField(
+                            "Partner's Education Status Should be",
+                            profile.educationLevels,
+                        )}
+                        {renderField("Partner's Job Status Should be", profile.professions)}
+                        {renderField(
+                            "Partner's Annual Income Should be",
+                            profile.annualIncomeRanges,
+                        )}
+                    </div>
+                    {profile.isDifferentlyAbled && profile.differentlyAbledDetails && (
+                        <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
+                            <p className="text-xs font-medium uppercase text-muted">
+                                Accessibility Details
+                            </p>
+                            <p className="mt-2 text-sm font-semibold text-slate-900">
+                                {profile.differentlyAbledDetails}
+                            </p>
+                        </div>
+                    )}
+                </div>
+
                 {/* Final Details Section */}
                 <div className="mb-8 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
                     <div className="mb-6 pb-4 flex items-center justify-between border-b border-muted-foreground/50">
@@ -231,11 +245,13 @@ export default async function ProfilePage() {
             </div>
         </main>
     );
-}
+};
+
+export default ProfilePage;
 
 const renderField = (
     label: string,
-    value: string | number | boolean | null | undefined,
+    value: string | string[] | number | boolean | null | undefined,
 ) => {
     let displayValue = "Not specified";
     if (value === null || value === undefined) {

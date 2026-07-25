@@ -38,7 +38,7 @@ const BasicInformation = ({
     register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<OnboardingFormValues>({
     resolver: zodResolver(stepOneBasicSchema as any),
     defaultValues: {
@@ -227,7 +227,7 @@ const BasicInformation = ({
                 Next Step <ArrowRight />
               </Button>
             ) : (
-              <Button size="lg" type="submit" variant="default" disabled={isSubmitting}>
+              <Button size="lg" type="submit" variant="default" disabled={isSubmitting || !isDirty}>
                 {isSubmitting ? "Saving..." : "Save Changes"}
               </Button>
             )}

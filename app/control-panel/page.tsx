@@ -9,14 +9,14 @@ import { createClient } from "@/utils/supabase";
 import { redirect } from "next/navigation";
 
 export default async function ControlPanelDashboard() {
-  // const supabase = await createClient();
-  // const {
-  //   data: { user },
-  // } = await supabase.auth.getUser();
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  // if (!user || user.user_metadata?.role !== "admin") {
-  //   redirect("/admin");
-  // }
+  if (!user || user.user_metadata?.role !== "admin") {
+    redirect("/admin");
+  }
 
   return (
     <div className="flex flex-1 flex-col">

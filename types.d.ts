@@ -74,9 +74,9 @@ export interface InitialProfileData {
   minAge?: string;
   maxAge?: string;
   maritalStatus?: string;
-  professions?: string[];
-  educationLevels?: string[];
-  annualIncomeRanges?: string[];
+  professions?: string[] | null;
+  educationLevels?: string[] | null;
+  annualIncomeRanges?: string[] | null;
 }
 
 export interface AdminCreateAdFormValues {
@@ -170,13 +170,13 @@ export interface StepSevenInitialData {
     maxAge?: string;
     lookingFor?: string;
     maritalStatus?: string | null;
+    professions?: string[] | null;
+    educationLevels?: string[] | null;
+    annualIncomeRanges?: string[] | null;
     // religions?: string[];
     // castes?: string[];
     // countries?: string[];
     // states?: string[];
-    professions?: string[] | null;
-    educationLevels?: string[] | null;
-    annualIncomeRanges?: string[];
   };
 }
 

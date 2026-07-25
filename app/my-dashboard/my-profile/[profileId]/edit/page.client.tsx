@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button";
 
 import { updateProfile } from "@/app/actions/profile-actions";
 import { ArrowLeft } from "lucide-react";
-
-// Import form components for each step
 import { InitialProfileData } from "@/types";
 import BasicInformationForm from "@/components/forms/onboarding-basic-form";
 import ReligionForm from "@/components/forms/onboarding-religion-form";

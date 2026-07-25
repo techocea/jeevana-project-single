@@ -29,6 +29,8 @@ const EditProfilePage = async ({ params }: PageProps) => {
         )
         .where(eq(profiles.id, profileId));
 
+    console.log("JOINED_RESULT:", joinedResult);
+
     if (!joinedResult || joinedResult.length === 0) {
         redirect("/my-dashboard");
     }
@@ -44,7 +46,7 @@ const EditProfilePage = async ({ params }: PageProps) => {
         ...(row.partner_preferences || {}),
     };
 
-    // console.log("Flattened user profile & preferences:", flatProfileData);
+    console.log("Flattened user profile & preferences:", flatProfileData);
 
     return (
         <EditProfile initialData={flatProfileData as any} profileId={profileId} />

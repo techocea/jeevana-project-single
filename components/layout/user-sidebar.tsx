@@ -27,7 +27,7 @@ export function UserSidebar({
   const pathname = usePathname();
 
   return (
-    <Sidebar {...props}>
+    <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>

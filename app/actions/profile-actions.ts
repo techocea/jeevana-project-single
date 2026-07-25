@@ -61,58 +61,7 @@ export async function getCurrentUserProfile() {
 
     return { success: true, data: profile };
   } catch (error) {
-    console.error("[CURRENT_PROFILE_FETCH_ERROR]:", error);
-    return {
-      success: false,
-      data: null,
-      error: "Failed to retrieve profile details.",
-    };
-  }
-}
-
-export async function getUserProfile(profileId: string) {
-  try {
-    const supabase = await createClient();
-    const {
-      data: { user: authedUser },
-      error,
-    } = await supabase.auth.getUser();
-
-    if (error || !authedUser) {
-      return {
-        success: false,
-        data: null,
-        error: "Unable to resolve the current user.",
-      };
-    }
-
-    const joinedResult = await db
-      .select()
-      .from(profiles)
-      .leftJoin(
-        partnerPreferences,
-        eq(profiles.userId, partnerPreferences.userId),
-      )
-      .where(eq(profiles.id, profileId));
-
-    if (!joinedResult || joinedResult.length === 0) {
-      redirect("/control-panel/approval-queues");
-    }
-
-    const row = joinedResult[0];
-
-    if (row.profiles.userId !== authedUser.id) {
-      redirect("/control-panel/approval-queues");
-    }
-
-    const flatProfileData = {
-      ...row.profiles,
-      ...(row.partner_preferences || {}),
-    };
-
-    return { success: true, data: flatProfileData };
-  } catch (error) {
-    console.error("[USER_PROFILE_FETCH_ERROR]:", error);
+    console.error("[USER:CURRENT_PROFILE_FETCH_ERROR]:", error);
     return {
       success: false,
       data: null,
@@ -202,6 +151,66 @@ export async function getProfilesByFilters(filters: SearchFilters) {
   }
 }
 
+export async function getUserProfile(profileId: string) {
+  let joinedResult;
+  let authedUser;
+
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (error || !user) {
+      return {
+        success: false,
+        data: null,
+        error: "Unable to resolve the current user.",
+      };
+    }
+    authedUser = user;
+
+    joinedResult = await db
+      .select()
+      .from(profiles)
+      .leftJoin(
+        partnerPreferences,
+        eq(profiles.userId, partnerPreferences.userId),
+      )
+      .where(eq(profiles.id, profileId));
+  } catch (error) {
+    console.error("[ADMIN:USER_PROFILE_FETCH_ERROR]:", error);
+    return {
+      success: false,
+      data: null,
+      error: "Failed to retrieve profile details.",
+    };
+  }
+
+  if (!joinedResult || joinedResult.length === 0) {
+    redirect("/control-panel/approval-queues");
+  }
+
+  const row = joinedResult[0];
+  const currentRole = authedUser.user_metadata?.role;
+
+  const isOwner = row.profiles.userId === authedUser.id;
+  const isAdmin = currentRole === "admin";
+
+  if (!isOwner && !isAdmin) {
+    redirect("/control-panel/approval-queues");
+  }
+
+  const flatProfileData = {
+    ...row.profiles,
+    ...(row.partner_preferences || {}),
+  };
+
+  return { success: true, data: flatProfileData };
+}
+
+// ADMIN PROFILE ACTIONS
 export async function approveProfile(id: string) {
   try {
     await db

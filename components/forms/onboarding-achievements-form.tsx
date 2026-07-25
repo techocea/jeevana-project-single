@@ -46,12 +46,11 @@ const AchievementsForm = ({
   initialData,
   variant = "onboarding",
 }: StepThreeProps) => {
-  const isInline = variant === "inline";
   const { education_levels, annual_income_ranges } = PERSONAL_DROPDOWNS;
 
   const {
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
     control,
   } = useForm<OnboardingFormValues>({
     resolver: zodResolver(stepThreeAchievementsSchema as any),
@@ -86,7 +85,7 @@ const AchievementsForm = ({
           </div>
         </div>
       ) : null}
-      <div className={isInline ? "w-full" : "flex-1"}>
+      <div className={variant === "inline" ? "w-full" : "flex-1"}>
         <form
           onSubmit={handleSubmit(onNext)}
           className="space-y-2 flex flex-col gap-4"
@@ -233,7 +232,7 @@ const AchievementsForm = ({
                   size="lg"
                   type="submit"
                   variant="default"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !isDirty}
                 >
                   {isSubmitting ? "Saving..." : "Save Changes"}
                 </Button>

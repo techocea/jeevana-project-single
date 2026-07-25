@@ -3,9 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
+    request: { headers: request.headers },
   });
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -20,9 +18,7 @@ export async function proxy(request: NextRequest) {
         cookiesToSet.forEach(({ name, value }) =>
           request.cookies.set(name, value),
         );
-        response = NextResponse.next({
-          request,
-        });
+        response = NextResponse.next({ request });
         cookiesToSet.forEach(({ name, value, options }) =>
           response.cookies.set(name, value, options),
         );
@@ -30,34 +26,41 @@ export async function proxy(request: NextRequest) {
     },
   });
 
+  // Fetch the current session details
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isAccessingProtectedRoute =
-    request.nextUrl.pathname.startsWith("/onboarding") ||
-    request.nextUrl.pathname.startsWith("/control-panel") ||
-    request.nextUrl.pathname.startsWith("/my-dashboard");
+  const nextUrl = request.nextUrl;
 
-  const isAccessingAuthRoute = request.nextUrl.pathname.startsWith("/auth");
-
-  if (!user && isAccessingProtectedRoute) {
-    const loginUrl = new URL("/auth", request.url);
-    loginUrl.searchParams.set("mode", "login");
-    loginUrl.searchParams.set("next", request.nextUrl.pathname);
-    return NextResponse.redirect(loginUrl);
+  if (nextUrl.pathname.startsWith("/my-dashboard")) {
+    if (!user) {
+      const loginUrl = new URL("/auth", request.url);
+      loginUrl.searchParams.set("mode", "login");
+      return NextResponse.redirect(loginUrl);
+    }
   }
 
-  // const paymentStatus = user?.user_metadata?.payment_status;
-  // if(paymentStatus != "paid")
+  if (nextUrl.pathname.startsWith("/control-panel")) {
+    if (!user) {
+      return NextResponse.redirect(new URL("/admin", request.url));
+    }
 
-  if (user && isAccessingAuthRoute) {
-    return NextResponse.redirect(new URL("/onboarding", request.url));
+    const role = user.user_metadata?.role;
+
+    if (role !== "admin") {
+      return NextResponse.redirect(new URL("/admin", request.url));
+    }
   }
-
   return response;
 }
 
 export const config = {
-  matcher: ["/my-dashboard/:path*", "/control-panel/:path*"],
+  matcher: [
+    "/my-dashboard/:path*",
+    "/control-panel/:path*",
+    "/onboarding/:path*",
+    "/auth",
+    "/admin",
+  ],
 };

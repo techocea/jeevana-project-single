@@ -35,7 +35,8 @@ const OnboardingPage = async () => {
   const savedStepString = userRecord?.onboardingStep || "START";
 
   if (savedStepString === "COMPLETED") {
-    redirect(`/pricing?profileId=${profileRecord?.id}`);
+    redirect(`/my-dashboard/my-profile`);
+    // redirect(`/pricing?profileId=${profileRecord?.id}`);
   }
 
   const activeStepInt = STEP_STRING_TO_NUMBER[savedStepString] || 1;

@@ -43,7 +43,7 @@ const PersonalInformation = ({
     handleSubmit,
     control,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<OnboardingFormValues>({
     resolver: zodResolver(stepFivePersonalSchema as any),
     defaultValues: {
@@ -410,7 +410,7 @@ const PersonalInformation = ({
                   size="lg"
                   type="submit"
                   variant="default"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !isDirty}
                 >
                   {isSubmitting ? "Saving..." : "Save Changes"}
                 </Button>

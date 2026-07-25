@@ -34,27 +34,18 @@ export async function loginAdmin(data: AuthLoginValues) {
   const { data: authData, error: authError } =
     await supabase.auth.signInWithPassword({ email, password });
 
+  console.log("Auth Data", authData);
   if (authError || !authData.user) {
     return { error: "Invalid admin email or password." };
   }
 
+  await supabase.auth.refreshSession();
+
   try {
-    const [dbUser] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, authData.user.id))
-      .limit(1);
-
-    const roleFromMetadata = authData.user.user_metadata?.role;
-    const roleFromTable = (dbUser as any)?.role; // Typecast if role column exists in schema
-
-    const isAdmin = roleFromTable === "admin" || roleFromMetadata === "admin";
-
-    if (!isAdmin) {
+    const role = authData.user.user_metadata?.role;
+    if (role !== "admin") {
       await supabase.auth.signOut();
-      return {
-        error: "Access denied. You do not have administrative privileges.",
-      };
+      return { error: "Access denied. Administrative privileges required." };
     }
 
     return {

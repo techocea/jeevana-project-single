@@ -32,13 +32,13 @@ const ReligionInformation = ({
   initialData,
   variant = "onboarding",
 }: StepTwoProps) => {
-  const isInline = variant === "inline";
+
   const {
     watch,
     control,
     setValue,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<OnboardingFormValues>({
     resolver: zodResolver(stepTwoReligionSchema as any),
     defaultValues: {
@@ -79,7 +79,7 @@ const ReligionInformation = ({
           </div>
         </div>
       ) : null}
-      <div className={isInline ? "w-full" : "flex-1"}>
+      <div className={variant === "inline" ? "w-full" : "flex-1"}>
         <form
           onSubmit={handleSubmit(onNext)}
           className="space-y-2 flex flex-col gap-4"
@@ -227,7 +227,7 @@ const ReligionInformation = ({
                 size="lg"
                 type="submit"
                 variant="default"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !isDirty}
               >
                 {isSubmitting ? "Saving..." : "Save Changes"}
               </Button>

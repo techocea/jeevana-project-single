@@ -1,9 +1,7 @@
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import {
-    approveProfile,
     getUserProfile,
-    rejectProfile,
 } from "@/app/actions/profile-actions";
 import { Label } from "@/components/ui/label";
 import { getStatusBadge } from "@/helpers/get-status-badge";

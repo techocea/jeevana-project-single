@@ -51,7 +51,7 @@ const LocationInformation = ({
     watch,
     setValue,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<OnboardingFormValues>({
     resolver: zodResolver(stepFourLocationSchema as any),
     defaultValues: {
@@ -386,7 +386,7 @@ const LocationInformation = ({
                   size="lg"
                   type="submit"
                   variant="default"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !isDirty}
                 >
                   {isSubmitting ? "Saving..." : "Save Changes"}
                 </Button>

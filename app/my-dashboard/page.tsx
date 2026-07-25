@@ -1,6 +1,8 @@
-import { createClient } from '@/utils/supabase';
-import { redirect } from 'next/navigation';
-import React from 'react'
+import { users } from "@/drizzle/schema";
+import { db } from "@/lib/db";
+import { createClient } from "@/utils/supabase";
+import { eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
 
 const DashboardPage = async () => {
   const supabase = await createClient();
@@ -12,10 +14,17 @@ const DashboardPage = async () => {
     redirect("/auth?mode=login");
   }
 
+  const [dbUser] = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, user.id))
+    .limit(1);
 
-  return (
-    <div>DashboardPage</div>
-  )
-}
+  if (!dbUser || dbUser.onboardingStatus === "INCOMPLETED") {
+    redirect("/onboarding");
+  }
 
-export default DashboardPage
+  return <div>DashboardPage</div>;
+};
+
+export default DashboardPage;
