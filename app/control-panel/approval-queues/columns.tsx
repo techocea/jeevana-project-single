@@ -116,6 +116,7 @@ export const columns: ColumnDef<AdvertisementTable>[] = [
           {row.original.status === "approved" ||
             row.original.status === "rejected" ? (
             <>
+
               <Button variant={"view"} asChild>
                 <Link href={`/control-panel/approval-queues/${profile.id}/view`}>
                   <Eye size={16} />

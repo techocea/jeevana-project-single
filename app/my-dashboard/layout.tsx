@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { Toaster } from 'react-hot-toast';
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { SiteHeader } from "@/components/layout/site-header";
 import { UserSidebar } from "@/components/layout/user-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { TooltipProvider } from "@/components/ui/tooltip";
 
 export const metadata: Metadata = {
   title: "My Dashboard | Jeevana Matrimony",
@@ -16,6 +17,10 @@ export default function MyDashboardLayout({
 }>) {
   return (
     <div className="min-h-screen bg-background">
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+      />
       <TooltipProvider>
         <SidebarProvider
           style={

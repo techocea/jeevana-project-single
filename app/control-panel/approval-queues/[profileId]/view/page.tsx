@@ -15,7 +15,7 @@ const ViewProfilePage = async ({ params }: PageProps) => {
     const { profileId } = await params;
     const result = await getUserProfile(profileId);
 
-    console.log("ADMIN VIEW PROFILE DATA:", result.data);
+    // console.log("ADMIN VIEW PROFILE DATA:", result.data);
 
     if (!result.success || !result.data) {
         return (
@@ -39,11 +39,11 @@ const ViewProfilePage = async ({ params }: PageProps) => {
         : profile.hobbies || "Not specified";
 
     return (
-        <main className="">
+        <main>
             <div className="mx-auto max-w-6xl">
-                <h1 className="mb-8 text-2xl font-semibold text-slate-950">
+                {/* <h1 className="mb-8 text-2xl font-semibold text-slate-950">
                     Profile: {profileId}
-                </h1>
+                </h1> */}
                 <div className="mb-8 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
                     <div className="flex items-start justify-between gap-6">
                         <div className="flex items-start justify-between w-full">
@@ -76,7 +76,7 @@ const ViewProfilePage = async ({ params }: PageProps) => {
                                     </div>
                                 </div>
                             </div>
-                            <ProfileActionsButtons profileId={profileId} />
+                            <ProfileActionsButtons profileId={profileId} status={profile.status} />
                         </div>
                     </div>
                 </div>

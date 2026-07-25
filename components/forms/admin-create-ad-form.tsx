@@ -32,7 +32,6 @@ import {
   Loader2,
   Map,
   ShieldCogCorner,
-  Trophy,
   User,
 } from "lucide-react";
 import { ageOptions } from "./onboarding-basic-form";
@@ -329,7 +328,7 @@ const AdminCreateAdForm = () => {
                     className={cn(
                       "w-full",
                       !selectedReligion &&
-                        "bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed",
+                      "bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed",
                     )}
                   >
                     <SelectValue
@@ -463,7 +462,7 @@ const AdminCreateAdForm = () => {
                       disabled={!selectedCountry || loadingStates}
                       className={cn(
                         (!selectedCountry || loadingStates) &&
-                          "bg-slate-50 text-slate-400 cursor-not-allowed",
+                        "bg-slate-50 text-slate-400 cursor-not-allowed",
                       )}
                     />
                     <ComboboxContent>
@@ -511,7 +510,7 @@ const AdminCreateAdForm = () => {
                       disabled={!selectedState || loadingCities}
                       className={cn(
                         (!selectedState || loadingCities) &&
-                          "bg-slate-50 text-slate-400 cursor-not-allowed",
+                        "bg-slate-50 text-slate-400 cursor-not-allowed",
                       )}
                     />
                     <ComboboxContent>

@@ -14,6 +14,7 @@ import LocationForm from "@/components/forms/onboarding-location-form";
 import PersonalForm from "@/components/forms/onboarding-personal-form";
 import HobbiesForm from "@/components/forms/onboarding-hobbies-form";
 import PartnerPreferences from "@/components/forms/partner-preferences-form";
+import toast from "react-hot-toast";
 
 interface EditProfileProps {
   initialData: InitialProfileData;
@@ -36,16 +37,18 @@ const EditProfile = ({ initialData, profileId }: EditProfileProps) => {
 
       const result = await updateProfile(profileId, sanitizedData);
       if (result.success) {
-        router.refresh();
-        console.log("Step saved successfully:", result.data);
+        toast.success("Data Saved Successfully!");
+        console.log("STEP_SAVED_SUCCESSFULLY:", result.data);
+        router.back();
       }
     } catch (error) {
-      console.error("Error saving profile:", error);
+      toast.error("Error in updating data!");
+      console.error("ERROR_UPDATING_DATA:", error);
     }
   };
 
   return (
-    <main className="">
+    <main>
       <div className="mx-auto max-w-4xl">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">

@@ -293,7 +293,7 @@ export async function updateProfile(
       ...profilePayload
     } = updateData;
 
-    const preferencesPayload = {
+    const rawPreferencesPayload = {
       minAge,
       maxAge,
       maritalStatus,
@@ -302,30 +302,57 @@ export async function updateProfile(
       annualIncomeRanges,
     };
 
+    const preferencesPayload = Object.fromEntries(
+      Object.entries(rawPreferencesPayload).filter(([_, v]) => v !== undefined),
+    );
+
+    const cleanProfilePayload = Object.fromEntries(
+      Object.entries(profilePayload).filter(([_, v]) => v !== undefined),
+    );
+
     const finalData = await db.transaction(async (tx) => {
-      const [updatedProfile] = await tx
-        .update(profiles)
-        .set({
-          ...profilePayload,
-          updatedAt: new Date(),
-        })
-        .where(eq(profiles.id, profileId))
-        .returning();
-
-      if (!currentProfile.userId) {
-        return {
-          success: false,
-          error: "Profile is not linked to a valid user account",
-        };
+      let updatedProfile = currentProfile;
+      if (Object.keys(cleanProfilePayload).length > 0) {
+        const [res] = await tx
+          .update(profiles)
+          .set({
+            ...cleanProfilePayload,
+            updatedAt: new Date(),
+          })
+          .where(eq(profiles.id, profileId))
+          .returning();
+        updatedProfile = res;
       }
-      // Update partner preferences linked by the verified user ID
-      const [updatedPreferences] = await tx
-        .update(partnerPreferences)
-        .set(preferencesPayload)
-        .where(eq(partnerPreferences.userId, currentProfile.userId))
-        .returning();
 
-      // Re-stitch them together for a flat object response
+      let updatedPreferences = {};
+
+      if (Object.keys(preferencesPayload).length > 0 && currentProfile.userId) {
+        // Upsert: Updates if exists, inserts if it doesn't exist yet
+        const [prefRes] = await tx
+          .insert(partnerPreferences)
+          .values({
+            userId: currentProfile.userId,
+            ...preferencesPayload,
+            updatedAt: new Date(),
+          })
+          .onConflictDoUpdate({
+            target: partnerPreferences.userId, // Requires unique constraint or index on userId
+            set: {
+              ...preferencesPayload,
+              updatedAt: new Date(),
+            },
+          })
+          .returning();
+
+        updatedPreferences = prefRes || {};
+      } else if (currentProfile.userId) {
+        // If no preference changes were passed, fetch current preferences to stitch back
+        const existingPref = await tx.query.partnerPreferences.findFirst({
+          where: eq(partnerPreferences.userId, currentProfile.userId),
+        });
+        updatedPreferences = existingPref || {};
+      }
+
       return {
         ...updatedProfile,
         ...updatedPreferences,

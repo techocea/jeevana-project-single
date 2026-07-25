@@ -16,7 +16,6 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import Image from "next/image";
-import { Label } from "../ui/label";
 import { usePathname } from "next/navigation";
 import { USER_DASHBOARD_SIDEBAR } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -50,33 +49,38 @@ export function UserSidebar({
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
-            {USER_DASHBOARD_SIDEBAR.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuSub>
-                  <SidebarMenuSubItem key={item.title}>
-                    <SidebarMenuSubButton
-                      asChild
-                      isActive={pathname === item.url}
-                    >
-                      <Link
-                        href={item.url}
-                        className={cn(
-                          "uppercase",
-                          pathname === item.url
-                            ? "font-semibold"
-                            : "text-muted",
-                        )}
-                      >
-                        <span>
-                          <item.icon />
-                        </span>
-                        {item.title}
-                      </Link>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                </SidebarMenuSub>
-              </SidebarMenuItem>
-            ))}
+            {USER_DASHBOARD_SIDEBAR.map((item) => {
+              const isActive =
+                item.url === "/my-dashboard"
+                  ? pathname === item.url
+                  : pathname.startsWith(item.url);
+
+              const Icon = item.icon;
+              return (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuSub>
+                    <SidebarMenuSubItem key={item.title}>
+                      <SidebarMenuSubButton asChild isActive={isActive}>
+                        <Link
+                          href={item.url}
+                          className={cn(
+                            "uppercase",
+                            pathname === item.url
+                              ? "font-semibold"
+                              : "text-muted",
+                          )}
+                        >
+                          <span>
+                            <Icon />
+                          </span>
+                          {item.title}
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </SidebarMenuSub>
+                </SidebarMenuItem>
+              );
+            })}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>

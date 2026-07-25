@@ -58,7 +58,7 @@ export function AdminSidebar({
                 {item.items?.length ? (
                   <SidebarMenuSub>
                     {item.items.map((subItem) => {
-                      const isCurrentActive =
+                      const isActive =
                         subItem.url === "/control-panel"
                           ? pathname === subItem.url
                           : pathname.startsWith(subItem.url);
@@ -66,7 +66,7 @@ export function AdminSidebar({
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton
                             asChild
-                            isActive={isCurrentActive}
+                            isActive={isActive}
                           >
                             <Link
                               href={subItem.url}
