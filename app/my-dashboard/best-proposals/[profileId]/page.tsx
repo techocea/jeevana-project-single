@@ -69,7 +69,7 @@ const ViewProfilePage = async ({ params }: PageProps) => {
                                     </div>
                                 </div>
                             </div>
-                            <ProfileActionsButtons profileId={profileId} />
+                            <ProfileActionsButtons profileId={profileId} status={profile.status} />
                         </div>
                     </div>
                 </div>

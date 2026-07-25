@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 const ProfilePage = async () => {
   const result = await getCurrentUserProfile();
-  console.log("ALL_PROFILES_RELATED_TO_CURRENT_USER:", result.data);
+  // console.log("ALL_PROFILES_RELATED_TO_CURRENT_USER:", result.data);
 
   if (!result.success || !result.data) {
     return (
