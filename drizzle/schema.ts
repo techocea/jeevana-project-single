@@ -10,6 +10,7 @@ import {
   boolean,
   integer,
   pgEnum,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 export const profileSeq = pgSequence("profile_id_seq", {
@@ -17,12 +18,11 @@ export const profileSeq = pgSequence("profile_id_seq", {
   increment: 1,
 });
 
-export const roleEnum = pgEnum("app_role", ["admin", "staff", "user"]);
+export const roleEnum = pgEnum("role", ["user", "admin"]);
 export const onboardingEnum = pgEnum("onboarding_status", [
   "INCOMPLETED",
   "COMPLETED",
 ]);
-
 export const onboardingStepEnum = pgEnum("onboarding_step", [
   "START",
   "RELIGION",
@@ -33,36 +33,41 @@ export const onboardingStepEnum = pgEnum("onboarding_step", [
   "PREFERENCES",
   "COMPLETED",
 ]);
-
+export const userStatusEnum = pgEnum("user_status", [
+  "active",
+  "suspended",
+  "banned",
+]);
+export const membershipEnum = pgEnum("membership_plan", [
+  "free_tier",
+  "basic",
+  "premium",
+]);
 export const profileStatusEnum = pgEnum("profile_status", [
   "pending",
   "approved",
   "rejected",
 ]);
-
-export const maritalStatusEnum = pgEnum("marital_status", [
-  "never_married",
-  "divorced",
-  "widowed",
+export const invitationStatusEnum = pgEnum("invitation_status", [
+  "pending",
+  "accepted",
+  "declined",
 ]);
-
-export const userStatusEnum = pgEnum("user_status", [
-  "active",
-  "flagged",
-  "suspended",
+export const verificationStatusEnum = pgEnum("verification_status", [
+  "unverified",
+  "pending",
+  "verified",
+  "rejected",
 ]);
-
-export const membershipEnum = pgEnum("membership_plan", [
-  "free_tier",
-  "classical",
-  "heritage",
-  "elite",
-]);
-
 export const mailRoutingEnum = pgEnum("mail_routing", [
   "owner",
   "candidate",
   "both",
+]);
+export const maritalStatusEnum = pgEnum("marital_status", [
+  "never_married",
+  "divorced",
+  "widowed",
 ]);
 
 export const users = pgTable("users", {
@@ -83,6 +88,68 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const favorites = pgTable(
+  "favorites",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    // The profile performing the favoriting
+    favoritedByProfileId: uuid("favorited_by_profile_id")
+      .notNull()
+      .references(() => profiles.id, { onDelete: "cascade" }),
+    // The target profile being favorited
+    targetProfileId: uuid("target_profile_id")
+      .notNull()
+      .references(() => profiles.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    // Prevent duplicate favorites on the same profile pair
+    uniqueIndex("unique_favorite_pair_idx").on(
+      table.favoritedByProfileId,
+      table.targetProfileId,
+    ),
+  ],
+);
+
+export const invitations = pgTable(
+  "invitations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    senderProfileId: uuid("sender_profile_id")
+      .notNull()
+      .references(() => profiles.id, { onDelete: "cascade" }),
+    receiverProfileId: uuid("receiver_profile_id")
+      .notNull()
+      .references(() => profiles.id, { onDelete: "cascade" }),
+    status: invitationStatusEnum("status").default("pending").notNull(),
+    message: text("message"), // Optional short introduction
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("unique_invitation_pair_idx").on(
+      table.senderProfileId,
+      table.receiverProfileId,
+    ),
+  ],
+);
+
+export const verifications = pgTable("verifications", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  profileId: uuid("profile_id")
+    .notNull()
+    .unique()
+    .references(() => profiles.id, { onDelete: "cascade" }),
+  idType: text("id_type").notNull(), // 'NIC' | 'Passport' | 'DrivingLicense'
+  idNumber: text("id_number").notNull(),
+  documentFrontUrl: text("document_front_url").notNull(),
+  documentBackUrl: text("document_back_url"),
+  status: verificationStatusEnum("status").default("pending").notNull(),
+  rejectionReason: text("rejection_reason"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const profiles = pgTable("profiles", {
   id: uuid("id").primaryKey().defaultRandom(),
   profileID: varchar("profile_id", { length: 20 })
@@ -90,32 +157,22 @@ export const profiles = pgTable("profiles", {
     .notNull()
     .unique(),
   userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
-
-  // Basic Info (Step 1)
   createdBy: text("created_by"), // 'self' | 'parent' | 'guardian' | 'sibling' | 'friend' | 'admin'
   fullName: text("full_name"),
   contact: text("contact"),
   gender: text("gender"),
   profilePic: text("profile_pic"),
   dob: date("dob", { mode: "date" }),
-
-  // Religion (Step 2)
   religion: text("religion"),
   caste: text("caste"),
   motherTongue: text("mother_tongue"),
-
-  // Career (Step 3)
   educationLevel: text("education_level"),
   profession: text("profession"),
   annualIncomeRange: text("annual_income_range"),
-
-  // Location (Step 4)
   country: text("country"),
   state: text("state"),
   city: text("city"),
-  residencyStatus: text("residency_status"), // citizen, pr, work
-
-  // Personal (Step 5)
+  residencyStatus: text("residency_status"),
   height: text("height_cm"),
   weight: text("weight_kg"),
   age: integer("age"),
@@ -125,9 +182,8 @@ export const profiles = pgTable("profiles", {
   foodPreferences: text("food_preferences"), // 'vegetarian' | 'non-vegetarian' | 'vegan'
   isDifferentlyAbled: boolean("is_differently_abled").default(false),
   differentlyAbledDetails: text("differently_abled_details"),
-
-  //Final
   hobbies: text("hobbies").array(),
+
   mailRoutingTarget: mailRoutingEnum("mail_routing_target").default("owner"),
   secondaryEmail: text("secondary_email"),
   status: profileStatusEnum("status").default("pending").notNull(), // 'pending' | 'approved' | 'rejected'
@@ -145,11 +201,6 @@ export const partnerPreferences = pgTable("partner_preferences", {
   educationLevels: text("preferred_education_levels").array(),
   professions: text("preferred_professions").array(),
   annualIncomeRanges: text("preferred_annual_income_ranges").array(),
-  // lookingFor: text("looking_for"),
-  // religions: text("preferred_religions").array(),
-  // castes: text("preferred_castes").array(),
-  // countries: text("preferred_countries").array(),
-  // states: text("preferred_states").array(),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

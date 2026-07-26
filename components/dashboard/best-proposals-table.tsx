@@ -33,7 +33,13 @@ const BestProposalsTable = ({
         <div className="w-full flex flex-col items-center gap-6">
             <div className="w-full flex flex-col items-center gap-6">
                 {pageRows.length > 0 ? (
-                    pageRows.map((row) => <ProfileCard key={row.id} {...row.original} />)
+                    pageRows.map((row) => (
+                        <ProfileCard
+                            key={row.id}
+                            currentProfileId={row?.original?.id || ""}
+                            profileCardData={row.original}
+                        />
+                    ))
                 ) : (
                     <div className="text-center text-muted-foreground">
                         No profiles found.

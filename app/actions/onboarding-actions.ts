@@ -3,7 +3,7 @@
 import { db } from "@/lib/db";
 import { users, profiles, partnerPreferences } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 const NEXT_STEP_POINTER = {
@@ -15,9 +15,6 @@ const NEXT_STEP_POINTER = {
   6: "PREFERENCES",
   7: "COMPLETED",
 } as const;
-
-// type OnboardingStepPointerValue =
-//   (typeof NEXT_STEP_POINTER)[keyof typeof NEXT_STEP_POINTER];
 
 export async function syncOnboardingProgressAction(
   stepNumber: number,

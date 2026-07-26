@@ -11,12 +11,12 @@ import {
   CreditCard,
   Flag,
   Ban,
-  Check,
   RefreshCw,
   HeartPlus,
   User,
   Settings,
   LucideLayoutDashboard,
+  Spotlight,
 } from "lucide-react";
 
 export const NAVLINKS = [
@@ -107,8 +107,13 @@ export const USER_DASHBOARD_SIDEBAR = [
     url: "/my-dashboard/my-profile",
   },
   {
-    title: "Best Proposals",
+    title: "Favorite Profiles",
     icon: HeartPlus,
+    url: "/my-dashboard/favorites",
+  },
+  {
+    title: "Best Proposals",
+    icon: Spotlight,
     url: "/my-dashboard/best-proposals",
   },
   {

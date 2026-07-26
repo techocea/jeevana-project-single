@@ -208,11 +208,10 @@ export interface SearchFilters {
   hobbies?: string; // comma separated
 }
 
-export interface ProfileCardProps {
+export interface ProfileCardData {
   id: string;
   fullName: string | null;
   profilePic: string | null;
-  // paymentStatus: string | null;
   age: number | null;
   height: string | number | null;
   country: string | null;
@@ -220,4 +219,10 @@ export interface ProfileCardProps {
   religion: string | null;
   caste: string | null;
   educationLevel: string | null;
+  isFavorited?: boolean; // Optional initial favorite state
+}
+
+export interface ProfileCardProps {
+  currentProfileId: string; // The ID of the logged-in user's profile
+  profileCardData: ProfileCardData;
 }

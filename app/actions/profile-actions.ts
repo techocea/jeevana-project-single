@@ -1,9 +1,14 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { partnerPreferences, profiles, users } from "@/drizzle/schema";
+import {
+  favorites,
+  partnerPreferences,
+  profiles,
+  users,
+} from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase";
-import { and, eq, gte, lte, desc, ilike } from "drizzle-orm";
+import { and, eq, gte, lte, desc, ilike, ne, sql } from "drizzle-orm";
 import { SearchFilters } from "@/types";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -70,7 +75,10 @@ export async function getCurrentUserProfile() {
   }
 }
 
-export async function getProfilesByFilters(filters: SearchFilters) {
+export async function getProfilesByFilters(
+  filters: SearchFilters,
+  currentProfileId?: string,
+) {
   try {
     const { minAge, maxAge } = filters;
 
@@ -90,56 +98,53 @@ export async function getProfilesByFilters(filters: SearchFilters) {
     const parsedMinAge = minAge ? parseInt(minAge, 10) : 18;
     const parsedMaxAge = maxAge ? parseInt(maxAge, 10) : 100;
 
-    // console.log("[SERVER_ACTION_FETCH]: Executing lookup for", {
-    //   rawLookingFor,
-    //   rawReligion,
-    //   rawCaste,
-    //   rawMotherTongue,
-    //   rawEducationLevel,
-    //   rawProfession,
-    //   rawIncomeRange,
-    //   rawCountry,
-    //   rawState,
-    //   parsedMinAge,
-    //   parsedMaxAge,
-    // });
-
     const conditions = [
       gte(profiles.age, parsedMinAge),
       lte(profiles.age, parsedMaxAge),
     ];
 
-    if (targetGender) {
-      conditions.push(eq(profiles.gender, targetGender));
-    }
-    if (rawReligion) {
-      conditions.push(eq(profiles.religion, rawReligion));
-    }
-    if (rawCaste) {
-      conditions.push(eq(profiles.caste, rawCaste));
-    }
-    if (rawMotherTongue) {
-      conditions.push(eq(profiles.motherTongue, rawMotherTongue));
-    }
-    if (rawEducationLevel) {
-      conditions.push(eq(profiles.educationLevel, rawEducationLevel));
-    }
-    if (rawProfession) {
-      conditions.push(eq(profiles.profession, rawProfession));
-    }
-    if (rawIncomeRange) {
-      conditions.push(eq(profiles.annualIncomeRange, rawIncomeRange));
-    }
-    if (rawCountry) {
-      conditions.push(eq(profiles.country, rawCountry));
-    }
-    if (rawState) {
-      conditions.push(eq(profiles.state, rawState));
+    if (currentProfileId) {
+      conditions.push(ne(profiles.id, currentProfileId));
     }
 
+    if (targetGender) conditions.push(eq(profiles.gender, targetGender));
+    if (rawReligion) conditions.push(eq(profiles.religion, rawReligion));
+    if (rawCaste) conditions.push(eq(profiles.caste, rawCaste));
+    if (rawMotherTongue)
+      conditions.push(eq(profiles.motherTongue, rawMotherTongue));
+    if (rawEducationLevel)
+      conditions.push(eq(profiles.educationLevel, rawEducationLevel));
+    if (rawProfession) conditions.push(eq(profiles.profession, rawProfession));
+    if (rawIncomeRange)
+      conditions.push(eq(profiles.annualIncomeRange, rawIncomeRange));
+    if (rawCountry) conditions.push(eq(profiles.country, rawCountry));
+    if (rawState) conditions.push(eq(profiles.state, rawState));
+
     const searchedProfiles = await db
-      .select()
+      .select({
+        id: profiles.id,
+        fullName: profiles.fullName,
+        profilePic: profiles.profilePic,
+        age: profiles.age,
+        height: profiles.height,
+        country: profiles.country,
+        profession: profiles.profession,
+        religion: profiles.religion,
+        caste: profiles.caste,
+        educationLevel: profiles.educationLevel,
+        isFavorited: sql<boolean>`COALESCE(${favorites.id} IS NOT NULL, false)`,
+      })
       .from(profiles)
+      .leftJoin(
+        favorites,
+        and(
+          eq(favorites.targetProfileId, profiles.id),
+          // If currentProfileId is undefined/null, this condition won't match any row
+          currentProfileId
+            ? eq(favorites.favoritedByProfileId, currentProfileId)
+            : sql`1 = 0`,
+        ),
+      )
       .where(and(...conditions))
       .orderBy(desc(profiles.createdAt))
       .limit(5);

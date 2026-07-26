@@ -1,4 +1,6 @@
-﻿import Image from "next/image";
+﻿"use client";
+
+import Image from "next/image";
 import {
   Heart,
   Star,
@@ -17,19 +19,49 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "../ui/card";
 import { convertCmToFeetInches } from "@/helpers/measurement-utils";
 import Link from "next/link";
+import { addProfileToFavorite } from "@/app/actions/favorite-actions";
+import { useEffect, useState, useTransition } from "react";
+import { cn } from "@/lib/utils";
 
 export function ProfileCard({
-  id,
-  fullName,
-  profilePic,
-  age,
-  caste,
-  religion,
-  height,
-  country,
-  profession,
-  educationLevel,
+  currentProfileId,
+  profileCardData,
 }: ProfileCardProps) {
+  const data = profileCardData || {};
+  const {
+    id: targetProfileId,
+    fullName,
+    profilePic,
+    age,
+    caste,
+    religion,
+    height,
+    country,
+    profession,
+    educationLevel,
+    isFavorited = false,
+  } = data;
+
+  const [favorited, setFavorited] = useState(isFavorited);
+  const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    setFavorited(profileCardData?.isFavorited ?? false);
+  }, [profileCardData?.isFavorited]);
+
+  const handleFavoriteClick = () => {
+    if (!currentProfileId || !targetProfileId) return;
+
+    setFavorited((prev) => !prev);
+
+    startTransition(async () => {
+      const result = await addProfileToFavorite(currentProfileId, profileCardData.id);
+      if (!result.success) {
+        setFavorited((prev) => !prev);
+      }
+    });
+  };
+
   // const membershipLabel = paymentStatus === "PAID" ? "Elite" : "Verified";
   // const badgeVariant = paymentStatus === "PAID" ? "default" : "secondary";
 
@@ -49,7 +81,6 @@ export function ProfileCard({
             </div>
 
             <div className="flex flex-col gap-1">
-              {/* {profileId} */}
               {/* <Badge variant={badgeVariant}>{membershipLabel}</Badge> */}
               <h4 className="text-xl font-newsreader text-black">{fullName}</h4>
               <span className="flex items-center gap-1 -mt-2 text-sm text-muted">
@@ -59,15 +90,19 @@ export function ProfileCard({
             </div>
           </div>
 
-          <div className="hidden md:flex items-center gap-2">
-            <Button variant="outline" type="button" className="rounded-full">
-              <Star size={18} />
-            </Button>
-            <Button variant="outline" type="button" className="rounded-full">
-              <Heart size={18} />
-            </Button>
-            <Button variant="outline" type="button" className="rounded-full">
-              <Bookmark size={18} />
+          <div className="flex items-start gap-2">
+            <Button
+              variant="outline"
+              type="button"
+              disabled={isPending}
+              className={cn(
+                "rounded-full transition-colors",
+                favorited &&
+                "text-red-500 border-red-200 bg-red-50 hover:bg-red-100",
+              )}
+              onClick={handleFavoriteClick}
+            >
+              <Heart size={18} className={cn(favorited && "fill-current")} />
             </Button>
           </div>
         </div>
@@ -83,7 +118,9 @@ export function ProfileCard({
           ].map((item, index, arr) => {
             const Icon = item.icon;
             const isFirstTwo = index < 2;
-            const spanClass = isFirstTwo ? "col-span-2 md:col-span-2" : "col-span-1";
+            const spanClass = isFirstTwo
+              ? "col-span-2 md:col-span-2"
+              : "col-span-1";
             return (
               <div key={index} className={`${spanClass} flex gap-2`}>
                 <Icon size={24} />
@@ -99,18 +136,10 @@ export function ProfileCard({
         </div>
 
         <div className="flex items-center justify-between w-full">
-          <div className="flex md:hidden items-center gap-2">
-            <Button variant="outline" type="button" className="rounded-full">
-              <Star size={18} />
-            </Button>
-            <Button variant="outline" type="button" className="rounded-full">
-              <Heart size={18} />
-            </Button>
-            <Button variant="outline" type="button" className="rounded-full">
-              <Bookmark size={18} />
-            </Button>
-          </div>
-          <Link href={`/my-dashboard/best-proposals/${id}`} className="text-primary flex items-center gap-2">
+          <Link
+            href={`/my-dashboard/best-proposals/${targetProfileId}`}
+            className="text-primary flex items-center gap-2"
+          >
             View Profile <ChevronRight />
           </Link>
         </div>

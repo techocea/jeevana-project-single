@@ -6,12 +6,13 @@ import { redirect } from "next/navigation";
 import OnboardingPageClient from "./page.client";
 
 const STEP_STRING_TO_NUMBER: Record<string, number> = {
-  "START": 1,        // Hasn't filled anything yet
-  "RELIGION": 2,     // Finished Step 1, needs to do Religion
-  "ACHIEVEMENTS": 3, // Finished Step 2, needs to do Achievements
-  "LOCATION": 4,     // Finished Step 3, needs to do Location
-  "PERSONAL": 5,     // Finished Step 4, needs to do Personal
-  "HOBBIES": 6,      // Finished Step 5, needs to do Hobbies
+  START: 1, // Hasn't filled anything yet
+  RELIGION: 2, // Finished Step 1, needs to do Religion
+  ACHIEVEMENTS: 3, // Finished Step 2, needs to do Achievements
+  LOCATION: 4, // Finished Step 3, needs to do Location
+  PERSONAL: 5, // Finished Step 4, needs to do Personal
+  HOBBIES: 6, // Finished Step 5, needs to do Hobbies
+  PREFERENCES: 7,
 };
 
 const OnboardingPage = async () => {
