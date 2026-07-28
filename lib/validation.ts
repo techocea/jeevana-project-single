@@ -74,17 +74,12 @@ export const stepSixHobbiesSchema = z.object({
 });
 
 export const stepSevenPreferencesSchema = z.object({
-  minAge: z.string().optional(),
-  maxAge: z.string().optional(),
-  maritalStatus: z.string(),
-  educationLevels: z.array(z.string()).default([]),
-  professions: z.array(z.string()).default([]),
-  annualIncomeRanges: z.array(z.string()).default([]),
-  // lookingFor: z.string().optional(),
-  // religions: z.array(z.string()).default([]),
-  // castes: z.array(z.string()).default([]),
-  // countries: z.array(z.string()).default([]),
-  // states: z.array(z.string()).default([]),
+  preferredMinAge: z.string().optional(),
+  preferredMaxAge: z.string().optional(),
+  preferredMaritalStatus: z.string(),
+  preferredEducationLevels: z.array(z.string()).default([]),
+  preferredProfessions: z.array(z.string()).default([]),
+  preferredAnnualIncomeRanges: z.array(z.string()).default([]),
 });
 
 export const contactFormSchema = z.object({
@@ -92,6 +87,14 @@ export const contactFormSchema = z.object({
   email: z.email({ message: "Enter a valid email address" }),
   interest: z.enum(["partnership", "feedback", "create_advertisement"]),
   message: z.string().min(10, { message: "Message is required" }),
+});
+
+export const createUserByAdminSchema = z.object({
+  email: z.email({ message: "Enter a valid email address" }),
+  fullName: z.string().min(2, "Full name required"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  role: z.enum(["user", "admin"]).default("user"),
+  emailConfirm: z.boolean().default(true), // Skip manual confirmation link for admin-created users
 });
 
 export const authRegisterSchema = z.object({
@@ -124,3 +127,4 @@ export type ContactFormValues = z.infer<typeof contactFormSchema>;
 export type AuthRegisterValues = z.infer<typeof authRegisterSchema>;
 export type AuthLoginValues = z.infer<typeof authLoginSchema>;
 export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
+export type CreateUserByAdminValues = z.infer<typeof createUserByAdminSchema>;

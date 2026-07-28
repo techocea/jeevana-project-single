@@ -33,6 +33,7 @@ const OnboardingPage = async () => {
   if (!userRecord) {
     return <OnboardingPageClient initialDbData={null} savedStep={1} />;
   }
+
   const savedStepString = userRecord?.onboardingStep || "START";
 
   if (savedStepString === "COMPLETED") {

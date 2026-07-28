@@ -21,15 +21,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import UserManagementTabs from "./user-management-tabs";
 
 interface DataTableProps<TData, TValue> {
+  currentStatus: string;
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   meta?: {
-    onUserFlag?: (id: string) => void;
-    onUserUnFlag?: (id: string) => void;
-    onUserSuspend?: (id: string) => void;
-    onUserReactivate?: (id: string) => void;
+    onBan?: (id: string) => void;
+    onReactivate?: (id: string) => void;
   };
 }
 
@@ -37,6 +37,7 @@ export function DataTable<TData, TValue>({
   columns = [],
   data = [],
   meta,
+  currentStatus,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const table = useReactTable({
@@ -64,7 +65,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex items-center justify-between w-full py-4">
         <Input
           placeholder="Search by email"
           value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
@@ -73,6 +74,7 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
+        <UserManagementTabs currentStatus={currentStatus} />
       </div>
       <div className="overflow-hidden rounded-md shadow-sm">
         <Table>

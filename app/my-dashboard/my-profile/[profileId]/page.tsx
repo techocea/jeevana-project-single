@@ -190,20 +190,20 @@ const ProfilePage = async ({ params }: PageProps) => {
                         </h2>
                     </div>
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                        {renderField("Partner Preferred Min Age", profile.minAge)}
-                        {renderField("Partner Preferred Max Age", profile.maxAge)}
+                        {renderField("Partner Preferred Min Age", profile.preferredMinAge)}
+                        {renderField("Partner Preferred Max Age", profile.preferredMaxAge)}
                         {renderField(
                             "Partner's Marriage Status Should be",
-                            profile.maritalStatus,
+                            profile.preferredMaritalStatus,
                         )}
                         {renderField(
                             "Partner's Education Status Should be",
-                            profile.educationLevels,
+                            profile.preferredEducationLevels,
                         )}
-                        {renderField("Partner's Job Status Should be", profile.professions)}
+                        {renderField("Partner's Job Status Should be", profile.preferredProfessions)}
                         {renderField(
                             "Partner's Annual Income Should be",
-                            profile.annualIncomeRanges,
+                            profile.preferredAnnualIncomeRanges,
                         )}
                     </div>
                     {profile.isDifferentlyAbled && profile.differentlyAbledDetails && (

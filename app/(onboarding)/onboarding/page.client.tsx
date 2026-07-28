@@ -23,11 +23,11 @@ const OnboardingPageClient = ({
   initialDbData,
   savedStep,
 }: OnboardingClientProps) => {
-
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<number>(savedStep);
-  const [initialData, setInitialData] =
-    useState<Record<string, any>>(initialDbData || {});
+  const [initialData, setInitialData] = useState<Record<string, any>>(
+    initialDbData || {},
+  );
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
 
   const onNext = async (stepData: Record<string, any>) => {
@@ -77,10 +77,15 @@ const OnboardingPageClient = ({
       <ProgressBarHeader currentStep={currentStep} steps={ONBOARDING_STEPS} />
 
       {currentStep === 1 && (
-        <BasicInformation initialData={initialData} onNext={onNext} />
+        <BasicInformation
+          variant="onboarding"
+          initialData={initialData}
+          onNext={onNext}
+        />
       )}
       {currentStep === 2 && (
         <ReligionInformation
+          variant="onboarding"
           initialData={initialData}
           onNext={onNext}
           onPrev={onPrev}
@@ -88,6 +93,7 @@ const OnboardingPageClient = ({
       )}
       {currentStep === 3 && (
         <AchievementsForm
+          variant="onboarding"
           initialData={initialData}
           onNext={onNext}
           onPrev={onPrev}
@@ -95,6 +101,7 @@ const OnboardingPageClient = ({
       )}
       {currentStep === 4 && (
         <LocationInformation
+          variant="onboarding"
           initialData={initialData}
           onNext={onNext}
           onPrev={onPrev}
@@ -102,6 +109,7 @@ const OnboardingPageClient = ({
       )}
       {currentStep === 5 && (
         <PersonalInformation
+          variant="onboarding"
           initialData={initialData}
           onPrev={onPrev}
           onNext={onNext}
@@ -109,6 +117,7 @@ const OnboardingPageClient = ({
       )}
       {currentStep === 6 && (
         <HobbiesSelector
+          variant="onboarding"
           initialData={initialData}
           onPrev={onPrev}
           onNext={onNext}
@@ -116,6 +125,7 @@ const OnboardingPageClient = ({
       )}
       {currentStep === 7 && (
         <PartnerPreferences
+          variant="onboarding"
           initialData={initialData}
           onPrev={onPrev}
           onNext={onNext}

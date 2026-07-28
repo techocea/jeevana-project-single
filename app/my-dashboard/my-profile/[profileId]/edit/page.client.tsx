@@ -90,49 +90,49 @@ const EditProfile = ({ initialData, profileId }: EditProfileProps) => {
         <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
           {activeTab === "basic" && (
             <BasicInformationForm
-              variant="inline"
+              variant="editing"
               initialData={initialData}
               onNext={handleSaveStep}
             />
           )}
           {activeTab === "religion" && (
             <ReligionForm
-              variant="inline"
+              variant="editing"
               initialData={initialData}
               onNext={handleSaveStep}
             />
           )}
           {activeTab === "career" && (
             <AchievementsForm
-              variant="inline"
+              variant="editing"
               initialData={initialData}
               onNext={handleSaveStep}
             />
           )}
           {activeTab === "location" && (
             <LocationForm
-              variant="inline"
+              variant="editing"
               initialData={initialData}
               onNext={handleSaveStep}
             />
           )}
           {activeTab === "personal" && (
             <PersonalForm
-              variant="inline"
+              variant="editing"
               initialData={initialData}
               onNext={handleSaveStep}
             />
           )}
           {activeTab === "hobbies" && (
             <HobbiesForm
-              variant="inline"
+              variant="editing"
               initialData={initialData}
               onNext={handleSaveStep}
             />
           )}
           {activeTab === "partner_preferences" && (
             <PartnerPreferences
-              variant="inline"
+              variant="editing"
               initialData={initialData}
               onNext={handleSaveStep}
             />

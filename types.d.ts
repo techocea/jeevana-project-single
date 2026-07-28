@@ -1,8 +1,7 @@
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {
-    onUserFlag?: (userId: string) => void;
-    onUserSuspend?: (userId: string) => void;
-    onUserReactivate?: (userId: string) => void;
+    onBan?: (userId: string) => void;
+    onReactivate?: (userId: string) => void;
     onApprove?: (userId: string) => void;
     onReject?: (userId: string) => void;
   }
@@ -16,13 +15,13 @@ export type CreatedByTypes =
   | "friend";
 export type GenderTypes = "male" | "female";
 export type ResindencyTypes = "CITIZEN" | "PR" | "WORK";
-export type UserStatusTypes = "active" | "flagged" | "suspended";
+export type UserStatusTypes = "active" | "banned";
 export type BadHabitTypes = "never" | "occasionally" | "regularly";
 export type TabTypes = "all" | "pending" | "approved" | "rejected";
 export type MailRoutingTargetTypes = "owner" | "candidate" | "both";
 export type ProfileStatusTypes = "pending" | "approved" | "rejected";
 export type FoodHabitTypes = "vegetarian" | "non-vegetarian" | "vegan";
-export type MembershipTypes = "free_tier" | "classical" | "heritage" | "elite";
+export type MembershipTypes = "free_tier" | "classical" | "heritage" | null;
 export type MaritalStatusTypes = "never_married" | "divorced" | "widowed";
 
 export interface StepConfig {
@@ -37,6 +36,7 @@ export interface ProgressBarHeaderProps {
 }
 
 export interface InitialProfileData {
+  userId?: string;
   createdBy?: CreatedByTypes;
   profilePic?: string;
   fullName?: string;
@@ -71,47 +71,57 @@ export interface InitialProfileData {
   status?: ProfileStatusTypes;
   mailRoutingTarget?: MailRoutingTargetTypes;
   secondaryEmail?: string;
-  minAge?: string;
-  maxAge?: string;
-  maritalStatus?: string;
-  professions?: string[] | null;
-  educationLevels?: string[] | null;
-  annualIncomeRanges?: string[] | null;
+  preferredMinAge?: string;
+  preferredMaxAge?: string;
+  preferredMaritalStatus?: MaritalStatusTypes;
+  preferredEducationLevels?: string[];
+  preferredProfessions?: string[];
+  preferredAnnualIncomeRanges?: string[];
 }
 
-export interface AdminCreateAdFormValues {
-  userId: string;
-  createdBy: CreatedByTypes;
-  profilePic: string;
-  fullName: string;
-  contact: string;
-  gender: GenderTypes;
-  dob: Date;
-  age: number;
-  religion: string;
-  caste: string;
-  motherTongue: string;
-  educationLevel: string;
-  profession: string;
-  annualIncomeRange: string;
-  country: string;
-  state: string;
-  city: string;
-  residencyStatus: ResindencyTypes;
-  height: string | undefined;
-  weight: string | undefined;
-  age: number;
-  smoking: BadHabitTypes;
-  drinking: BadHabitTypes;
-  foodPreferences: FoodHabitTypes;
-  isDifferentlyAbled: boolean;
-  differentlyAbledDetails: string;
-  narrative: string;
-  hobbies: string[];
-  status: ProfileStatusTypes;
-  mailRoutingTarget: MailRoutingTargetTypes;
-  secondaryEmail?: string;
-}
+// export interface AdminCreateAdFormValues {
+//   userId: string;
+//   createdBy?: CreatedByTypes;
+//   profilePic?: string;
+//   fullName?: string;
+//   contact?: string;
+//   gender?: GenderTypes;
+//   dob?: Date;
+//   age?: number;
+//   religion?: string;
+//   caste?: string;
+//   motherTongue?: string;
+//   educationLevel?: string;
+//   profession?: string;
+//   annualIncomeRange?: string;
+//   country?: string;
+//   state?: string;
+//   city?: string;
+//   residencyStatus?: ResindencyTypes;
+//   height?: string | undefined;
+//   weight?: string | undefined;
+//   age?: number;
+//   smoking?: BadHabitTypes;
+//   drinking?: BadHabitTypes;
+//   foodPreferences?: FoodHabitTypes;
+//   isDifferentlyAbled?: boolean;
+//   differentlyAbledDetails?: string;
+//   narrative?: string;
+//   foodPreferences?: FoodHabitTypes;
+//   isDifferentlyAbled?: boolean;
+//   differentlyAbledDetails?: string;
+//   narrative?: string;
+//   hobbies?: string[];
+//   status?: ProfileStatusTypes;
+//   mailRoutingTarget?: MailRoutingTargetTypes;
+//   secondaryEmail?: string;
+//   preferredMinAge?: string;
+//   preferredMaxAge?: string;
+//   preferredMaritalStatus?: string | null;
+//   preferredEducationLevels?: string[] | null;
+//   preferredProfessions?: string[] | null;
+//   preferredAnnualIncomeRanges?: string[] | null;
+// }
 
 export interface StepOneInitialData {
   initialData: {
@@ -166,17 +176,12 @@ export interface StepFiveInitialData {
 
 export interface StepSevenInitialData {
   initialData: {
-    minAge?: string;
-    maxAge?: string;
-    lookingFor?: string;
-    maritalStatus?: string | null;
-    professions?: string[] | null;
-    educationLevels?: string[] | null;
-    annualIncomeRanges?: string[] | null;
-    // religions?: string[];
-    // castes?: string[];
-    // countries?: string[];
-    // states?: string[];
+    preferredMinAge?: string;
+    preferredMaxAge?: string;
+    preferredMaritalStatus?: string | null;
+    preferredEducationLevels?: string[] | null;
+    preferredProfessions?: string[] | null;
+    preferredAnnualIncomeRanges?: string[] | null;
   };
 }
 

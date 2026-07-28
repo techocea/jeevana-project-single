@@ -29,8 +29,7 @@ const UserManagementTabs = ({ currentStatus }: { currentStatus: string }) => {
       <TabsList>
         <TabsTrigger value="all">All</TabsTrigger>
         <TabsTrigger value="active">Active</TabsTrigger>
-        <TabsTrigger value="flagged">Flagged</TabsTrigger>
-        <TabsTrigger value="suspended">Suspended</TabsTrigger>
+        <TabsTrigger value="banned">Banned</TabsTrigger>
       </TabsList>
     </Tabs>
   );

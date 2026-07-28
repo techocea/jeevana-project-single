@@ -1,5 +1,4 @@
 import { getProfilesByFilters } from "@/app/actions/profile-actions";
-import BestProposalsTable from "@/components/dashboard/best-proposals-table";
 import FilterOptions from "@/components/landing/filter-options";
 import { db } from "@/lib/db";
 import { profiles as profilesSchema } from "@/drizzle/schema";

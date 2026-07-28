@@ -2,17 +2,17 @@
 
 import { Badge } from "@/components/ui/badge";
 import { MembershipTypes, UserStatusTypes } from "@/types";
-import { ColumnDef, RowData } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/helpers/format-date";
-import { STATUS_ACTIONS } from "@/lib/constants";
+import { Ban, RefreshCw } from "lucide-react";
 
 export type UsersTable = {
-  userId: string;
+  id: string;
   fullName: string | null;
   email: string | null;
   createdAt: string | Date | undefined;
-  membership: MembershipTypes;
+  membership: MembershipTypes | undefined;
   status: UserStatusTypes;
 };
 
@@ -67,7 +67,7 @@ export const columns: ColumnDef<UsersTable>[] = [
         <div className="flex flex-col gap-0.5 text-sm">
           <Badge className="flex items-center gap-0.5 bg-input w-2/3">
             <span className="text-black">
-              {row.original.membership.replace("_", " ").toUpperCase()}
+              {row.original.membership?.replace("_", " ").toUpperCase()}
             </span>
           </Badge>
         </div>
@@ -83,10 +83,8 @@ export const columns: ColumnDef<UsersTable>[] = [
       const variants: Record<string, string> = {
         active:
           "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 hover:bg-emerald-100",
-        suspended:
+        banned:
           "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400 hover:bg-rose-100",
-        flagged:
-          "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 hover:bg-amber-100",
       };
 
       return (
@@ -104,26 +102,38 @@ export const columns: ColumnDef<UsersTable>[] = [
     cell: ({ row, table }) => {
       const user = row.original;
 
-      const meta = table.options.meta;
+      const meta = table.options.meta as {
+        onBan?: (id: string) => void;
+        onReactivate?: (id: string) => void;
+      };
 
-      const currentStatus = (row.original.status ||
-        "active") as keyof typeof STATUS_ACTIONS;
-      const availableButtons = STATUS_ACTIONS[currentStatus] || [];
+      const isBanned = user.status === "banned";
 
       return (
         <div className="flex items-center gap-1.5 justify-end">
-          {availableButtons.map(({ icon: Icon, color, action, label }) => (
+          {isBanned ? (
             <Button
-              key={action}
               variant="outline"
-              size="icon"
-              className={`h-8 w-8 shrink-0 transition-colors ${color}`}
-              title={label}
-              onClick={() => meta?.[action]?.(user.userId)}
+              size="sm"
+              className="h-8 gap-1.5 border-emerald-500/30 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-950/50"
+              title="Reactivate Account"
+              onClick={() => meta?.onReactivate?.(user.id)}
             >
-              <Icon size={14} strokeWidth={2.5} />
+              <RefreshCw size={14} strokeWidth={2.5} />
+              <span>Reactivate</span>
             </Button>
-          ))}
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 gap-1.5 border-destructive/30 text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20"
+              title="Ban Account"
+              onClick={() => meta?.onBan?.(user.id)}
+            >
+              <Ban size={14} strokeWidth={2.5} />
+              <span>Ban</span>
+            </Button>
+          )}
         </div>
       );
     },

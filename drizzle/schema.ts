@@ -18,7 +18,7 @@ export const profileSeq = pgSequence("profile_id_seq", {
   increment: 1,
 });
 
-export const roleEnum = pgEnum("role", ["user", "admin"]);
+export const roleEnum = pgEnum("app_role", ["user", "admin"]);
 export const onboardingEnum = pgEnum("onboarding_status", [
   "INCOMPLETED",
   "COMPLETED",
@@ -33,15 +33,12 @@ export const onboardingStepEnum = pgEnum("onboarding_step", [
   "PREFERENCES",
   "COMPLETED",
 ]);
-export const userStatusEnum = pgEnum("user_status", [
-  "active",
-  "suspended",
-  "banned",
-]);
+
+export const userStatusEnum = pgEnum("user_status", ["active", "banned"]);
 export const membershipEnum = pgEnum("membership_plan", [
   "free_tier",
-  "basic",
-  "premium",
+  "classical",
+  "heritage",
 ]);
 export const profileStatusEnum = pgEnum("profile_status", [
   "pending",
@@ -74,17 +71,13 @@ export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   fullName: text("full_name"),
   email: varchar("email", { length: 255 }).notNull().unique(),
-  role: roleEnum("role").default("user").notNull(),
+  role: roleEnum("app_role").default("user").notNull(),
 
-  onboardingStatus: onboardingEnum("onboarding_status")
-    .default("INCOMPLETED")
-    .notNull(),
-  onboardingStep: onboardingStepEnum("onboarding_step")
-    .default("START")
-    .notNull(),
+  onboardingStatus: onboardingEnum("onboarding_status").default("INCOMPLETED"),
+  onboardingStep: onboardingStepEnum("onboarding_step").default("START"),
 
   status: userStatusEnum("user_status").default("active").notNull(),
-  membership: membershipEnum("membership_plan").default("free_tier").notNull(),
+  membership: membershipEnum("membership_plan").default("free_tier"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -92,18 +85,15 @@ export const favorites = pgTable(
   "favorites",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    // The profile performing the favoriting
     favoritedByProfileId: uuid("favorited_by_profile_id")
       .notNull()
       .references(() => profiles.id, { onDelete: "cascade" }),
-    // The target profile being favorited
     targetProfileId: uuid("target_profile_id")
       .notNull()
       .references(() => profiles.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [
-    // Prevent duplicate favorites on the same profile pair
     uniqueIndex("unique_favorite_pair_idx").on(
       table.favoritedByProfileId,
       table.targetProfileId,
@@ -195,12 +185,14 @@ export const profiles = pgTable("profiles", {
 export const partnerPreferences = pgTable("partner_preferences", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
-  minAge: integer("min_age").default(18),
-  maxAge: integer("max_age").default(50),
-  maritalStatus: maritalStatusEnum("marital_status").default("never_married"),
-  educationLevels: text("preferred_education_levels").array(),
-  professions: text("preferred_professions").array(),
-  annualIncomeRanges: text("preferred_annual_income_ranges").array(),
+  preferredMinAge: integer("preferred_min_age"),
+  preferredMaxAge: integer("preferred_max_age"),
+  preferredMaritalStatus: maritalStatusEnum("preferred_marital_status").default(
+    "never_married",
+  ),
+  preferredEducationLevels: text("preferred_education_levels").array(),
+  preferredProfessions: text("preferred_professions").array(),
+  preferredAnnualIncomeRanges: text("preferred_annual_income_ranges").array(),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

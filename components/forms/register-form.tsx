@@ -22,6 +22,7 @@ const RegisterForm = () => {
   } = useForm<AuthRegisterValues>({
     resolver: zodResolver(authRegisterSchema as any),
     defaultValues: {
+      fullName: "",
       email: "",
       password: "",
     },

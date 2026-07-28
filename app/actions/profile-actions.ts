@@ -280,12 +280,12 @@ export async function updateProfile(
 
     const {
       // --- Partner Preference Fields ---
-      minAge,
-      maxAge,
-      maritalStatus,
-      educationLevels,
-      professions,
-      annualIncomeRanges,
+      preferredMinAge,
+      preferredMaxAge,
+      preferredMaritalStatus,
+      preferredEducationLevels,
+      preferredProfessions,
+      preferredAnnualIncomeRanges,
 
       // --- Immutable/System Fields (Ignored from update data for security) ---
       id,
@@ -299,12 +299,12 @@ export async function updateProfile(
     } = updateData;
 
     const rawPreferencesPayload = {
-      minAge,
-      maxAge,
-      maritalStatus,
-      educationLevels,
-      professions,
-      annualIncomeRanges,
+      preferredMinAge,
+      preferredMaxAge,
+      preferredMaritalStatus,
+      preferredEducationLevels,
+      preferredProfessions,
+      preferredAnnualIncomeRanges,
     };
 
     const preferencesPayload = Object.fromEntries(

@@ -4,13 +4,10 @@ import { db } from "@/lib/db";
 import { eq, and, desc, ne } from "drizzle-orm";
 import { users } from "@/drizzle/schema";
 import { columns } from "./columns";
-import {
-  flagUser,
-  reactivateUser,
-  suspendUser,
-} from "@/app/actions/users-actions";
+import { banUser, reactivateUser } from "@/app/actions/users-actions";
 import UserManagementTabs from "./user-management-tabs";
 import { UserStatusTypes } from "@/types";
+import CreateUser from "@/components/dashboard/create-user";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +27,7 @@ const UserManagementPage = async ({ searchParams }: PageProps) => {
 
   const data = await db
     .select({
-      userId: users.id,
+      id: users.id,
       fullName: users.fullName,
       email: users.email,
       status: users.status,
@@ -52,14 +49,9 @@ const UserManagementPage = async ({ searchParams }: PageProps) => {
     );
   }
 
-  const handleUserFlag = async (id: string) => {
+  const handleUserBan = async (id: string) => {
     "use server";
-    await flagUser(id);
-  };
-
-  const handleUserSuspend = async (id: string) => {
-    "use server";
-    await suspendUser(id);
+    await banUser(id);
   };
 
   const handleUserReactivate = async (id: string) => {
@@ -77,20 +69,18 @@ const UserManagementPage = async ({ searchParams }: PageProps) => {
               title="user directory"
               description="Manage Jeevana`s global community of seekers."
             />
-            <UserManagementTabs currentStatus={currentStatus} />
+            <CreateUser />
           </div>
 
-          <div>
-            <DataTable
-              columns={columns}
-              data={sanitizedData}
-              meta={{
-                onUserFlag: handleUserFlag,
-                onUserSuspend: handleUserSuspend,
-                onUserReactivate: handleUserReactivate,
-              }}
-            />
-          </div>
+          <DataTable
+            columns={columns}
+            currentStatus={currentStatus}
+            data={sanitizedData}
+            meta={{
+              onBan: handleUserBan,
+              onReactivate: handleUserReactivate,
+            }}
+          />
         </div>
       </div>
     </div>

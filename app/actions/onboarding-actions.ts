@@ -47,7 +47,7 @@ export async function syncOnboardingProgressAction(
         contact: payload.contact,
         gender: payload.gender,
         dob: parsedDate,
-        age: payload.age,
+        age: payload.age ? parseInt(String(payload.age), 10) : null,
         profilePic: payload.profilePic,
       };
     } else if (stepNumber === 2) {
@@ -87,19 +87,23 @@ export async function syncOnboardingProgressAction(
         hobbies: Array.isArray(payload.hobbies) ? payload.hobbies : [],
       };
     } else if (stepNumber === 7) {
-      // Capture Step 7 values into updatePayload explicitly
       updatePayload = {
-        minAge: payload.minAge ? Number(payload.minAge) : 18,
-        maxAge: payload.maxAge ? Number(payload.maxAge) : 50,
-        maritalStatus: payload.maritalStatus || "never_married",
-        educationLevels: Array.isArray(payload.educationLevels)
-          ? payload.educationLevels
+        preferredMinAge: payload.minAge ? Number(payload.preferredMinAge) : 18,
+        preferredMaxAge: payload.maxAge ? Number(payload.preferredMaxAge) : 50,
+        preferredMaritalStatus:
+          payload.preferredMaritalStatus || "never_married",
+        preferredEducationLevels: Array.isArray(
+          payload.preferredEducationLevels,
+        )
+          ? payload.preferredEducationLevels
           : [],
-        professions: Array.isArray(payload.professions)
-          ? payload.professions
+        preferredProfessions: Array.isArray(payload.preferredProfessions)
+          ? payload.preferredProfessions
           : [],
-        annualIncomeRanges: Array.isArray(payload.annualIncomeRanges)
-          ? payload.annualIncomeRanges
+        preferredAnnualIncomeRanges: Array.isArray(
+          payload.preferredAnnualIncomeRanges,
+        )
+          ? payload.preferredAnnualIncomeRanges
           : [],
       };
     }
@@ -144,12 +148,13 @@ export async function syncOnboardingProgressAction(
       } else {
         await db.insert(partnerPreferences).values({
           userId: userIdToUpdate,
-          maxAge: updatePayload.maxAge,
-          minAge: updatePayload.minAge,
-          maritalStatus: updatePayload.maritalStatus,
-          educationLevels: updatePayload.educationLevels,
-          professions: updatePayload.professions,
-          annualIncomeRanges: updatePayload.annualIncomeRanges,
+          preferredMaxAge: updatePayload.preferredMaxAge,
+          preferredMinAge: updatePayload.preferredMinAge,
+          preferredMaritalStatus: updatePayload.preferredMaritalStatus,
+          preferredEducationLevels: updatePayload.preferredEducationLevels,
+          preferredProfessions: updatePayload.preferredProfessions,
+          preferredAnnualIncomeRanges:
+            updatePayload.preferredAnnualIncomeRanges,
         });
       }
 
@@ -239,6 +244,20 @@ export async function createAdminProfileAction(
       mailRoutingTarget: payload.mailRoutingTarget,
       secondaryEmail: payload.secondaryEmail,
       status: payload.status || "pending",
+      preferredMinAge: payload.minAge ? Number(payload.preferredMinAge) : 18,
+      preferredMaxAge: payload.maxAge ? Number(payload.preferredMaxAge) : 50,
+      preferredMaritalStatus: payload.preferredMaritalStatus || "never_married",
+      preferredEducationLevels: Array.isArray(payload.preferredEducationLevels)
+        ? payload.preferredEducationLevels
+        : [],
+      preferredProfessions: Array.isArray(payload.preferredProfessions)
+        ? payload.preferredProfessions
+        : [],
+      preferredAnnualIncomeRanges: Array.isArray(
+        payload.preferredAnnualIncomeRanges,
+      )
+        ? payload.preferredAnnualIncomeRanges
+        : [],
       updatedAt: new Date(),
     };
 

@@ -142,8 +142,8 @@ export function MultiSelectField<TFieldValues extends FieldValues>({
                                                         <span className="truncate max-w-[150px]">
                                                             {matchedOption ? matchedOption.label : val}
                                                         </span>
-                                                        <button
-                                                            type="button"
+                                                        <div
+
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
                                                                 onChange(
@@ -153,7 +153,7 @@ export function MultiSelectField<TFieldValues extends FieldValues>({
                                                             className="rounded-full p-0.5 outline-none hover:bg-gray-200 transition-colors"
                                                         >
                                                             <X className="h-3 w-3 text-muted-foreground hover:text-destructive" />
-                                                        </button>
+                                                        </div>
                                                     </Badge>
                                                 );
                                             })

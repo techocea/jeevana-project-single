@@ -601,36 +601,3 @@ export const GROUPS_PROFESSIONS = [
     ],
   },
 ];
-
-export const STATUS_ACTIONS = {
-  active: [
-    {
-      icon: Flag,
-      color: "text-amber-500 border-amber-500 hover:bg-amber-300",
-      action: "onUserFlag",
-      label: "Flag Account",
-    },
-    {
-      icon: Ban,
-      color: "text-red-500 border-red-200 hover:bg-red-200",
-      action: "onUserSuspend",
-      label: "Suspend Account",
-    },
-  ],
-  flagged: [
-    {
-      icon: RefreshCw,
-      color: "text-emerald-500 border-emerald-200 hover:bg-emerald-50",
-      action: "onUserReactivate",
-      label: "Reactivate",
-    },
-  ],
-  suspended: [
-    {
-      icon: RefreshCw,
-      color: "text-emerald-500 border-emerald-200 hover:bg-emerald-50",
-      action: "onUserReactivate",
-      label: "Reactivate",
-    },
-  ],
-} as const;

@@ -3,7 +3,7 @@
 import { favorites, profiles } from "@/drizzle/schema";
 import { db } from "@/lib/db";
 import { createClient } from "@/utils/supabase";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export async function addProfileToFavorite(
@@ -78,32 +78,44 @@ export async function getFavoriteProfiles(currentProfileId: string) {
     const supabase = await createClient();
     const {
       data: { user },
+      error,
     } = await supabase.auth.getUser();
 
-    if (!user) {
-      return { success: false, data: [] };
+    if (error || !user) {
+      return { success: false, error: "Unauthorized access", data: [] };
     }
 
-    const favList = await db.query.favorites.findMany({
-      where: eq(favorites.favoritedByProfileId, currentProfileId),
-      with: {
-        // Requires relation defined in drizzle config or manual lookup
-      },
-    });
-
-    // Alternatively fetch full profile details
-    const favoritedIds = favList.map((f) => f.targetProfileId);
-
-    if (favoritedIds.length === 0) {
-      return { success: true, data: [] };
+    if (!currentProfileId) {
+      return { success: false, error: "Profile ID required", data: [] };
     }
 
-    // Fetch favorited profiles
-    const favProfiles = await db.query.profiles.findMany({
-      where: (table, { inArray }) => inArray(table.id, favoritedIds),
-    });
+    const favoritedProfiles = await db
+      .select({
+        id: profiles.id,
+        fullName: profiles.fullName,
+        profilePic: profiles.profilePic,
+        age: profiles.age,
+        height: profiles.height,
+        country: profiles.country,
+        profession: profiles.profession,
+        religion: profiles.religion,
+        caste: profiles.caste,
+        educationLevel: profiles.educationLevel,
+        isFavorited: sql<boolean>`true`,
+      })
+      .from(favorites)
+      .innerJoin(profiles, eq(favorites.targetProfileId, profiles.id))
+      .where(eq(favorites.favoritedByProfileId, currentProfileId))
+      .orderBy(desc(favorites.createdAt));
 
-    return { success: true, data: favProfiles };
+    return {
+      success: true,
+      message:
+        favoritedProfiles.length > 0
+          ? "FAVORITES_PROFILES_FOUND"
+          : "FAVORITES_PROFILES_NOT_FOUND",
+      data: favoritedProfiles,
+    };
   } catch (error) {
     console.error("[GET_FAVORITES_ERROR]:", error);
     return { success: false, data: [] };
