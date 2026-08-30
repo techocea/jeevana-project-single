@@ -3,8 +3,6 @@
 import Image from "next/image";
 import {
   Heart,
-  Star,
-  Bookmark,
   MapPin,
   Briefcase,
   Ruler,
@@ -19,13 +17,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "../ui/card";
 import { convertCmToFeetInches } from "@/helpers/measurement-utils";
 import Link from "next/link";
-import { addProfileToFavorite } from "@/app/actions/favorite-actions";
+import { addProfileToFavorite } from "@/app/actions/profile-actions";
 import { useEffect, useState, useTransition } from "react";
 import { cn } from "@/lib/utils";
+import toast from "react-hot-toast";
 
 export function ProfileCard({
   currentProfileId,
-  profileCardData,
+  profileCardData, routing,
 }: ProfileCardProps) {
   const data = profileCardData || {};
   const {
@@ -56,9 +55,14 @@ export function ProfileCard({
 
     startTransition(async () => {
       const result = await addProfileToFavorite(currentProfileId, profileCardData.id);
+
       if (!result.success) {
         setFavorited((prev) => !prev);
+        toast.error("Failed to add profile to favorites. Please try again.");
+      }else{
+        toast.success("Profile added to favorites");
       }
+
     });
   };
 
@@ -137,7 +141,7 @@ export function ProfileCard({
 
         <div className="flex items-center justify-between w-full">
           <Link
-            href={`/my-dashboard/best-proposals/${targetProfileId}`}
+            href={`/my-dashboard/${routing}/${targetProfileId}`}
             className="text-primary flex items-center gap-2"
           >
             View Profile <ChevronRight />

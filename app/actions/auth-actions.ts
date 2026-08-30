@@ -16,7 +16,7 @@ import { eq } from "drizzle-orm";
 import { users } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase";
 import { supabaseAdmin } from "@/utils/supabase-admin";
-import { syncOnboardingProgressAction } from "./onboarding-actions";
+import { createProfileByUser } from "./onboarding-actions";
 
 export async function loginAdmin(data: AuthLoginValues) {
   const parsed = authLoginSchema.safeParse(data);
@@ -129,7 +129,7 @@ export async function loginUser(data: AuthLoginValues) {
     await supabase.auth.signInWithPassword({ email, password });
 
   if (authError || !authData.user) {
-    return { error: "Invalid email or password." };
+    return { error: "User not registered." };
   }
 
   await supabase.auth.refreshSession();

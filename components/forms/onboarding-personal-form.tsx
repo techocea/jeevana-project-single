@@ -48,7 +48,6 @@ const PersonalInformation = ({
     defaultValues: {
       height: initialData?.height ? String(initialData.height) : "",
       weight: initialData?.weight ? String(initialData.weight) : "",
-      age: initialData?.age || 0,
       smoking: initialData?.smoking || "never",
       drinking: initialData?.drinking || "never",
       foodPreferences: initialData?.foodPreferences || undefined,

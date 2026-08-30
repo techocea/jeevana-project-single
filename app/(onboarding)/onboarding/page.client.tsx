@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { ONBOARDING_STEPS } from "@/lib/constants";
 import BasicInformation from "@/components/forms/onboarding-basic-form";
 import ProgressBarHeader from "@/components/landing/progress-bar-header";
-import { syncOnboardingProgressAction } from "@/app/actions/onboarding-actions";
+import { createProfileByUser } from "@/app/actions/profile-actions";
 import HobbiesSelector from "@/components/forms/onboarding-hobbies-form";
 import PersonalInformation from "@/components/forms/onboarding-personal-form";
 import ReligionInformation from "@/components/forms/onboarding-religion-form";
@@ -36,7 +36,7 @@ const OnboardingPageClient = ({
 
     try {
       setIsSyncing(true);
-      const result = await syncOnboardingProgressAction(currentStep, stepData);
+      const result = await createProfileByUser(currentStep, stepData);
 
       if (!result.success) {
         throw new Error(result.error || "Failed to preserve session progress.");
@@ -62,7 +62,7 @@ const OnboardingPageClient = ({
   };
 
   return (
-    <div className="w-full py-10 px-6 md:px-0 mx-auto md:max-w-5xl">
+    <div className="w-full py-10 px-6 md:px-0 mx-auto md:max-w-5xl min-h-full">
       {isSyncing && (
         <div className="absolute inset-0 bg-white/40 z-50 backdrop-blur-[1px] flex items-center justify-center pointer-events-auto h-full">
           <div className="flex items-center gap-2 bg-white shadow-md border rounded-xl px-4 py-2">

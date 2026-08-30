@@ -35,6 +35,7 @@ const BasicInformation = ({
   initialData,
   variant = "onboarding",
 }: StepOneProps) => {
+
   const {
     register,
     control,

@@ -28,6 +28,7 @@ interface DataTableProps<TData, TValue> {
   meta?: {
     onApprove?: (id: string) => void;
     onReject?: (id: string) => void;
+    onDelete?: (id: string) => void;
   };
 }
 

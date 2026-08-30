@@ -4,7 +4,7 @@ import { profiles, users } from "@/drizzle/schema";
 import { db } from "@/lib/db";
 import { columns } from "./columns";
 import { ProfileStatusTypes } from "@/types";
-import { approveProfile, rejectProfile } from "@/app/actions/profile-actions";
+import { approveProfile, deleteProfile, rejectProfile } from "@/app/actions/profile-actions";
 import { DataTable } from "./data-table";
 import ApprovalQueueTabs from "./approval-queue-tabs";
 
@@ -61,6 +61,11 @@ const ApprovalQueuePage = async ({ searchParams }: PageProps) => {
     await rejectProfile(id);
   };
 
+  const handleDelete = async (id: string) => {
+    "use server";
+    await deleteProfile(id);
+  };
+
 
   return (
     <div className="flex flex-1 flex-col">
@@ -82,6 +87,7 @@ const ApprovalQueuePage = async ({ searchParams }: PageProps) => {
               meta={{
                 onApprove: handleApprove,
                 onReject: handleReject,
+                onDelete: handleDelete,
               }}
             />
           </div>

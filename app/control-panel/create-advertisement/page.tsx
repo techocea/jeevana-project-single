@@ -1,5 +1,18 @@
 "use client";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  ArrowRight,
+  ArrowRightLeft,
+  ShieldCogCorner,
+  UserCheck,
+} from "lucide-react";
 import ReligionInformation from "@/components/forms/onboarding-religion-form";
 import AchievementsForm from "@/components/forms/onboarding-achievements-form";
 import LocationInformation from "@/components/forms/onboarding-location-form";
@@ -11,64 +24,27 @@ import TitleHeader from "@/components/dashboard/title-header";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { InitialProfileData } from "@/types";
 import { useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  ArrowRight,
-  ArrowRightLeft,
-  ShieldCogCorner,
-  UserCheck,
-} from "lucide-react";
 import UserProfileSearch from "@/components/dashboard/user-profile-search";
 import { useRouter } from "next/navigation";
-import { createAdminProfileAction } from "@/app/actions/onboarding-actions";
+import { createProfileByAdmin } from "@/app/actions/profile-actions";
 import toast from "react-hot-toast";
 
-const CreateAdPage = () => {
+const CreateAdPage = ({ initialData }: { initialData: InitialProfileData }) => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const methods = useForm<InitialProfileData>({
     defaultValues: {
-      userId: "",
-      createdBy: undefined,
-      profilePic: "",
-      fullName: "",
-      contact: "",
-      gender: undefined,
-      dob: undefined,
-      religion: "",
-      caste: "",
-      motherTongue: "",
-      educationLevel: "",
-      profession: "",
-      annualIncomeRange: "",
-      country: "",
-      state: "",
-      city: "",
-      residencyStatus: undefined,
-      height: "",
-      weight: "",
-      age: 0,
-      smoking: "never",
-      drinking: "never",
-      foodPreferences: "vegetarian",
-      isDifferentlyAbled: false,
-      differentlyAbledDetails: "",
-      narrative: "",
-      hobbies: [""],
-      status: "pending",
-      mailRoutingTarget: "owner",
-      secondaryEmail: "",
+      userId: initialData?.userId || "",
+      status: initialData?.status || "approved",
+      mailRoutingTarget: initialData?.mailRoutingTarget || "owner",
+      secondaryEmail: initialData?.secondaryEmail || "",
+      createdBy: initialData?.createdBy || "self",
+      ...initialData,
     },
   });
 
@@ -93,14 +69,12 @@ const CreateAdPage = () => {
 
     setIsSubmitting(true);
     try {
-      const result = await createAdminProfileAction(data, data.userId);
+      const result = await createProfileByAdmin(data, data.userId);
       if (!result.success) {
-        toast.error(
-          result.error || "Failed to create the advertisement profile.",
-        );
+        toast.error("Failed to create the advertisement profile.");
         return;
       }
-      toast.success("Advertisement profile created successfully!");
+      toast.success("Profile created successfully!");
       router.push("/control-panel/approval-queues");
     } catch (error) {
       console.error("[ADMIN_AD_SUBMIT_ERROR]:", error);
@@ -163,25 +137,37 @@ const CreateAdPage = () => {
               {selectedUserId && (
                 <div className="space-y-8 animate-in fade-in duration-300">
                   {/* SECTION 1: Basic Details */}
-                  <BasicInformation variant="admin" />
+                  <BasicInformation initialData={initialData} variant="admin" />
 
                   {/* SECTION 2: Religion */}
-                  <ReligionInformation variant="admin" />
+                  <ReligionInformation
+                    initialData={initialData}
+                    variant="admin"
+                  />
 
                   {/* SECTION 3: Location */}
-                  <LocationInformation variant="admin" />
+                  <LocationInformation
+                    initialData={initialData}
+                    variant="admin"
+                  />
 
                   {/* SECTION 4: Career */}
-                  <AchievementsForm variant="admin" />
+                  <AchievementsForm initialData={initialData} variant="admin" />
 
                   {/* SECTION 5: Personal Info */}
-                  <PersonalInformation variant="admin" />
+                  <PersonalInformation
+                    initialData={initialData}
+                    variant="admin"
+                  />
 
                   {/* SECTION 6: Hobbies */}
-                  <HobbiesSelector variant="admin" />
+                  <HobbiesSelector initialData={initialData} variant="admin" />
 
                   {/* SECTION 7: Partner Preferences */}
-                  <PartnerPreferences variant="admin" />
+                  <PartnerPreferences
+                    initialData={initialData}
+                    variant="admin"
+                  />
 
                   {/* SECTION 7: Admin Overrides */}
                   <section className="bg-white border border-muted-foreground/50 rounded-lg p-5 shadow-sm">

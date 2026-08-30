@@ -74,8 +74,8 @@ export const stepSixHobbiesSchema = z.object({
 });
 
 export const stepSevenPreferencesSchema = z.object({
-  preferredMinAge: z.string().optional(),
-  preferredMaxAge: z.string().optional(),
+  preferredMinAge: z.number().int().positive().optional(),
+  preferredMaxAge: z.number().int().positive().optional(),
   preferredMaritalStatus: z.string(),
   preferredEducationLevels: z.array(z.string()).default([]),
   preferredProfessions: z.array(z.string()).default([]),

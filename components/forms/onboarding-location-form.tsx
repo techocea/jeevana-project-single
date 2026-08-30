@@ -22,7 +22,7 @@ import { Controller, useForm } from "react-hook-form";
 import { LocationNode, StepFourInitialData } from "@/types";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Loader2, Map } from "lucide-react";
+import { ArrowRight, Loader2, Map } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { OnboardingFormValues, stepFourLocationSchema } from "@/lib/validation";
 import { useEffect, useState } from "react";

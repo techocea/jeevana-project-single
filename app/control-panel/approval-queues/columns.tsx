@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { ProfileStatusTypes } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
-import { Check, Dot, Eye, X } from "lucide-react";
+import { Check, Dot, Eye, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/helpers/format-date";
 import Link from "next/link";
@@ -109,21 +109,34 @@ export const columns: ColumnDef<AdvertisementTable>[] = [
       const meta = table.options.meta as {
         onApprove?: (id: string) => void;
         onReject?: (id: string) => void;
+        onDelete?: (id: string) => void;
       };
 
       return (
         <div className="flex items-center gap-1 justify-end">
           {row.original.status === "approved" ||
             row.original.status === "rejected" ? (
-            <Button variant={"view"} asChild>
-              <Link href={`/control-panel/approval-queues/${profile.id}/view`}>
-                <Eye size={16} />
-              </Link>
-            </Button>
+            <>
+              <Button variant={"view"} asChild>
+                <Link
+                  href={`/control-panel/approval-queues/${profile.id}/view`}
+                >
+                  <Eye size={16} />
+                </Link>
+              </Button>
+              <Button
+                variant={"destructive"}
+                onClick={() => meta?.onDelete?.(profile.id)}
+              >
+                <Trash2 />
+              </Button>
+            </>
           ) : (
             <>
               <Button variant={"view"} asChild>
-                <Link href={`/control-panel/approval-queues/${profile.id}/view`}>
+                <Link
+                  href={`/control-panel/approval-queues/${profile.id}/view`}
+                >
                   <Eye size={16} />
                 </Link>
               </Button>

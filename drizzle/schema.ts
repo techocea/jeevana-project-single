@@ -1,4 +1,4 @@
-import { relations, sql } from "drizzle-orm";
+  import { relations, sql } from "drizzle-orm";
 import {
   pgTable,
   uuid,
@@ -78,6 +78,8 @@ export const users = pgTable("users", {
 
   status: userStatusEnum("user_status").default("active").notNull(),
   membership: membershipEnum("membership_plan").default("free_tier"),
+  // isVerified: boolean("is_verified").default(false),
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -176,7 +178,9 @@ export const profiles = pgTable("profiles", {
 
   mailRoutingTarget: mailRoutingEnum("mail_routing_target").default("owner"),
   secondaryEmail: text("secondary_email"),
+
   status: profileStatusEnum("status").default("pending").notNull(), // 'pending' | 'approved' | 'rejected'
+  // isVerifed:boolean("is_verified").default(false),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

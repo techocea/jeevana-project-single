@@ -10,7 +10,7 @@ import { useForm, Controller } from "react-hook-form";
 import { StepTwoInitialData } from "@/types";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { OnboardingFormValues, stepTwoReligionSchema } from "@/lib/validation";
 import { MOTHER_TONGUES, RELIGIONS_AND_CASTES } from "@/lib/constants";

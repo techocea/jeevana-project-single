@@ -80,15 +80,21 @@ const ProfilePage = async ({ params }: PageProps) => {
                                     </div>
                                 </div>
                             </div>
-                            <div>
-                                <Link href={`/my-dashboard/my-profile/${profileId}/edit`}>
-                                    <Button
-                                        variant="outline"
-                                        className="h-10 px-6 text-sm font-medium"
-                                    >
-                                        Edit Profile <Pen size={16} className="ml-2" />
-                                    </Button>
+                            <div className="flex items-center gap-2">
+                                <Button variant="default" size="lg" asChild>
+                                <Link href="/best-proposals">
+                                        View Matches
                                 </Link>
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="lg"
+                                    asChild
+                                >
+                                <Link href={`/my-dashboard/my-profile/${profileId}/edit`}>
+                                        Edit Profile <Pen size={16} className="ml-2" />
+                                </Link>
+                                </Button>
                             </div>
                         </div>
                     </div>

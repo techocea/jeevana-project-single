@@ -18,6 +18,7 @@ import { getUsersByEmail } from "@/app/actions/profile-actions";
 interface UserQueryResult {
   id: string;
   email: string;
+  fullName?: string;
 }
 
 // 2. Inline Debounce Hook
@@ -80,12 +81,12 @@ const MatrimonialUserSearch = ({
         </div>
 
         <div className="w-full relative">
-          <Combobox 
+          <Combobox
             items={searchResults}
             value={selectedValue}
             onValueChange={(selectedEmail) => {
               if (!selectedEmail) return;
-              
+
               const matchedUser = searchResults.find(u => u.email === selectedEmail);
               if (matchedUser) {
                 setSelectedValue(matchedUser.email);
@@ -104,11 +105,11 @@ const MatrimonialUserSearch = ({
                 )}
               </div>
 
-              <ComboboxInput 
-                placeholder="Search system users by login email..." 
+              <ComboboxInput
+                placeholder="Search system users by login email..."
                 className="pl-6 w-full"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)} 
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
 
@@ -124,11 +125,11 @@ const MatrimonialUserSearch = ({
                     <ComboboxEmpty className="p-4 text-xs text-slate-400 text-center">
                       No registered emails match these parameters
                     </ComboboxEmpty>
-                    
+
                     <ComboboxList className="max-h-48 overflow-y-auto divide-y divide-slate-50">
                       {(user: UserQueryResult) => (
-                        <ComboboxItem 
-                          key={user.id} 
+                        <ComboboxItem
+                          key={user.id}
                           value={user.email}
                           className="flex items-center justify-between py-2 px-3 data-[selected=true]:bg-slate-50 cursor-pointer group aria-selected:bg-slate-50"
                         >
@@ -142,11 +143,10 @@ const MatrimonialUserSearch = ({
                           </div>
                           <Check
                             size={14}
-                            className={`text-pink-600 transition-opacity ${
-                              selectedValue === user.email 
-                                ? "opacity-100" 
-                                : "opacity-0 group-hover:opacity-100 group-aria-selected:opacity-100"
-                            }`}
+                            className={`text-pink-600 transition-opacity ${selectedValue === user.email
+                              ? "opacity-100"
+                              : "opacity-0 group-hover:opacity-100 group-aria-selected:opacity-100"
+                              }`}
                           />
                         </ComboboxItem>
                       )}
@@ -157,7 +157,7 @@ const MatrimonialUserSearch = ({
             )}
           </Combobox>
         </div>
-        
+
         {errors.userId && (
           <p className="text-xs text-red-500 mt-1">
             {errors.userId.message as string}

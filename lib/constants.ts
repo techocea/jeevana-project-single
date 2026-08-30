@@ -106,11 +106,11 @@ export const USER_DASHBOARD_SIDEBAR = [
     icon: User,
     url: "/my-dashboard/my-profile",
   },
-  {
-    title: "Favorite Profiles",
-    icon: HeartPlus,
-    url: "/my-dashboard/favorites",
-  },
+  // {
+  //   title: "Favorite Profiles",
+  //   icon: HeartPlus,
+  //   url: "/my-dashboard/favorites",
+  // },
   {
     title: "Best Proposals",
     icon: Spotlight,

@@ -21,7 +21,7 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Briefcase } from "lucide-react";
+import { ArrowRight, Briefcase } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   OnboardingFormValues,

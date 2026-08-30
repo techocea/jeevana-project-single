@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
+//ADMIN USER ACTIONS
 export async function banUser(userId: string) {
   try {
     await db

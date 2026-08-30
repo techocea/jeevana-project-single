@@ -58,12 +58,12 @@ const PartnerPreferences = ({
     } = useForm<OnboardingFormValues>({
         resolver: zodResolver(stepSevenPreferencesSchema as any),
         defaultValues: {
-            preferredMinAge: initialData?.preferredMinAge || "",
-            preferredMaxAge: initialData?.preferredMaxAge || "",
-            preferredMaritalStatus: initialData?.preferredMaritalStatus ?? "never_married",
-            preferredEducationLevels: initialData?.preferredEducationLevels ?? [],
-            preferredProfessions: initialData?.preferredProfessions ?? [],
-            preferredAnnualIncomeRanges: initialData?.preferredAnnualIncomeRanges ?? [],
+            preferredMinAge: initialData?.preferredMinAge || 0,
+            preferredMaxAge: initialData?.preferredMaxAge || 0,
+            preferredMaritalStatus: initialData?.preferredMaritalStatus || "never_married",
+            preferredEducationLevels: initialData?.preferredEducationLevels || [],
+            preferredProfessions: initialData?.preferredProfessions || [],
+            preferredAnnualIncomeRanges: initialData?.preferredAnnualIncomeRanges || [],
         },
     });
 
@@ -387,7 +387,7 @@ const PartnerPreferences = ({
                             onClick={handleSubmit(onNext)}
                             disabled={isSubmitting}
                         >
-                            Next Step <ArrowRight />
+                            Done <ArrowRight />
                         </Button>
                     </>
                 ) : (

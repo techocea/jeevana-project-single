@@ -96,6 +96,7 @@ const SearchProfiles = async ({ searchParams }: PageProps) => {
             profiles.map((profile) => (
               <ProfileCard
                 key={profile.id}
+                routing="/profiles"
                 currentProfileId={currentProfile?.id || ""}
                 profileCardData={profile}
               />

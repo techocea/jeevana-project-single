@@ -673,13 +673,13 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
         </div>
 
         <div className="flex items-center gap-2 pb-2 w-full">
-          <Button type="submit" className="w-1/2">
+          <Button type="submit" className="w-1/2 rounded-full">
             APPLY
           </Button>
           <Button
             variant="outline"
             type="button"
-            className="w-1/2"
+            className="w-1/2 rounded-full"
             onClick={resetFilters}
           >
             RESET

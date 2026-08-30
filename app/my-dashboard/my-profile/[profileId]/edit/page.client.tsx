@@ -24,7 +24,13 @@ interface EditProfileProps {
 const EditProfile = ({ initialData, profileId }: EditProfileProps) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<
-    "basic" | "religion" | "career" | "location" | "personal" | "hobbies" | "partner_preferences"
+    | "basic"
+    | "religion"
+    | "career"
+    | "location"
+    | "personal"
+    | "hobbies"
+    | "partner_preferences"
   >("basic");
 
   const handleSaveStep = async (stepData: any) => {
@@ -36,11 +42,12 @@ const EditProfile = ({ initialData, profileId }: EditProfileProps) => {
       }
 
       const result = await updateProfile(profileId, sanitizedData);
-      if (result.success) {
-        toast.success("Data Saved Successfully!");
-        console.log("STEP_SAVED_SUCCESSFULLY:", result.data);
-        router.back();
+      if (!result.success) {
+        toast.error(result.error || "Failed to update profile!");
+        return;
       }
+      toast.success("Data Saved Successfully!");
+      router.back();
     } catch (error) {
       toast.error("Error in updating data!");
       console.error("ERROR_UPDATING_DATA:", error);
@@ -77,8 +84,8 @@ const EditProfile = ({ initialData, profileId }: EditProfileProps) => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={`px-4 py-2 text-sm font-medium whitespace-nowrap cursor-pointer ${activeTab === tab.id
-                ? "border-b-2 border-primary text-primary"
-                : "text-muted hover:text-primary hover:border-b-2 delay-100 transition-colors"
+                  ? "border-b-2 border-primary text-primary"
+                  : "text-muted hover:text-primary hover:border-b-2 delay-100 transition-colors"
                 }`}
             >
               {tab.label}
