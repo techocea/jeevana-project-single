@@ -39,16 +39,17 @@ const CreateAdPage = ({ initialData }: { initialData: InitialProfileData }) => {
 
   const methods = useForm<InitialProfileData>({
     defaultValues: {
+      ...initialData,
       userId: initialData?.userId || "",
       status: initialData?.status || "approved",
       mailRoutingTarget: initialData?.mailRoutingTarget || "owner",
       secondaryEmail: initialData?.secondaryEmail || "",
       createdBy: initialData?.createdBy || "self",
-      ...initialData,
-    },
+    }
   });
 
   const { watch, setValue, control } = methods;
+
   const selectedUserId = watch("userId");
   const mailRoutingTarget = watch("mailRoutingTarget");
   const showSecondaryEmail =
@@ -64,14 +65,19 @@ const CreateAdPage = ({ initialData }: { initialData: InitialProfileData }) => {
   const onSubmit = async (data: InitialProfileData) => {
     if (!data.userId) {
       toast.error("Search and select a registered user before publishing.");
+      console.log("User ID is missing:", data.userId);
       return;
     }
 
     setIsSubmitting(true);
+
     try {
+      console.log("[Submitting data:]", data);
       const result = await createProfileByAdmin(data, data.userId);
-      if (!result.success) {
-        toast.error("Failed to create the advertisement profile.");
+
+      console.log("[Admin Profile Create Result:]", result);
+      if (!result?.success) {
+        toast.error(result?.error || "Failed to create the advertisement profile.");
         return;
       }
       toast.success("Profile created successfully!");
@@ -352,7 +358,7 @@ const CreateAdPage = ({ initialData }: { initialData: InitialProfileData }) => {
                       variant="secondary"
                       className="w-fit uppercase py-3 px-5"
                     >
-                      Publish Ad
+                      Save as Draft
                       <ArrowRight />
                     </Button>
                   </div>

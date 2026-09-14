@@ -148,7 +148,7 @@ export const profiles = pgTable("profiles", {
     .default(sql`concat('JV', nextval('profile_id_seq'))`)
     .notNull()
     .unique(),
-  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).unique(),
   createdBy: text("created_by"), // 'self' | 'parent' | 'guardian' | 'sibling' | 'friend' | 'admin'
   fullName: text("full_name"),
   contact: text("contact"),
@@ -188,7 +188,7 @@ export const profiles = pgTable("profiles", {
 
 export const partnerPreferences = pgTable("partner_preferences", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).unique(),
   preferredMinAge: integer("preferred_min_age"),
   preferredMaxAge: integer("preferred_max_age"),
   preferredMaritalStatus: maritalStatusEnum("preferred_marital_status").default(

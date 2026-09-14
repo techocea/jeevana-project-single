@@ -56,17 +56,14 @@ export interface InitialProfileData {
   residencyStatus?: ResindencyTypes;
   height?: string | undefined;
   weight?: string | undefined;
-  age?: number;
+
   smoking?: BadHabitTypes;
   drinking?: BadHabitTypes;
   foodPreferences?: FoodHabitTypes;
   isDifferentlyAbled?: boolean;
   differentlyAbledDetails?: string;
   narrative?: string;
-  foodPreferences?: FoodHabitTypes;
-  isDifferentlyAbled?: boolean;
-  differentlyAbledDetails?: string;
-  narrative?: string;
+
   hobbies?: string[];
   status?: ProfileStatusTypes;
   mailRoutingTarget?: MailRoutingTargetTypes;
@@ -78,6 +75,7 @@ export interface InitialProfileData {
   preferredProfessions?: string[];
   preferredAnnualIncomeRanges?: string[];
 }
+
 export interface StepOneInitialData {
   initialData: {
     createdBy?: CreatedByTypes;

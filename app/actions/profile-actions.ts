@@ -34,8 +34,7 @@ type CombinedUpdateInput = Partial<typeof profiles.$inferInsert> &
 // USER PROFILE ACTIONS
 export async function createProfileByUser(
   stepNumber: number,
-  payload: Record<string, any>,
-  targetUserId?: string,
+  payload: Record<string, any>
 ) {
   try {
     const supabase = await createClient();
@@ -43,19 +42,22 @@ export async function createProfileByUser(
       data: { user: authedUser },
     } = await supabase.auth.getUser();
 
-    if (!authedUser) throw new Error("Unauthorized mutations rejected");
-
-    let userIdToUpdate = authedUser.id;
-
-    if (targetUserId) {
-      userIdToUpdate = targetUserId;
+    if (!authedUser) {
+      return { success: false, error: "Unauthorized mutations rejected" };
     }
-    let updatePayload: Record<string, any> = {};
+
+    const userIdToUpdate = authedUser.id;
+
+    let updatePayload: CombinedUpdateInput = {};
 
     if (stepNumber === 1) {
       const rawDob = payload.dob;
       const parsedDate =
         rawDob && !isNaN(Date.parse(rawDob)) ? new Date(rawDob) : null;
+
+      const parsedAge = payload.age !== undefined && payload.age !== null && payload.age !== ""
+              ? parseInt(String(payload.age), 10)
+              : null;
 
       updatePayload = {
         createdBy: payload.createdBy,
@@ -63,7 +65,7 @@ export async function createProfileByUser(
         contact: payload.contact,
         gender: payload.gender,
         dob: parsedDate,
-        age: payload.age ? parseInt(String(payload.age), 10) : null,
+        age: parsedAge,
         profilePic: payload.profilePic,
       };
     } else if (stepNumber === 2) {
@@ -127,87 +129,78 @@ export async function createProfileByUser(
       };
     }
 
-    let returnedProfileId = "";
+    const isFinished = stepNumber === 7;
+    const nextProgressString =
+        NEXT_STEP_POINTER[stepNumber as keyof typeof NEXT_STEP_POINTER] ||
+        "COMPLETED";
 
-    if (stepNumber <= 6) {
-      const existingRecord = await db.query.profiles.findFirst({
-        where: eq(profiles.userId, userIdToUpdate),
-      });
+    const { savedProfile, savedPrefs } = await db.transaction(async (tx) => {
+      let savedProfile: typeof profiles.$inferSelect | undefined;
+      let savedPrefs: typeof partnerPreferences.$inferSelect | undefined;
 
-      if (existingRecord) {
-        await db
-          .update(profiles)
-          .set({ ...updatePayload, updatedAt: new Date() })
-          .where(eq(profiles.userId, userIdToUpdate));
-        returnedProfileId = existingRecord.id;
-      } else {
-        const [insertedRow] = await db
-          .insert(profiles)
-          .values({
-            userId: userIdToUpdate,
-            ...updatePayload,
-            status: "pending",
-          })
-          .returning({ id: profiles.id });
+      if (stepNumber <= 6) {
+        // Requires a UNIQUE constraint on profiles.userId for this to work.
+        const [row] = await tx
+            .insert(profiles)
+            .values({
+              userId: userIdToUpdate,
+              ...updatePayload,
+              status: "pending",
+            })
+            .onConflictDoUpdate({
+              target: profiles.userId,
+              set: { ...updatePayload, updatedAt: new Date() },
+            })
+            .returning();
+        savedProfile = row;
+      } else if (stepNumber === 7) {
+        // Requires a UNIQUE constraint on partnerPreferences.userId.
+        const [prefRow] = await tx
+            .insert(partnerPreferences)
+            .values({
+              userId: userIdToUpdate,
+              preferredMinAge: updatePayload.preferredMinAge,
+              preferredMaxAge: updatePayload.preferredMaxAge,
+              preferredMaritalStatus:
+                  updatePayload.preferredMaritalStatus || "never_married",
+              preferredEducationLevels: Array.isArray(
+                  updatePayload.preferredEducationLevels,
+              )
+                  ? updatePayload.preferredEducationLevels
+                  : [],
+              preferredProfessions: Array.isArray(
+                  updatePayload.preferredProfessions,
+              )
+                  ? updatePayload.preferredProfessions
+                  : [],
+              preferredAnnualIncomeRanges: Array.isArray(
+                  updatePayload.preferredAnnualIncomeRanges,
+              )
+                  ? updatePayload.preferredAnnualIncomeRanges
+                  : [],
+            })
+            .onConflictDoUpdate({
+              target: partnerPreferences.userId,
+              set: { ...updatePayload, updatedAt: new Date() },
+            })
+            .returning();
+        savedPrefs = prefRow;
 
-        if (!insertedRow)
-          throw new Error("Failed to capture returned inserted row ID.");
-        returnedProfileId = insertedRow.id;
-      }
-    } else if (stepNumber === 7) {
-      const existingPrefs = await db.query.partnerPreferences.findFirst({
-        where: eq(partnerPreferences.userId, userIdToUpdate),
-      });
-
-      if (existingPrefs) {
-        await db
-          .update(partnerPreferences)
-          .set({ ...updatePayload, updatedAt: new Date() })
-          .where(eq(partnerPreferences.userId, userIdToUpdate));
-      } else {
-        await db.insert(partnerPreferences).values({
-          userId: userIdToUpdate,
-          preferredMaxAge: updatePayload.preferredMaxAge,
-          preferredMinAge: updatePayload.preferredMinAge,
-          preferredMaritalStatus:
-            updatePayload.preferredMaritalStatus || "never_married",
-          preferredEducationLevels: Array.isArray(
-            updatePayload.preferredEducationLevels,
-          )
-            ? updatePayload.preferredEducationLevels
-            : [],
-          preferredProfessions: Array.isArray(
-            updatePayload.preferredProfessions,
-          )
-            ? updatePayload.preferredProfessions
-            : [],
-          preferredAnnualIncomeRanges: Array.isArray(
-            updatePayload.preferredAnnualIncomeRanges,
-          )
-            ? updatePayload.preferredAnnualIncomeRanges
-            : [],
+        savedProfile = await tx.query.profiles.findFirst({
+          where: eq(profiles.userId, userIdToUpdate),
         });
       }
 
-      const userProfile = await db.query.profiles.findFirst({
-        where: eq(profiles.userId, userIdToUpdate),
-      });
-      returnedProfileId = userProfile?.id || "";
-    }
+      await tx
+          .update(users)
+          .set({
+            onboardingStep: nextProgressString,
+            onboardingStatus: isFinished ? "COMPLETED" : "INCOMPLETED",
+          })
+          .where(eq(users.id, userIdToUpdate));
 
-    const nextProgressString =
-      NEXT_STEP_POINTER[stepNumber as keyof typeof NEXT_STEP_POINTER] ||
-      "COMPLETED";
-
-    const isFinished = stepNumber === 7;
-
-    await db
-      .update(users)
-      .set({
-        onboardingStep: nextProgressString,
-        onboardingStatus: isFinished ? "COMPLETED" : "INCOMPLETED",
-      })
-      .where(eq(users.id, userIdToUpdate));
+      return { savedProfile, savedPrefs };
+    });
 
     revalidatePath("/onboarding");
 
@@ -215,7 +208,9 @@ export async function createProfileByUser(
       success: true,
       nextStep: stepNumber + 1,
       isFinished,
-      profileId: returnedProfileId,
+      profileId: savedProfile?.id || "",
+      profile: savedProfile || null,
+      partnerPreferences: savedPrefs || null,
     };
   } catch (error: any) {
     console.error(`[WIZARD_SYNC_STEP_${stepNumber}_CRASH]:`, error);
@@ -742,6 +737,23 @@ export async function createProfileByAdmin(
   profileIdToUpdate?: string,
 ) {
   try {
+    const supabase = await createClient();
+    const {
+      data: {user: authedUser},
+    } = await supabase.auth.getUser();
+
+    if (!authedUser) {
+      return {success: false, error: "Unauthorized"};
+    }
+
+    const requester = await db.query.users.findFirst({
+      where: eq(users.id, authedUser.id),
+    });
+
+    if (!requester || requester.role !== "admin") {
+      return {success: false, error: "Forbidden: admin access required"};
+    }
+
     if (!targetUserId) {
       return {
         success: false,
@@ -749,15 +761,15 @@ export async function createProfileByAdmin(
       };
     }
 
-    // 1. Parse Date of Birth & Numbers cleanly
     const parsedDate =
-      payload.dob && !isNaN(Date.parse(payload.dob))
-        ? new Date(payload.dob)
+        payload.dob && !isNaN(Date.parse(payload.dob))
+            ? new Date(payload.dob)
+            : null;
+
+    const parsedAge = payload.age !== undefined && payload.age !== null && payload.age !== ""
+        ? parseInt(String(payload.age), 10)
         : null;
 
-    const ageNum = payload.age ? parseInt(String(payload.age), 10) : null;
-
-    // 2. Prepare Profile Payload (Strictly profiles table columns)
     const profilePayload = {
       userId: targetUserId,
       createdBy: payload.createdBy || null,
@@ -765,7 +777,7 @@ export async function createProfileByAdmin(
       contact: payload.contact || null,
       gender: payload.gender || null,
       dob: parsedDate,
-      age: isNaN(ageNum as number) ? null : ageNum,
+      age: parsedAge,
       profilePic: payload.profilePic || null,
       religion: payload.religion || null,
       caste: payload.caste || null,
@@ -784,8 +796,8 @@ export async function createProfileByAdmin(
       drinking: payload.drinking || null,
       foodPreferences: payload.foodPreferences || null,
       isDifferentlyAbled:
-        payload.isDifferentlyAbled === true ||
-        payload.isDifferentlyAbled === "yes",
+          payload.isDifferentlyAbled === true ||
+          payload.isDifferentlyAbled === "yes",
       differentlyAbledDetails: payload.differentlyAbledDetails || null,
       hobbies: Array.isArray(payload.hobbies) ? payload.hobbies : [],
       mailRoutingTarget: payload.mailRoutingTarget || "owner",
@@ -794,7 +806,6 @@ export async function createProfileByAdmin(
       updatedAt: new Date(),
     };
 
-    // 3. Prepare Partner Preferences Payload (Strictly partner_preferences table columns)
     const minAge = payload.preferredMinAge ?? payload.minAge;
     const maxAge = payload.preferredMaxAge ?? payload.maxAge;
 
@@ -804,86 +815,78 @@ export async function createProfileByAdmin(
       preferredMaxAge: maxAge ? Number(maxAge) : 50,
       preferredMaritalStatus: payload.preferredMaritalStatus || "never_married",
       preferredEducationLevels: Array.isArray(payload.preferredEducationLevels)
-        ? payload.preferredEducationLevels
-        : [],
+          ? payload.preferredEducationLevels
+          : [],
       preferredProfessions: Array.isArray(payload.preferredProfessions)
-        ? payload.preferredProfessions
-        : [],
+          ? payload.preferredProfessions
+          : [],
       preferredAnnualIncomeRanges: Array.isArray(
-        payload.preferredAnnualIncomeRanges,
+          payload.preferredAnnualIncomeRanges,
       )
-        ? payload.preferredAnnualIncomeRanges
-        : [],
+          ? payload.preferredAnnualIncomeRanges
+          : [],
       updatedAt: new Date(),
     };
 
-    let finalProfileId: string;
+    const {savedProfile, savedPrefs} = await db.transaction(async (tx) => {
+      let savedProfile: typeof profiles.$inferSelect;
 
-    // 4. Upsert Profiles Table
-    if (profileIdToUpdate) {
-      await db
-        .update(profiles)
-        .set(profilePayload)
-        .where(eq(profiles.id, profileIdToUpdate));
-
-      finalProfileId = profileIdToUpdate;
-    } else {
-      const existingProfile = await db.query.profiles.findFirst({
-        where: eq(profiles.userId, targetUserId),
-      });
-
-      if (existingProfile) {
-        await db
-          .update(profiles)
-          .set(profilePayload)
-          .where(eq(profiles.userId, targetUserId));
-        finalProfileId = existingProfile.id;
+      if (profileIdToUpdate) {
+        const [row] = await tx
+            .update(profiles)
+            .set(profilePayload)
+            .where(eq(profiles.id, profileIdToUpdate))
+            .returning();
+        savedProfile = row;
       } else {
-        const [insertedRow] = await db
-          .insert(profiles)
-          .values(profilePayload)
-          .returning({ id: profiles.id });
-
-        if (!insertedRow) {
-          throw new Error("Failed to create the profile record.");
-        }
-        finalProfileId = insertedRow.id;
+        // Requires a UNIQUE constraint on profiles.userId.
+        const [row] = await tx
+            .insert(profiles)
+            .values(profilePayload)
+            .onConflictDoUpdate({
+              target: profiles.userId,
+              set: profilePayload,
+            })
+            .returning();
+        savedProfile = row;
       }
-    }
 
-    // 5. Upsert Partner Preferences Table (Explicit find & update/insert to avoid constraint issues)
-    const existingPrefs = await db.query.partnerPreferences.findFirst({
-      where: eq(partnerPreferences.userId, targetUserId),
+      if (!savedProfile) {
+        throw new Error("Failed to create or update the profile record.");
+      }
+
+      // Requires a UNIQUE constraint on partnerPreferences.userId.
+      const [savedPrefs] = await tx
+          .insert(partnerPreferences)
+          .values(partnerPreferencesPayload)
+          .onConflictDoUpdate({
+            target: partnerPreferences.userId,
+            set: partnerPreferencesPayload,
+          })
+          .returning();
+
+      await tx
+          .update(users)
+          .set({onboardingStatus: "COMPLETED", onboardingStep: "COMPLETED"})
+          .where(eq(users.id, targetUserId));
+
+      return {savedProfile, savedPrefs};
     });
-
-    if (existingPrefs) {
-      await db
-        .update(partnerPreferences)
-        .set(partnerPreferencesPayload)
-        .where(eq(partnerPreferences.userId, targetUserId));
-    } else {
-      await db.insert(partnerPreferences).values(partnerPreferencesPayload);
-    }
-
-    // 6. Complete Onboarding Status for Target User
-    await db
-      .update(users)
-      .set({ onboardingStatus: "COMPLETED", onboardingStep: "COMPLETED" })
-      .where(eq(users.id, targetUserId));
 
     revalidatePath("/control-panel");
     revalidatePath("/control-panel/approval-queues");
 
     return {
       success: true,
-      profileId: finalProfileId,
+      profileId: savedProfile.id,
+      profile: savedProfile,
+      partnerPreferences: savedPrefs,
     };
   } catch (error: any) {
     console.error("[ADMIN_PROFILE_CREATE_CRASH]:", error);
     return {
       success: false,
       error: error.message || "Profile creation failed.",
-    };
+    }
   }
 }
-
