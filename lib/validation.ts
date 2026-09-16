@@ -15,6 +15,7 @@ export const stepOneBasicSchema = z.object({
     .nullable()
     .optional(),
   gender: z.enum(["male", "female"]).nullable(),
+  maritalStatus: z.enum(["divorced", "widowed", "single"]).nullable(),
   profilePic: z.url("Invalid image path location").nullable(),
   dob: z.coerce
     .date()

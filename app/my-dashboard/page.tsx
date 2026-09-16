@@ -24,7 +24,7 @@ const DashboardPage = async () => {
     redirect("/onboarding");
   }
 
-  return <div>DashboardPage</div>;
+  return <div><h2 className="text-black">DashboardPage</h2></div>;
 };
 
 export default DashboardPage;

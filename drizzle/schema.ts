@@ -165,6 +165,7 @@ export const profiles = pgTable("profiles", {
   state: text("state"),
   city: text("city"),
   residencyStatus: text("residency_status"),
+  maritalStatus: maritalStatusEnum("marital_status"),
   height: text("height_cm"),
   weight: text("weight_kg"),
   age: integer("age"),
@@ -202,6 +203,40 @@ export const partnerPreferences = pgTable("partner_preferences", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const profileMatches = pgTable("profile_matches", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+    matchedProfileId: uuid("matched_profile_id").references(() => profiles.id, { onDelete: "cascade" }).notNull(),
+    score: integer("score").notNull(), // Match percentage (0-100)
+    matchReasons: text("match_reasons").array(), // e.g. ["Age Preference Met", "Education Match"]
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  }, (table) => ({
+    // Prevents duplicate match entries for the same user pair
+    userMatchIdx: uniqueIndex("user_match_idx").on(table.userId, table.matchedProfileId),
+}));
+
+export const profileMatchesRelations = relations(profileMatches, ({ one }) => ({
+    matchedProfile: one(profiles, {
+      fields: [profileMatches.matchedProfileId],
+      references: [profiles.id],
+    }),
+    user: one(users, {
+      fields: [profileMatches.userId],
+      references: [users.id],
+    }),
+  }));
+
+export const usersRelations = relations(users, ({ many }) => ({
+    profiles: many(profiles),
+  }));
+
+export const profilesRelations = relations(profiles, ({ one }) => ({
+    user: one(users, {
+      fields: [profiles.userId],
+      references: [users.id],
+    }),
+}));
+
 export const inquiries = pgTable("inquiries", {
   id: uuid("id").primaryKey().defaultRandom(),
   fullName: text("full_name").notNull(),
@@ -212,17 +247,6 @@ export const inquiries = pgTable("inquiries", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
-
-export const usersRelations = relations(users, ({ many }) => ({
-  profiles: many(profiles),
-}));
-
-export const profilesRelations = relations(profiles, ({ one }) => ({
-  user: one(users, {
-    fields: [profiles.userId],
-    references: [users.id],
-  }),
-}));
 
 export type User = typeof users.$inferSelect;
 export type Profile = typeof profiles.$inferSelect;

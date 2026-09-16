@@ -12,6 +12,7 @@ import { and, eq, gte, lte, desc, ilike, ne, sql } from "drizzle-orm";
 import { SearchFilters } from "@/types";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import {calculateUserMatchesAction} from "@/app/actions/matchmaking-action";
 
 const NEXT_STEP_POINTER = {
   1: "RELIGION",
@@ -64,6 +65,7 @@ export async function createProfileByUser(
         fullName: payload.fullName,
         contact: payload.contact,
         gender: payload.gender,
+        maritalStatus:payload.maritalStatus,
         dob: parsedDate,
         age: parsedAge,
         profilePic: payload.profilePic,
@@ -201,6 +203,8 @@ export async function createProfileByUser(
 
       return { savedProfile, savedPrefs };
     });
+
+    await calculateUserMatchesAction(userIdToUpdate);
 
     revalidatePath("/onboarding");
 
@@ -460,6 +464,8 @@ export async function updateProfile(
         ...updatedPreferences,
       };
     });
+
+    await calculateUserMatchesAction(currentProfile.userId);
 
     revalidatePath("/my-dashboard");
     revalidatePath(`/my-dashboard/my-profile/${profileId}/edit`);
@@ -776,6 +782,7 @@ export async function createProfileByAdmin(
       fullName: payload.fullName || null,
       contact: payload.contact || null,
       gender: payload.gender || null,
+      maritalStatus:payload.maritalStatus || null,
       dob: parsedDate,
       age: parsedAge,
       profilePic: payload.profilePic || null,
@@ -872,6 +879,8 @@ export async function createProfileByAdmin(
 
       return {savedProfile, savedPrefs};
     });
+
+    await calculateUserMatchesAction(targetUserId);
 
     revalidatePath("/control-panel");
     revalidatePath("/control-panel/approval-queues");

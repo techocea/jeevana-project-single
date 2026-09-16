@@ -1,51 +1,26 @@
-import { getProfilesByFilters } from "@/app/actions/profile-actions";
 import FilterOptions from "@/components/landing/filter-options";
 import { db } from "@/lib/db";
-import { profiles as profilesSchema } from "@/drizzle/schema";
-import { SearchFilters } from "@/types";
 import { createClient } from "@/utils/supabase";
-import { eq } from "drizzle-orm";
+import {desc, eq} from "drizzle-orm";
 import { ProfileCard } from "@/components/landing/profile-card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import {profileMatches} from "@/drizzle/schema";
+import {calculateUserMatchesAction} from "@/app/actions/matchmaking-action";
+import MatchingProfileCard from "@/components/landing/matching-profile-card";
 
 type PageProps = {
     searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-const getSearchValue = (
-    value: string | string[] | undefined,
-): string | undefined => {
-    if (Array.isArray(value)) {
-        return value[0] || undefined;
-    }
-    return value || undefined;
-};
-
-const normalizeSearchFilters = (
-    searchParams: Record<string, string | string[] | undefined>,
-): SearchFilters => ({
-    lookingFor: getSearchValue(searchParams.lookingFor),
-    minAge: getSearchValue(searchParams.minAge),
-    maxAge: getSearchValue(searchParams.maxAge),
-    religion: getSearchValue(searchParams.religion),
-    caste: getSearchValue(searchParams.caste),
-    motherTongue: getSearchValue(searchParams.motherTongue),
-    educationLevel: getSearchValue(searchParams.educationLevel),
-    profession: getSearchValue(searchParams.profession),
-    annualIncomeRange: getSearchValue(searchParams.annualIncomeRange),
-    country: getSearchValue(searchParams.country),
-    state: getSearchValue(searchParams.state),
-    hobbies: getSearchValue(searchParams.hobbies),
-});
-
 const BestProposalsPage = async ({ searchParams }: PageProps) => {
     const supabase = await createClient();
+
     const {
-        data: { user },
+        data: { user:authedUser },
     } = await supabase.auth.getUser();
 
-    if (!user) {
+    if (!authedUser) {
         return (
             <div className="flex items-center justify-center min-h-100 text-red-500 font-medium">
                 <p>User not authenticated</p>
@@ -53,34 +28,43 @@ const BestProposalsPage = async ({ searchParams }: PageProps) => {
         );
     }
 
-    const currentProfile = await db.query.profiles.findFirst({
-        where: eq(profilesSchema.userId, user.id),
-        columns: { id: true },
-    });
+    const currentUserId = authedUser.id;
 
     const resolvedSearchParams = await searchParams;
 
     const currentPage = Number(resolvedSearchParams.page) || 1;
     const pageSize = 4;
 
-    const filters = normalizeSearchFilters(resolvedSearchParams);
+    let userMatches = await db.query.profileMatches.findMany({
+        where: eq(profileMatches.userId, currentUserId),
+        with:{
+            matchedProfile:true,
+        },
+        orderBy:[desc(profileMatches.score)],
+    });
 
-    const result = await getProfilesByFilters(filters, currentProfile?.id);
-    const allProfiles = result.data || [];
+    if(userMatches.length === 0) {
+        await calculateUserMatchesAction(currentUserId);
 
-    const totalPages = Math.ceil(allProfiles.length / pageSize) || 1;
+        userMatches = await db.query.profileMatches.findMany({
+            where: eq(profileMatches.userId, currentUserId),
+            with:{
+                matchedProfile:true,
+            },
+            orderBy:[desc(profileMatches.score)],
+        });
+    }
+
+    const totalPages = Math.ceil(userMatches.length / pageSize) || 1;
     const startIndex = (currentPage - 1) * pageSize;
-    const profiles = allProfiles.slice(startIndex, startIndex + pageSize);
+    const profiles = userMatches.slice(startIndex, startIndex + pageSize);
 
-    // console.log("Current profile id:", currentProfile?.id);
-    // console.log("Returned profiles from DB:", result.data);
-    // console.log(profiles);
+    // console.log("MATCHING PROFILES FROM DB:", profiles);
 
-    if (!result.success) {
+    if (profiles.length === 0) {
         return (
-            <div className="flex items-center justify-center min-h-100 text-red-500 font-medium">
-                {result.error ||
-                    "An error occurred while rendering your search result matches."}
+            <div className="flex items-center justify-center min-h-[400px] text-gray-500 font-medium">
+                <p>No matching proposals found at this time.</p>
             </div>
         );
     }
@@ -96,23 +80,30 @@ const BestProposalsPage = async ({ searchParams }: PageProps) => {
     return (
         <main className="w-full">
             <section className="flex flex-col gap-8">
-                <FilterOptions mode="dashboard" />
-                <div className="flex-3 flex flex-col items-center gap-6">
+                <div className="flex-3 flex flex-col items-left justify-center gap-6">
+                    <div className="flex flex-col gap-1.5 text-left">
+                        <h1 className="text-2xl font-bold text-black">Best Matches For You</h1>
+                        <p className="text-sm text-muted-foreground">
+                            Curated based on your partner preferences
+                        </p>
+                    </div>
+
                     {profiles.length > 0 ? (
-                        profiles.map((profile) => (
-                            <ProfileCard
-                                key={profile.id}
-                                currentProfileId={currentProfile?.id || ""}
-                                profileCardData={profile}
-                            />
-                        ))
+                        <div className="grid grid-cols-1 md:grid-cols-2 mt-2 gap-6">
+                            {profiles.map((match) => (
+                                <MatchingProfileCard key={match.id} match={match} />
+                            ))}
+                        </div>
                     ) : (
-                        <div className="text-center text-muted-foreground">
-                            No profiles found matching your criteria.
+                        <div className="flex flex-col items-center justify-center min-h-[300px] rounded-lg border border-dashed text-center p-8">
+                            <p className="text-muted-foreground font-medium">No matching profiles found yet.</p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                                Try expanding your partner preferences to discover more candidates.
+                            </p>
                         </div>
                     )}
 
-                    {allProfiles.length > pageSize && (
+                    {profiles.length > pageSize && (
                         <div className="flex items-center gap-4 mt-6">
                             <Button
                                 variant="outline"

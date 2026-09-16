@@ -92,9 +92,9 @@ const LoginForm = () => {
           )}
         </div>
 
-        {serverError ? (
+        {serverError &&
           <div className="p-3 text-sm bg-red-200 border-l-4 border-red-600 text-red-600">{serverError}</div>
-        ) : null}
+        }
 
         <Button
           type="submit"

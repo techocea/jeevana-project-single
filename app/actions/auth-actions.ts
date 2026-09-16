@@ -16,7 +16,6 @@ import { eq } from "drizzle-orm";
 import { users } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase";
 import { supabaseAdmin } from "@/utils/supabase-admin";
-import { createProfileByUser } from "./onboarding-actions";
 
 export async function loginAdmin(data: AuthLoginValues) {
   const parsed = authLoginSchema.safeParse(data);
@@ -129,6 +128,7 @@ export async function loginUser(data: AuthLoginValues) {
     await supabase.auth.signInWithPassword({ email, password });
 
   if (authError || !authData.user) {
+    console.error("[LOGIN_AUTH_FAILURE]:", authError?.message, authError?.code);
     return { error: "User not registered." };
   }
 
@@ -209,7 +209,7 @@ export async function createUserByAdmin(data: CreateUserByAdminValues) {
     if (!parsed.success) {
       return {
         error: "Validation failed",
-        fields: parsed.error.flatten().fieldErrors,
+        fields: z.treeifyError(parsed.error).errors,
       };
     }
 

@@ -45,6 +45,7 @@ export function ProfileCard({
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFavorited(profileCardData?.isFavorited ?? false);
   }, [profileCardData?.isFavorited]);
 
@@ -62,7 +63,6 @@ export function ProfileCard({
       }else{
         toast.success("Profile added to favorites");
       }
-
     });
   };
 

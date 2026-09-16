@@ -74,7 +74,6 @@ const SearchProfiles = async ({ searchParams }: PageProps) => {
 
   // console.log("Current profile id:", currentProfile?.id);
   // console.log("Returned profiles from DB:", result.data);
-  // console.log(profiles);
 
   if (!result.success) {
     return (

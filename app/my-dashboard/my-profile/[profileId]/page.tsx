@@ -109,9 +109,9 @@ const ProfilePage = async ({ params }: PageProps) => {
                     </div>
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                         {renderField("Full Name", profile.fullName)}
-                        {renderField("Created By", profile.createdBy)}
                         {renderField("Contact", profile.contact)}
                         {renderField("Gender", profile.gender)}
+                        {renderField("Marital Status", profile.maritalStatus)}
                         {renderField(
                             "Date of Birth",
                             profile.dob
@@ -235,7 +235,6 @@ const ProfilePage = async ({ params }: PageProps) => {
                         {renderField("Hobbies", hobbies)}
                         {renderField("Mail Routing Target", profile.mailRoutingTarget)}
                         {renderField("Secondary Email", profile.secondaryEmail)}
-                        {renderField("Profile Status", profile.status)}
                     </div>
                     {profile.narrative && (
                         <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4">

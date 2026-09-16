@@ -30,3 +30,9 @@ export const getStatusBadge = (status: string) => {
             null;
     }
 };
+
+export const getScoreBadgeStyle = (score: number) => {
+    if (score >= 80) return "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800";
+    if (score >= 60) return "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800";
+    return "bg-slate-500/15 text-slate-700 dark:text-slate-400 border-slate-200 dark:border-slate-800";
+};

@@ -64,10 +64,10 @@ function BasicInformationFields({
                   <Controller
                       name="createdBy"
                       control={control}
-                      render={({ field }) => (
+                      render={({field}) => (
                           <Select onValueChange={field.onChange} value={field.value}>
                             <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select relationship" />
+                              <SelectValue placeholder="Select relationship"/>
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="self">Myself</SelectItem>
@@ -86,7 +86,7 @@ function BasicInformationFields({
                 </div>
             )}
 
-            <div className="col-span-2 flex flex-col gap-2">
+            <div className="md:col-span-1 col-span-2 flex flex-col gap-2">
               <Label
                   htmlFor="fullName"
                   className="text-sm font-medium text-slate-700 uppercase"
@@ -128,6 +128,38 @@ function BasicInformationFields({
 
             <div className="md:col-span-1 col-span-2 flex flex-col gap-2">
               <Label
+                  htmlFor="maritalStatus"
+                  className="text-sm font-medium text-slate-700 uppercase"
+              >
+                Marital Status
+              </Label>
+              <Controller
+                  control={control}
+                  name="maritalStatus"
+                  render={({field}) => (
+                      <Select value={field.value ?? ""} onValueChange={field.onChange}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select Marital Status"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectItem value="never_married">Never Married</SelectItem>
+                            <SelectItem value="widowed">Widowed</SelectItem>
+                            <SelectItem value="divorced">Divorced</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                  )}
+              />
+              {errors.maritalStatus && (
+                  <span className="text-sm text-red-600">
+                {errors.maritalStatus.message as string}
+              </span>
+              )}
+            </div>
+
+            <div className="md:col-span-1 col-span-2 flex flex-col gap-2">
+              <Label
                   htmlFor="gender"
                   className="text-sm font-medium text-slate-700 uppercase"
               >
@@ -136,10 +168,10 @@ function BasicInformationFields({
               <Controller
                   control={control}
                   name="gender"
-                  render={({ field }) => (
+                  render={({field}) => (
                       <Select value={field.value ?? ""} onValueChange={field.onChange}>
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select gender" />
+                          <SelectValue placeholder="Select gender"/>
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
@@ -182,13 +214,13 @@ function BasicInformationFields({
               <Controller
                   control={control}
                   name="age"
-                  render={({ field }) => (
+                  render={({field}) => (
                       <Select
                           value={field.value ? field.value.toString() : ""}
                           onValueChange={(value) => field.onChange(parseInt(value))}
                       >
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select age" />
+                          <SelectValue placeholder="Select age"/>
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
@@ -214,12 +246,12 @@ function BasicInformationFields({
   );
 }
 
-function BasicInformationOnboarding({ onPrev, onNext, initialData }: StepOneProps) {
+function BasicInformationOnboarding({onPrev, onNext, initialData}: StepOneProps) {
   const {
     register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<OnboardingFormValues>({
     resolver: zodResolver(stepOneBasicSchema as any),
     defaultValues: {

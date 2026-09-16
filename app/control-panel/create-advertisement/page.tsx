@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import {
   ArrowRight,
-  ArrowRightLeft,
+  ArrowRightLeft, Loader2,
   ShieldCogCorner,
   UserCheck,
 } from "lucide-react";
@@ -356,10 +356,14 @@ const CreateAdPage = ({ initialData }: { initialData: InitialProfileData }) => {
                       type="submit"
                       disabled={isSubmitting}
                       variant="secondary"
-                      className="w-fit uppercase py-3 px-5"
+                      className="w-fit uppercase py-3 px-5 flex gap-2"
                     >
-                      Save as Draft
-                      <ArrowRight />
+                      {isSubmitting ? <Loader2 className="animate-spin transition-all"/> :
+                          <>
+                        Save as Draft
+                        <ArrowRight />
+                      </>
+                      }
                     </Button>
                   </div>
                 </div>
