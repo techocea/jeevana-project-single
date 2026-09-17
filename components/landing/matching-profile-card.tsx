@@ -34,10 +34,10 @@ interface ProfileMatchItem {
 
 interface MatchingProfileCardProps {
     match: ProfileMatchItem;
-    currentProfileId: string;
+    // currentProfileId: string;
 }
 
-const MatchingProfileCard = ({ match,currentProfileId }: MatchingProfileCardProps) =>{
+const MatchingProfileCard = ({ match }: MatchingProfileCardProps) =>{
     const { score, matchReasons, matchedProfile } = match;
 
     // const [favorited, setFavorited] = useState<boolean>(matchedProfile?.isFavorited ?? false);
