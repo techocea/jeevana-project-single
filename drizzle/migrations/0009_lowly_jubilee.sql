@@ -1,0 +1,1 @@
+ALTER TABLE "profile_matches" ADD COLUMN "viewed_at" timestamp;

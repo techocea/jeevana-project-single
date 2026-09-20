@@ -1,8 +1,6 @@
-import FilterOptions from "@/components/landing/filter-options";
 import { db } from "@/lib/db";
 import { createClient } from "@/utils/supabase";
 import {desc, eq} from "drizzle-orm";
-import { ProfileCard } from "@/components/landing/profile-card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {profileMatches} from "@/drizzle/schema";
@@ -89,7 +87,7 @@ const BestProposalsPage = async ({ searchParams }: PageProps) => {
                     </div>
 
                     {profiles.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 mt-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 mt-2 gap-2">
                             {profiles.map((match) => (
                                 <MatchingProfileCard key={match.id} match={match} />
                             ))}

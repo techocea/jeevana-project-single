@@ -82,7 +82,7 @@ const ProfilePage = async ({ params }: PageProps) => {
                             </div>
                             <div className="flex items-center gap-2">
                                 <Button variant="default" size="lg" asChild>
-                                <Link href="/best-proposals">
+                                <Link href="/my-dashboard/best-proposals">
                                         View Matches
                                 </Link>
                                 </Button>

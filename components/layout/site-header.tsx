@@ -1,5 +1,8 @@
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "../ui/sidebar";
+import {Globe} from "lucide-react";
+import Link from "next/link";
+import { Button } from "../ui/button";
 
 export function SiteHeader() {
   return (
@@ -10,10 +13,14 @@ export function SiteHeader() {
           orientation="vertical"
           className="mx-2 data-[orientation=vertical]:h-6"
         />
-        <h1 className="text-secondary uppercase font-newsreader font-bold">
-          Dashboard
+        <h1 className="text-secondary uppercase font-sans font-bold">
+          Member Dashboard
         </h1>
       </div>
+      <Button variant={"outline"}>
+        <Globe className="text-primary h-3 w-3"/>
+        <Link href={"/"} className="text-primary">Website</Link>
+      </Button>
     </header>
   );
 }

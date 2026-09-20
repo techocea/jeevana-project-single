@@ -209,6 +209,7 @@ export const profileMatches = pgTable("profile_matches", {
     matchedProfileId: uuid("matched_profile_id").references(() => profiles.id, { onDelete: "cascade" }).notNull(),
     score: integer("score").notNull(), // Match percentage (0-100)
     matchReasons: text("match_reasons").array(), // e.g. ["Age Preference Met", "Education Match"]
+    viewedAt:timestamp("viewed_at"),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   }, (table) => ({
     // Prevents duplicate match entries for the same user pair
