@@ -4,11 +4,10 @@ import {db} from "@/lib/db";
 import {
     favorites,
     partnerPreferences, profileMatches,
-    profiles,
-    users,
+    profiles, profileViews, users,
 } from "@/drizzle/schema";
 import {createClient} from "@/utils/supabase";
-import {and, eq, gte, lte, desc, ilike, ne, sql} from "drizzle-orm";
+import {and, eq, gte, lte, desc, ilike, ne, sql, count} from "drizzle-orm";
 import {SearchFilters} from "@/types";
 import {revalidatePath} from "next/cache";
 import {redirect} from "next/navigation";
@@ -78,6 +77,22 @@ export async function getCurrentUser() {
     }
 }
 
+export async function getMatchingProfilesCount(userId: string): Promise<number> {
+    if (!userId) return 0;
+
+    try {
+        const [result] = await db
+            .select({total:count()})
+            .from(profileMatches)
+            .where(eq(profileMatches.userId, userId));
+
+        return result?.total ?? 0;
+    } catch (error) {
+        console.error("Error fetching matching profiles count:", error);
+        return 0;
+    }
+}
+
 export async function createProfileByUser(
     stepNumber: number,
     payload: Record<string, any>
@@ -86,7 +101,7 @@ export async function createProfileByUser(
         const {success, data: currentUser} = await getCurrentUser();
 
         if (!success || !currentUser) {
-            return { success: false, error: "Unauthorized" };
+            return {success: false, error: "Unauthorized"};
         }
 
         const userIdToUpdate = currentUser.id;
@@ -576,6 +591,12 @@ export async function getMatchedProfile(profileId: string) {
                 .where(eq(profileMatches.id, profileId));
         }
 
+        try {
+            await recordProfileView(row.profile.id);
+        } catch (viewError) {
+            console.error("[RECORD_PROFILE_VIEW_FROM_MATCH_CRASH]:", viewError);
+        }
+
         return {
             success: true,
             data: {
@@ -592,6 +613,147 @@ export async function getMatchedProfile(profileId: string) {
             success: false,
             error: "Failed to load matched profile.",
         };
+    }
+}
+
+const VIEW_COOLDOWN_HOURS = 6;
+
+/**
+ * Records that the current user viewed `viewedProfileId`. Safe to call on
+ * every profile-detail page load — it silently no-ops on self-views and
+ * within the cooldown window rather than erroring, so callers don't need
+ * to special-case those.
+ */
+export async function recordProfileView(viewedProfileId: string) {
+    try {
+        const {success, data: currentUser} = await getCurrentUser();
+        if (!success || !currentUser) {
+            return {success: false, error: "Unauthorized"};
+        }
+
+        const targetProfile = await db.query.profiles.findFirst({
+            where: eq(profiles.id, viewedProfileId),
+        });
+
+        if (!targetProfile) {
+            return {success: false, error: "Profile not found."};
+        }
+
+        // Don't count someone viewing their own profile.
+        if (targetProfile.userId === currentUser.id) {
+            return {success: true, recorded: false, reason: "self-view"};
+        }
+
+        const cooldownCutoff = new Date(Date.now() - VIEW_COOLDOWN_HOURS * 60 * 60 * 1000);
+
+        const recentView = await db.query.profileViews.findFirst({
+            where: and(
+                eq(profileViews.viewerUserId, currentUser.id),
+                eq(profileViews.viewedProfileId, viewedProfileId),
+                gte(profileViews.viewedAt, cooldownCutoff),
+            ),
+            orderBy: desc(profileViews.viewedAt),
+        });
+
+        if (recentView) {
+            return {success: true, recorded: false, reason: "cooldown"};
+        }
+
+        await db.insert(profileViews).values({
+            viewerUserId: currentUser.id,
+            viewedProfileId,
+        });
+
+        return {success: true, recorded: true};
+    } catch (error: any) {
+        // A failed view-tracking write should never break the profile page
+        // itself — log it and let the caller carry on.
+        console.error("[RECORD_PROFILE_VIEW_CRASH]:", error);
+        return {success: false, error: error.message || "Failed to record view."};
+    }
+}
+
+/**
+ * Total view count for a profile. Public-ish — safe to show on the
+ * profile owner's own dashboard, or even on their public card if you
+ * want a "X views" badge. Returns both total events and unique viewers
+ * since they can differ meaningfully (one person opening your profile
+ * five times vs. five different people opening it once).
+ */
+export async function getProfileViewCount(profileId: string) {
+    try {
+        const [row] = await db
+            .select({
+                totalViews: sql<number>`count(*)`,
+                uniqueViewers: sql<number>`count(distinct ${profileViews.viewerUserId})`,
+            })
+            .from(profileViews)
+            .where(eq(profileViews.viewedProfileId, profileId));
+
+        return {
+            success: true,
+            data: {
+                totalViews: Number(row?.totalViews ?? 0),
+                uniqueViewers: Number(row?.uniqueViewers ?? 0),
+            },
+        };
+    } catch (error: any) {
+        console.error("[GET_PROFILE_VIEW_COUNT_CRASH]:", error);
+        return {success: false, error: error.message || "Failed to load view count."};
+    }
+}
+
+/**
+ * "Who viewed your profile" — deduped to one row per viewer (their most
+ * recent view time), most recent first. Owner-only: this is private data
+ * about your own profile, not something any logged-in user should be able
+ * to pull for anyone's profileId.
+ */
+export async function getProfileViewers(profileId: string) {
+    try {
+        const {success, data: currentUser} = await getCurrentUser();
+        if (!success || !currentUser) {
+            return {success: false, error: "Unauthorized"};
+        }
+
+        const targetProfile = await db.query.profiles.findFirst({
+            where: eq(profiles.id, profileId),
+        });
+
+        if (!targetProfile) {
+            return {success: false, error: "Profile not found."};
+        }
+
+        if (targetProfile.userId !== currentUser.id) {
+            return {success: false, error: "You can only view your own profile's viewers."};
+        }
+
+        // One row per viewer, using their latest view timestamp, joined with
+        // the viewer's own profile so the UI has a name/photo to show.
+        const latestViewPerViewer = db
+            .select({
+                viewerUserId: profileViews.viewerUserId,
+                lastViewedAt: sql<Date>`max(${profileViews.viewedAt})`.as("last_viewed_at"),
+            })
+            .from(profileViews)
+            .where(eq(profileViews.viewedProfileId, profileId))
+            .groupBy(profileViews.viewerUserId)
+            .as("latest_view_per_viewer");
+
+        const viewers = await db
+            .select({
+                viewerUserId: latestViewPerViewer.viewerUserId,
+                lastViewedAt: latestViewPerViewer.lastViewedAt,
+                viewerProfile: profiles,
+            })
+            .from(latestViewPerViewer)
+            .innerJoin(profiles, eq(profiles.userId, latestViewPerViewer.viewerUserId))
+            .orderBy(desc(latestViewPerViewer.lastViewedAt));
+
+        return {success: true, data: viewers};
+    } catch (error: any) {
+        console.error("[GET_PROFILE_VIEWERS_CRASH]:", error);
+        return {success: false, error: error.message || "Failed to load viewers."};
     }
 }
 
@@ -722,7 +884,7 @@ export async function deleteProfile(id: string) {
 export async function getUserProfile(profileId: string) {
     let joinedResult;
     const currentUser = await getCurrentUser();
-    
+
     try {
 
         joinedResult = await db
@@ -748,7 +910,7 @@ export async function getUserProfile(profileId: string) {
 
     const row = joinedResult[0];
     const currentRole = currentUser.data?.role;
-    
+
     const isOwner = row.profiles.userId === currentUser.data?.id;
     const isAdmin = currentRole === "admin";
 
@@ -792,10 +954,10 @@ export async function createProfileByAdmin(
     profileIdToUpdate?: string,
 ) {
     try {
-        const { success, data: currentUser } = await getCurrentUser();
+        const {success, data: currentUser} = await getCurrentUser();
 
         if (!success || !currentUser) {
-            return { success: false, error: "Unauthorized" };
+            return {success: false, error: "Unauthorized"};
         }
 
         const requester = await db.query.users.findFirst({

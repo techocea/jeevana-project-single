@@ -1,32 +1,34 @@
-import {users} from "@/drizzle/schema";
-import {db} from "@/lib/db";
-import {createClient} from "@/utils/supabase";
-import {eq} from "drizzle-orm";
 import {redirect} from "next/navigation";
 import DashboardStatsGrid from "@/components/dashboard/dashboard-stats-grid";
+import {
+    getCurrentUser,
+    getMatchingProfilesCount,
+    getProfileViewCount,
+} from "@/app/actions/profile-actions";
 
 const DashboardPage = async () => {
-    const supabase = await createClient();
+    const {data: currentUser} = await getCurrentUser();
 
-    const {
-        data: {user: authedUser},
-    } = await supabase.auth.getUser();
-
-    if (!authedUser) {
+    if (!currentUser) {
         redirect("/auth?mode=login");
     }
 
-    const [dbUser] = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, authedUser.id))
-        .limit(1);
-
-    if (!dbUser || dbUser.onboardingStatus === "INCOMPLETED") {
+    if (currentUser.onboardingStatus === "INCOMPLETED") {
         redirect("/onboarding");
     }
-    // console.log("Authed User:", authedUser);
-    const userName = authedUser.user_metadata.full_name;
+
+    const [profileViewRes, totalMatchesCount] = await Promise.all([
+        getProfileViewCount(currentUser.id),
+        getMatchingProfilesCount(currentUser.id)
+    ])
+
+    const statsData = {
+        totalViews: profileViewRes.data?.totalViews ?? 0,
+        totalMatches: totalMatchesCount,
+        totalPayment: 0, // PayHere integration placeholder
+    };
+
+    const userName = currentUser.fullName;
 
     return (
         <div className="flex flex-col space-y-2">
@@ -35,7 +37,7 @@ const DashboardPage = async () => {
                 <p className="text-muted-foreground text-lg">Here's what's happening with your account today</p>
             </div>
 
-            <DashboardStatsGrid  />
+            <DashboardStatsGrid statsData={statsData} />
         </div>
     )
 };

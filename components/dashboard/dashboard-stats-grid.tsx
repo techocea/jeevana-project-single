@@ -1,43 +1,49 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { CircleDollarSign, Users, UserCheck, HandCoins } from "lucide-react";
+import {Card, CardContent} from "@/components/ui/card";
+import {CircleDollarSign, Users, UserCheck, HandCoins} from "lucide-react";
+import {getProfileViewCount} from "@/app/actions/profile-actions";
 
 interface DashboardStatsProps {
     totalSpend?: string;
-    totalProfiles?: number;
-    activeProfiles?: number;
-    pendingPayments?: number;
+    totalMatches?: number;
+    viewedProfiles?: number;
+    acceptedInvites?: number;
 }
 
-export default function DashboardStatsGrid({
-                                               totalSpend = "Rs. 0.00",
-                                               totalProfiles = 1,
-                                               activeProfiles = 0,
-                                               pendingPayments = 0,
-                                           }: DashboardStatsProps) {
+interface DashboardStatsGridProps{
+    statsData: DashboardStatsProps;
+}
+
+export default async function DashboardStatsGrid({
+                                                     statsData
+                                                 }: DashboardStatsGridProps) {
+
+    const {
+        totalSpend = "LKR 0.00",
+        totalMatches = 0,
+        viewedProfiles = 0,
+    } = statsData;
+
     const stats = [
         {
             title: "Total Spend",
             value: totalSpend,
             subtitle: "From successful payments",
             icon: CircleDollarSign,
+            color: "text-amber-600 bg-amber-50 dark:bg-amber-950/40",
         },
         {
-            title: "Total Profiles",
-            value: totalProfiles,
-            subtitle: "Registered profiles",
+            title: "Total Matches",
+            value: totalMatches.toLocaleString(),
+            subtitle: "Matches for today",
             icon: Users,
+            color: "text-indigo-600 bg-indigo-50 dark:bg-indigo-950/40",
         },
         {
-            title: "Active Profiles",
-            value: activeProfiles,
-            subtitle: "Visible to members",
+            title: "Profile Views",
+            value: viewedProfiles.toLocaleString(),
+            subtitle: "Profiles who viewed me",
             icon: UserCheck,
-        },
-        {
-            title: "Pending Payments",
-            value: pendingPayments,
-            subtitle: "Awaiting confirmation",
-            icon: HandCoins,
+            color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40",
         },
     ];
 
@@ -62,8 +68,9 @@ export default function DashboardStatsGrid({
                                     </h3>
                                 </div>
 
-                                <div className="flex items-center justify-center h-11 w-11 rounded-full bg-muted/20 text-[var(--secondary)] shrink-0">
-                                    <Icon className="h-5 w-5" />
+                                <div
+                                    className={`flex items-center justify-center h-10 w-10 rounded-xl shrink-0 ${stat.color}`}>
+                                    <Icon className="h-5 w-5"/>
                                 </div>
                             </div>
 
