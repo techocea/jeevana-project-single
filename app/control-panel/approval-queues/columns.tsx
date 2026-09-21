@@ -1,161 +1,185 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { ProfileStatusTypes } from "@/types";
-import { ColumnDef } from "@tanstack/react-table";
-import { Check, Dot, Eye, Trash2, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { formatDate } from "@/helpers/format-date";
+import {Badge} from "@/components/ui/badge";
+import {ProfileStatusTypes} from "@/types";
+import {ColumnDef} from "@tanstack/react-table";
+import {Check, Dot, Eye, Trash2, X} from "lucide-react";
+import {Button} from "@/components/ui/button";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import {formatDate} from "@/helpers/format-date";
 import Link from "next/link";
 
 export type AdvertisementTable = {
-  id: string;
-  profileId: string;
-  fullName: string | null;
-  religion: string | null;
-  caste: string | null;
-  createdAt: string | Date | undefined;
-  email: string | null;
-  status: ProfileStatusTypes;
+    id: string;
+    profileId: string;
+    fullName: string | null;
+    religion: string | null;
+    caste: string | null;
+    createdAt: string | Date | undefined;
+    email: string | null;
+    status: ProfileStatusTypes;
 };
 
 export const columns: ColumnDef<AdvertisementTable>[] = [
-  {
-    accessorKey: "profileId",
-    header: "PROFILE ID",
-    cell: ({ row }) => (
-      <span className="font-mono font-medium text-muted-foreground">
+    {
+        accessorKey: "profileId",
+        header: "PROFILE ID",
+        cell: ({row}) => (
+            <span className="font-mono font-medium text-muted-foreground">
         #{row.getValue("profileId")}
       </span>
-    ),
-  },
-  {
-    accessorKey: "fullName",
-    header: "ADVERTISER",
-    cell: ({ row }) => {
-      const name = row.original.fullName;
-      const email = row.original.email;
-      return (
-        <div className="flex flex-col gap-0.5">
-          <span className="font-semibold text-black">{name}</span>
-          <span className="text-xs text-muted-foreground italic">
+        ),
+    },
+    {
+        accessorKey: "fullName",
+        header: "ADVERTISER",
+        cell: ({row}) => {
+            const name = row.original.fullName;
+            const email = row.original.email;
+            return (
+                <div className="flex flex-col gap-0.5">
+                    <span className="font-semibold text-black">{name}</span>
+                    <span className="text-xs text-muted-foreground italic">
             Created By: {email}
           </span>
-        </div>
-      );
+                </div>
+            );
+        },
     },
-  },
-  {
-    accessorKey: "email",
-    header: "EMAIL",
-    enableHiding: true,
-  },
-  {
-    accessorKey: "demographics",
-    header: "DEMOGRPAHICS",
-    cell: ({ row }) => {
-      const religion = row.original.religion;
-      const caste = row.original.caste;
-      const date = row.original.createdAt;
-
-      const safeDate = date ? new Date(date) : null;
-      return (
-        <div className="flex flex-col gap-0.5 text-sm">
-          <Badge className="flex items-center gap-0.5 bg-input">
-            <span className="text-black">{religion}</span>
-            <Dot size={16} />
-            <span className="text-black">{caste}</span>
-          </Badge>
-          <p className="italic text-muted-foreground text-xs">
-            Created On:{" "}
-            {safeDate && !isNaN(safeDate.getTime())
-              ? formatDate(safeDate)
-              : "N/A"}
-          </p>
-        </div>
-      );
+    {
+        accessorKey: "email",
+        header: "EMAIL",
+        enableHiding: true,
     },
-  },
-  {
-    accessorKey: "status",
-    header: "STATUS",
-    cell: ({ row }) => {
-      const status = (row.getValue("status") as string) || "pending";
+    {
+        accessorKey: "demographics",
+        header: "DEMOGRPAHICS",
+        cell: ({row}) => {
+            const religion = row.original.religion;
+            const caste = row.original.caste;
+            const date = row.original.createdAt;
 
-      const variants: Record<string, string> = {
-        approved:
-          "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 hover:bg-emerald-100",
-        rejected:
-          "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400 hover:bg-rose-100",
-        pending:
-          "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 hover:bg-amber-100",
-      };
-
-      return (
-        <Badge
-          className={`capitalize font-medium shadow-none ${variants[status]}`}
-        >
-          {status}
-        </Badge>
-      );
+            const safeDate = date ? new Date(date) : null;
+            return (
+                <div className="flex flex-col gap-0.5 text-sm">
+                    <Badge className="flex items-center gap-0.5 bg-input">
+                        <span className="text-black">{religion}</span>
+                        <Dot size={16}/>
+                        <span className="text-black">{caste}</span>
+                    </Badge>
+                    <p className="italic text-muted-foreground text-xs">
+                        Created On:{" "}
+                        {safeDate && !isNaN(safeDate.getTime())
+                            ? formatDate(safeDate)
+                            : "N/A"}
+                    </p>
+                </div>
+            );
+        },
     },
-  },
-  {
-    accessorKey: "actions",
-    header: "ACTIONS",
-    cell: ({ row, table }) => {
-      const profile = row.original;
+    {
+        accessorKey: "status",
+        header: "STATUS",
+        cell: ({row}) => {
+            const status = (row.getValue("status") as string) || "pending";
 
-      const meta = table.options.meta as {
-        onApprove?: (id: string) => void;
-        onReject?: (id: string) => void;
-        onDelete?: (id: string) => void;
-      };
+            const variants: Record<string, string> = {
+                approved:
+                    "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 hover:bg-emerald-100",
+                rejected:
+                    "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400 hover:bg-rose-100",
+                pending:
+                    "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 hover:bg-amber-100",
+            };
 
-      return (
-        <div className="flex items-center gap-1 justify-end">
-          {row.original.status === "approved" ||
-            row.original.status === "rejected" ? (
-            <>
-              <Button variant={"view"} asChild>
-                <Link
-                  href={`/control-panel/approval-queues/${profile.id}/view`}
+            return (
+                <Badge
+                    className={`capitalize font-medium shadow-none ${variants[status]}`}
                 >
-                  <Eye size={16} />
-                </Link>
-              </Button>
-              <Button
-                variant={"destructive"}
-                onClick={() => meta?.onDelete?.(profile.id)}
-              >
-                <Trash2 />
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button variant={"view"} asChild>
-                <Link
-                  href={`/control-panel/approval-queues/${profile.id}/view`}
-                >
-                  <Eye size={16} />
-                </Link>
-              </Button>
-              <Button
-                variant={"approved"}
-                onClick={() => meta?.onApprove?.(profile.id)}
-              >
-                <Check />
-              </Button>
-              <Button
-                variant={"destructive"}
-                onClick={() => meta?.onReject?.(profile.id)}
-              >
-                <X />
-              </Button>
-            </>
-          )}
-        </div>
-      );
+                    {status}
+                </Badge>
+            );
+        },
     },
-  },
+    {
+        accessorKey: "actions",
+        header: "ACTIONS",
+        cell: ({row, table}) => {
+            const profile = row.original;
+
+            const meta = table.options.meta as {
+                onApprove?: (id: string) => void;
+                onReject?: (id: string) => void;
+                onDelete?: (id: string) => void;
+            };
+
+            return (
+                <div className="flex items-center gap-1 justify-end">
+                    {row.original.status === "approved" ||
+                    row.original.status === "rejected" ? (
+                        <>
+                            <Button variant={"view"} asChild>
+                                <Link
+                                    href={`/control-panel/approval-queues/${profile.id}/view`}
+                                >
+                                    <Eye size={16}/>
+                                </Link>
+                            </Button>
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button variant="destructive">
+                                        <Trash2 />
+                                    </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            This action cannot be undone. This will permanently delete this profile from the database.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction variant={"destructive"} onClick={() => meta?.onDelete?.(profile.id)}>Continue</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                        </>
+                    ) : (
+                        <>
+                            <Button variant={"view"} asChild>
+                                <Link
+                                    href={`/control-panel/approval-queues/${profile.id}/view`}
+                                >
+                                    <Eye size={16}/>
+                                </Link>
+                            </Button>
+                            <Button
+                                variant={"approved"}
+                                onClick={() => meta?.onApprove?.(profile.id)}
+                            >
+                                <Check/>
+                            </Button>
+                            <Button
+                                variant={"destructive"}
+                                onClick={() => meta?.onReject?.(profile.id)}
+                            >
+                                <X/>
+                            </Button>
+                        </>
+                    )}
+                </div>
+            );
+        },
+    },
 ];

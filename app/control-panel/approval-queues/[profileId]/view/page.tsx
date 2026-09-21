@@ -4,7 +4,7 @@ import {
     getUserProfile,
 } from "@/app/actions/profile-actions";
 import { Label } from "@/components/ui/label";
-import { getStatusBadge } from "@/helpers/get-status-badge";
+import { getProfileStatusBadge } from "@/helpers/get-status-badge";
 import { ProfileActionsButtons } from "@/components/dashboard/profile-actions-buttons";
 
 interface PageProps {
@@ -15,7 +15,7 @@ const ViewProfilePage = async ({ params }: PageProps) => {
     const { profileId } = await params;
     const result = await getUserProfile(profileId);
 
-    // console.log("ADMIN VIEW PROFILE DATA:", result.data);
+    console.log("ADMIN VIEW PROFILE DATA:", result.data);
 
     if (!result.success || !result.data) {
         return (
@@ -63,7 +63,7 @@ const ViewProfilePage = async ({ params }: PageProps) => {
                                         <Badge className="bg-blue-100 text-blue-400 border border-blue-400">
                                             {profile.profileID}
                                         </Badge>
-                                        {getStatusBadge(profile.status)}
+                                        {getProfileStatusBadge(profile.status)}
                                     </div>
                                     <div>
                                         <h2 className="text-lg font-semibold text-slate-950">
@@ -177,12 +177,12 @@ const ViewProfilePage = async ({ params }: PageProps) => {
                         </h2>
                     </div>
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                        {renderField("Partner Preferred Min Age", profile.minAge)}
-                        {renderField("Partner Preferred Max Age", profile.maxAge)}
-                        {renderField("Partner's Marriage Status Should be", profile.maritalStatus)}
-                        {renderField("Partner's Education Status Should be", profile.educationLevels)}
-                        {renderField("Partner's Job Status Should be", profile.professions)}
-                        {renderField("Partner's Annual Income Should be", profile.annualIncomeRanges)}
+                        {renderField("Partner Preferred Min Age", profile.preferredMinAge)}
+                        {renderField("Partner Preferred Max Age", profile.preferredMaxAge)}
+                        {renderField("Partner's Marriage Status Should be", profile.preferredMaritalStatus)}
+                        {renderField("Partner's Education Status Should be", profile.preferredEducationLevels)}
+                        {renderField("Partner's Job Status Should be", profile.preferredProfessions)}
+                        {renderField("Partner's Annual Income Should be", profile.preferredAnnualIncomeRanges)}
                     </div>
                     {profile.isDifferentlyAbled && profile.differentlyAbledDetails && (
                         <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
