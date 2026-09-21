@@ -7,20 +7,34 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 
-export default function Breadcrumbs({profileID}: { profileID: string }) {
+interface BreadcrumbProps {
+    currentPath: string,
+    primaryLink: string,
+    secondaryLink: string,
+    primaryText: string,
+    secondaryText: string,
+}
+
+export default function Breadcrumbs({
+                                        currentPath,
+                                        primaryText,
+                                        primaryLink,
+                                        secondaryText,
+                                        secondaryLink
+                                    }: BreadcrumbProps) {
     return (
         <Breadcrumb>
             <BreadcrumbList>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href="/my-dashboard">Dashboard</BreadcrumbLink>
+                    <BreadcrumbLink href={`/${primaryLink}`}>{primaryText}</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator/>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href="/my-dashboard/best-proposals">BestProposals</BreadcrumbLink>
+                    <BreadcrumbLink href={`/${primaryLink}/${secondaryLink}`}>{secondaryText}</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator/>
                 <BreadcrumbItem>
-                    <BreadcrumbPage>{profileID}</BreadcrumbPage>
+                    <BreadcrumbPage>{currentPath}</BreadcrumbPage>
                 </BreadcrumbItem>
             </BreadcrumbList>
         </Breadcrumb>

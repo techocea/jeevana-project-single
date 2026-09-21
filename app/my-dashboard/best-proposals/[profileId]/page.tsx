@@ -1,22 +1,21 @@
 import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
-import { getMatchedProfile } from "@/app/actions/profile-actions";
-import { Label } from "@/components/ui/label";
-import { getStatusBadge } from "@/helpers/get-status-badge";
-import { ProfileActionsButtons } from "@/components/dashboard/profile-actions-buttons";
+import {Badge} from "@/components/ui/badge";
+import {getMatchedProfile} from "@/app/actions/profile-actions";
+import {Label} from "@/components/ui/label";
+import {getProfileStatusBadge} from "@/helpers/get-status-badge";
+import {ProfileActionsButtons} from "@/components/dashboard/profile-actions-buttons";
 import Breadcrumbs from "@/components/dashboard/breadcrumbs";
 
 interface PageProps {
     params: Promise<{ profileId: string }>;
 }
 
-const ViewProfilePage = async ({ params }: PageProps) => {
-    const { profileId } = await params;
+const ViewProfilePage = async ({params}: PageProps) => {
+    const {profileId} = await params;
 
     const result = await getMatchedProfile(profileId);
 
     const matchedProfile = result.data?.profile;
-
 
 
     if (!matchedProfile) {
@@ -43,7 +42,8 @@ const ViewProfilePage = async ({ params }: PageProps) => {
 
     return (
         <main className="space-y-4">
-            <Breadcrumbs profileID={matchedProfile.profileID} />
+            <Breadcrumbs primaryText="My Dashboard" primaryLink="my-dashboard" secondaryText="Best Proposals"
+                         secondaryLink="best-proposals" currentPath={matchedProfile.profileID}/>
             <div className="mx-auto max-w-6xl">
                 <div className="mb-8 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
                     <div className="flex items-start justify-between gap-6">
@@ -64,7 +64,7 @@ const ViewProfilePage = async ({ params }: PageProps) => {
                                         <Badge className="bg-blue-100 text-blue-400 border border-blue-400">
                                             {matchedProfile.profileID}
                                         </Badge>
-                                        {getStatusBadge(matchedProfile.status)}
+                                        {getProfileStatusBadge(matchedProfile.status)}
                                     </div>
                                     <div>
                                         <h2 className="text-lg font-semibold text-slate-950">
@@ -77,7 +77,7 @@ const ViewProfilePage = async ({ params }: PageProps) => {
                                     </div>
                                 </div>
                             </div>
-                            <ProfileActionsButtons profileId={profileId} status={matchedProfile.status} />
+                            <ProfileActionsButtons profileId={profileId} status={matchedProfile.status}/>
                         </div>
                     </div>
                 </div>

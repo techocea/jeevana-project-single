@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { getUserProfile } from "@/app/actions/profile-actions";
 import { Pen } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import { getStatusBadge } from "@/helpers/get-status-badge";
+import { getProfileStatusBadge } from "@/helpers/get-status-badge";
 
 interface PageProps {
     params: Promise<{ profileId: string }>;
@@ -67,7 +67,7 @@ const ProfilePage = async ({ params }: PageProps) => {
                                         <Badge className="bg-blue-100 text-blue-400 border border-blue-400">
                                             {profile.profileID}
                                         </Badge>
-                                        {getStatusBadge(profile.status)}
+                                        {getProfileStatusBadge(profile.status)}
                                     </div>
                                     <div>
                                         <h2 className="text-lg font-semibold text-slate-950">

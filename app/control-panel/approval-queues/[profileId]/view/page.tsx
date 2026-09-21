@@ -1,18 +1,19 @@
 import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
+import {Badge} from "@/components/ui/badge";
 import {
     getUserProfile,
 } from "@/app/actions/profile-actions";
-import { Label } from "@/components/ui/label";
-import { getProfileStatusBadge } from "@/helpers/get-status-badge";
-import { ProfileActionsButtons } from "@/components/dashboard/profile-actions-buttons";
+import {Label} from "@/components/ui/label";
+import {getProfileStatusBadge} from "@/helpers/get-status-badge";
+import {ProfileActionsButtons} from "@/components/dashboard/profile-actions-buttons";
+import Breadcrumbs from "@/components/dashboard/breadcrumbs";
 
 interface PageProps {
     params: Promise<{ profileId: string }>;
 }
 
-const ViewProfilePage = async ({ params }: PageProps) => {
-    const { profileId } = await params;
+const ViewProfilePage = async ({params}: PageProps) => {
+    const {profileId} = await params;
     const result = await getUserProfile(profileId);
 
     console.log("ADMIN VIEW PROFILE DATA:", result.data);
@@ -40,10 +41,9 @@ const ViewProfilePage = async ({ params }: PageProps) => {
 
     return (
         <main>
-            <div className="mx-auto max-w-6xl">
-                {/* <h1 className="mb-8 text-2xl font-semibold text-slate-950">
-                    Profile: {profileId}
-                </h1> */}
+            <div className="mx-auto max-w-6xl space-y-3">
+                <Breadcrumbs primaryText="Control Panel" primaryLink="control-panel" secondaryText="Approval Queue"
+                             secondaryLink="approval-queues" currentPath={profile.profileID}/>
                 <div className="mb-8 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
                     <div className="flex items-start justify-between gap-6">
                         <div className="flex items-start justify-between w-full">
@@ -76,7 +76,7 @@ const ViewProfilePage = async ({ params }: PageProps) => {
                                     </div>
                                 </div>
                             </div>
-                            <ProfileActionsButtons profileId={profileId} status={profile.status} />
+                            <ProfileActionsButtons profileId={profileId} status={profile.status}/>
                         </div>
                     </div>
                 </div>
