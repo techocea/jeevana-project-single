@@ -51,7 +51,6 @@ export const invitationStatusEnum = pgEnum("invitation_status", [
     "declined",
 ]);
 export const verificationStatusEnum = pgEnum("verification_status", [
-    "unverified",
     "pending",
     "verified",
     "rejected",
@@ -180,7 +179,7 @@ export const profiles = pgTable("profiles", {
     secondaryEmail: text("secondary_email"),
 
     status: profileStatusEnum("status").default("pending").notNull(), // 'pending' | 'approved' | 'rejected'
-    // isVerifed:boolean("is_verified").default(false),
+    isVerified:boolean("is_verified").default(false),
 
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),

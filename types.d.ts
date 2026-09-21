@@ -20,6 +20,7 @@ export type BadHabitTypes = "never" | "occasionally" | "regularly";
 export type TabTypes = "all" | "pending" | "approved" | "rejected";
 export type MailRoutingTargetTypes = "owner" | "candidate" | "both";
 export type ProfileStatusTypes = "pending" | "approved" | "rejected";
+export type VerificationStatusTypes = "pending" | "verified" | "rejected" | null;
 export type FoodHabitTypes = "vegetarian" | "non-vegetarian" | "vegan";
 export type MembershipTypes = "free_tier" | "classical" | "heritage" | null;
 export type MaritalStatusTypes = "never_married" | "divorced" | "widowed";

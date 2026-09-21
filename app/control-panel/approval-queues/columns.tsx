@@ -1,9 +1,9 @@
 "use client";
 
 import {Badge} from "@/components/ui/badge";
-import {ProfileStatusTypes} from "@/types";
+import {ProfileStatusTypes, VerificationStatusTypes} from "@/types";
 import {ColumnDef} from "@tanstack/react-table";
-import {Check, Dot, Eye, Trash2, X} from "lucide-react";
+import {Check, Dot, Eye, Trash2, ShieldCheck, Clock, AlertCircle, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {
     AlertDialog,
@@ -28,6 +28,15 @@ export type AdvertisementTable = {
     createdAt: string | Date | undefined;
     email: string | null;
     status: ProfileStatusTypes;
+
+    // Verification fields (allow null for profiles without verification submissions)
+    isVerified: boolean;
+    idNumber: string | null;
+    verificationStatus: VerificationStatusTypes | null;
+    verificationId?: string | null;
+    documentFrontUrl?: string | null;
+    documentBackUrl?: string | null;
+    rejectionReason?: string | null;
 };
 
 export const columns: ColumnDef<AdvertisementTable>[] = [
@@ -88,6 +97,47 @@ export const columns: ColumnDef<AdvertisementTable>[] = [
         },
     },
     {
+        accessorKey: "verifications",
+        header: "VERIFICATION(NIC)",
+        cell: ({row}) => {
+            const isVerified = row.original.isVerified;
+            const status = row.original.verificationStatus;
+            const idNumber = row.original.idNumber;
+
+            if (isVerified) {
+                return (
+                    <span
+                        className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+            <ShieldCheck className="h-3.5 w-3.5"/> Verified
+          </span>
+                );
+            }
+
+            if (status === "pending") {
+                return (
+                    <div className="flex flex-col">
+            <span
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200 w-max">
+              <Clock className="h-3 w-3"/> Pending Review
+            </span>
+                        {idNumber && <span className="text-[10px] text-slate-400 mt-0.5">{idNumber}</span>}
+                    </div>
+                );
+            }
+
+            if (status === "rejected") {
+                return (
+                    <span
+                        className="inline-flex items-center gap-1 text-xs font-bold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-200">
+            <AlertCircle className="h-3.5 w-3.5"/> Rejected
+          </span>
+                );
+            }
+
+            return <span className="text-xs text-slate-400">Not Submitted</span>;
+        },
+    },
+    {
         accessorKey: "status",
         header: "STATUS",
         cell: ({row}) => {
@@ -117,10 +167,16 @@ export const columns: ColumnDef<AdvertisementTable>[] = [
         cell: ({row, table}) => {
             const profile = row.original;
 
-            const meta = table.options.meta as {
-                onApprove?: (id: string) => void;
-                onReject?: (id: string) => void;
+            const { onApprove, onReject } = table.options.meta as {
+                onApprove: (profileId: string, verificationId?: string | null) => void;
+                onReject: (profileId: string, verificationId?: string | null, reason?: string) => void;
                 onDelete?: (id: string) => void;
+            };
+
+            const handleConfirmReject = async (reason: string) => {
+                if (onReject) {
+                    await onReject(profile.id, profile.verificationId, reason);
+                }
             };
 
             return (
@@ -138,19 +194,21 @@ export const columns: ColumnDef<AdvertisementTable>[] = [
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                     <Button variant="destructive">
-                                        <Trash2 />
+                                        <Trash2/>
                                     </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
                                         <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                                         <AlertDialogDescription>
-                                            This action cannot be undone. This will permanently delete this profile from the database.
+                                            This action cannot be undone. This will permanently delete this profile from
+                                            the database.
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction variant={"destructive"} onClick={() => meta?.onDelete?.(profile.id)}>Continue</AlertDialogAction>
+                                        <AlertDialogAction variant={"destructive"}
+                                                           onClick={() => onReject(row.original.id, row.original.verificationId)}>Continue</AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>
@@ -166,13 +224,16 @@ export const columns: ColumnDef<AdvertisementTable>[] = [
                             </Button>
                             <Button
                                 variant={"approved"}
-                                onClick={() => meta?.onApprove?.(profile.id)}
+                                onClick={() => onApprove(row.original.id, row.original.verificationId)}
                             >
                                 <Check/>
                             </Button>
                             <Button
                                 variant={"destructive"}
-                                onClick={() => meta?.onReject?.(profile.id)}
+                                onClick={() => {
+                                    const reason = prompt("Enter reason for rejection:");
+                                    if (reason) handleConfirmReject(reason);
+                                }}
                             >
                                 <X/>
                             </Button>

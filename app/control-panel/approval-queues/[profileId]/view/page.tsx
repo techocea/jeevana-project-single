@@ -1,12 +1,15 @@
 import Image from "next/image";
 import {Badge} from "@/components/ui/badge";
 import {
-    getUserProfile,
+    approveProfile,
+    getUserProfile, rejectProfile,
 } from "@/app/actions/profile-actions";
 import {Label} from "@/components/ui/label";
 import {getProfileStatusBadge} from "@/helpers/get-status-badge";
 import {ProfileActionsButtons} from "@/components/dashboard/profile-actions-buttons";
 import Breadcrumbs from "@/components/dashboard/breadcrumbs";
+import NicVerificationBanner from "@/components/dashboard/nic-verification-banner";
+import {createClient} from "@/utils/supabase";
 
 interface PageProps {
     params: Promise<{ profileId: string }>;
@@ -15,8 +18,6 @@ interface PageProps {
 const ViewProfilePage = async ({params}: PageProps) => {
     const {profileId} = await params;
     const result = await getUserProfile(profileId);
-
-    console.log("ADMIN VIEW PROFILE DATA:", result.data);
 
     if (!result.success || !result.data) {
         return (
@@ -34,10 +35,34 @@ const ViewProfilePage = async ({params}: PageProps) => {
     }
 
     const profile = result.data;
+    const verification = profile.verification;
+    const supabase = await createClient();
+
+    console.log("profile data with verifications:", profile);
     const profileImage = profile.profilePic || "/images/demo-profile-pic.png";
     const hobbies = Array.isArray(profile.hobbies)
         ? profile.hobbies.join(", ")
         : profile.hobbies || "Not specified";
+
+
+    let frontSignedUrl: string | null = null;
+    let backSignedUrl: string | null = null;
+
+    if (verification?.documentFrontUrl) {
+        const { data } = await supabase.storage
+            .from("nic_documents")
+            .createSignedUrl(verification.documentFrontUrl, 3600);
+        frontSignedUrl = data?.signedUrl || null;
+    }
+
+    if (verification?.documentBackUrl) {
+        const { data } = await supabase.storage
+            .from("nic_documents")
+            .createSignedUrl(verification.documentBackUrl, 3600);
+        backSignedUrl = data?.signedUrl || null;
+    }
+
+
 
     return (
         <main>
@@ -177,12 +202,12 @@ const ViewProfilePage = async ({params}: PageProps) => {
                         </h2>
                     </div>
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                        {renderField("Partner Preferred Min Age", profile.preferredMinAge)}
-                        {renderField("Partner Preferred Max Age", profile.preferredMaxAge)}
-                        {renderField("Partner's Marriage Status Should be", profile.preferredMaritalStatus)}
-                        {renderField("Partner's Education Status Should be", profile.preferredEducationLevels)}
-                        {renderField("Partner's Job Status Should be", profile.preferredProfessions)}
-                        {renderField("Partner's Annual Income Should be", profile.preferredAnnualIncomeRanges)}
+                        {renderField("Partner Preferred Min Age", profile.partnerPreferences?.preferredMinAge)}
+                        {renderField("Partner Preferred Max Age", profile.partnerPreferences?.preferredMaxAge)}
+                        {renderField("Partner's Marriage Status Should be", profile.partnerPreferences?.preferredMaritalStatus)}
+                        {renderField("Partner's Education Status Should be", profile.partnerPreferences?.preferredEducationLevels)}
+                        {renderField("Partner's Job Status Should be", profile.partnerPreferences?.preferredProfessions)}
+                        {renderField("Partner's Annual Income Should be", profile.partnerPreferences?.preferredAnnualIncomeRanges)}
                     </div>
                     {profile.isDifferentlyAbled && profile.differentlyAbledDetails && (
                         <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
@@ -220,6 +245,18 @@ const ViewProfilePage = async ({params}: PageProps) => {
                         </div>
                     )}
                 </div>
+
+                {verification && (
+                    <NicVerificationBanner
+                        isAdmin={true}
+                        profileId={profile.id}
+                        verificationId={verification.verificationId}
+                        verificationStatus={verification.verificationStatus}
+                        rejectionReason={verification.rejectionReason}
+                        documentFrontUrl={frontSignedUrl}
+                        documentBackUrl={backSignedUrl}
+                    />
+                )}
             </div>
         </main>
     );

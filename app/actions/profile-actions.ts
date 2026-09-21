@@ -3,7 +3,7 @@
 import {db} from "@/lib/db";
 import {
     favorites,
-    partnerPreferences, profileMatches,
+    partnerPreferences, profileMatches, verifications,
     profiles, profileViews, users,
 } from "@/drizzle/schema";
 import {createClient} from "@/utils/supabase";
@@ -82,7 +82,7 @@ export async function getMatchingProfilesCount(userId: string): Promise<number> 
 
     try {
         const [result] = await db
-            .select({total:count()})
+            .select({total: count()})
             .from(profileMatches)
             .where(eq(profileMatches.userId, userId));
 
@@ -839,30 +839,57 @@ export async function getProfilesByFilters(
 }
 
 // ADMIN PROFILE ACTIONS
-export async function approveProfile(id: string) {
+export async function approveProfile(verificationId: string, profileId: string) {
     try {
+        // 1. Update verification record
+        await db
+            .update(verifications)
+            .set({
+                status: "verified",
+                rejectionReason: null,
+                updatedAt: new Date(),
+            })
+            .where(eq(verifications.id, verificationId));
+        // 2. Grant verified badge on the profile
         await db
             .update(profiles)
-            .set({status: "approved"})
-            .where(eq(profiles.id, id));
+            .set({
+                isVerified: true,
+                updatedAt: new Date(),
+            })
+            .where(eq(profiles.id, profileId));
 
-        revalidatePath("/control-panel");
-        return {success: true};
+        revalidatePath(`/control-panel/approval-queues/${profileId}`);
+        return {success: true, message: "Profile successfully verified!"};
     } catch (error) {
         console.error("[PROFILE_APPROVAL_ERROR]:", error);
         return {success: false, error: "Failed to approve profile"};
     }
 }
 
-export async function rejectProfile(id: string) {
+export async function rejectProfile(verificationId: string, profileId: string, reason: string) {
     try {
+        // 1. Update verification status and store rejection reason
+        await db
+            .update(verifications)
+            .set({
+                status: "rejected",
+                rejectionReason: reason,
+                updatedAt: new Date(),
+            })
+            .where(eq(verifications.id, verificationId));
+
+        // 2. Remove verified badge if previously verified
         await db
             .update(profiles)
-            .set({status: "rejected"})
-            .where(eq(profiles.id, id));
+            .set({
+                isVerified: false,
+                updatedAt: new Date(),
+            })
+            .where(eq(profiles.id, profileId));
 
-        revalidatePath("/control-panel");
-        return {success: true};
+        revalidatePath(`/control-panel/approval-queues/${profileId}`);
+        return {success: true, message: "Profile verification rejected"};
     } catch (error) {
         console.error("[PROFILE_REJECTED_ERROR]:", error);
         return {success: false, error: "Failed to reject profile"};
@@ -894,6 +921,10 @@ export async function getUserProfile(profileId: string) {
                 partnerPreferences,
                 eq(profiles.userId, partnerPreferences.userId),
             )
+            .leftJoin(
+                verifications,
+                eq(profiles.id, verifications.profileId)
+            )
             .where(eq(profiles.id, profileId));
     } catch (error) {
         console.error("[ADMIN:USER_PROFILE_FETCH_ERROR]:", error);
@@ -920,7 +951,17 @@ export async function getUserProfile(profileId: string) {
 
     const flatProfileData = {
         ...row.profiles,
-        ...(row.partner_preferences || {}),
+        partnerPreferences: row.partner_preferences || null,
+        verification: row.verifications
+            ? {
+                verificationId: row.verifications.id,
+                idNumber: row.verifications.idNumber,
+                documentFrontUrl: row.verifications.documentFrontUrl,
+                documentBackUrl: row.verifications.documentBackUrl,
+                verificationStatus: row.verifications.status,
+                rejectionReason: row.verifications.rejectionReason,
+            }
+            : null,
     };
 
     return {success: true, data: flatProfileData};
