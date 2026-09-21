@@ -132,7 +132,6 @@ export const verifications = pgTable("verifications", {
         .notNull()
         .unique()
         .references(() => profiles.id, {onDelete: "cascade"}),
-    idType: text("id_type").notNull(), // 'NIC' | 'Passport' | 'DrivingLicense'
     idNumber: text("id_number").notNull(),
     documentFrontUrl: text("document_front_url").notNull(),
     documentBackUrl: text("document_back_url"),

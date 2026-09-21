@@ -78,6 +78,13 @@
       "when": 1789901043408,
       "tag": "0010_exotic_vindicator",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1789978804060,
+      "tag": "0011_smiling_bishop",
+      "breakpoints": true
     }
   ]
 }
