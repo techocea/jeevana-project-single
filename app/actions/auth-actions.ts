@@ -15,7 +15,7 @@ import { db } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { users } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase";
-import { supabaseAdmin } from "@/utils/supabase-admin";
+import { getSupabaseAdmin } from "@/utils/supabase-admin";
 
 export async function loginAdmin(data: AuthLoginValues) {
   const parsed = authLoginSchema.safeParse(data);
@@ -218,7 +218,7 @@ export async function createUserByAdmin(data: CreateUserByAdminValues) {
     const cleanName = fullName.trim();
 
     const { data: authData, error: authError } =
-      await supabaseAdmin.auth.admin.createUser({
+      await getSupabaseAdmin().auth.admin.createUser({
         email: cleanEmail,
         password,
         email_confirm: emailConfirm, // Marks email as verified immediately
