@@ -49,20 +49,18 @@ const ViewProfilePage = async ({params}: PageProps) => {
     let backSignedUrl: string | null = null;
 
     if (verification?.documentFrontUrl) {
-        const { data } = await supabase.storage
+        const {data} = await supabase.storage
             .from("nic_documents")
             .createSignedUrl(verification.documentFrontUrl, 3600);
         frontSignedUrl = data?.signedUrl || null;
     }
 
     if (verification?.documentBackUrl) {
-        const { data } = await supabase.storage
+        const {data} = await supabase.storage
             .from("nic_documents")
             .createSignedUrl(verification.documentBackUrl, 3600);
         backSignedUrl = data?.signedUrl || null;
     }
-
-
 
     return (
         <main>

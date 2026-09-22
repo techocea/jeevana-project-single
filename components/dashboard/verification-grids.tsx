@@ -11,7 +11,7 @@ interface VerificationCardsGridProps {
 export default function VerificationCardsGrid({phoneVerified, nicStatus}: VerificationCardsGridProps) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-            <Card className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-2 shadow-2xs transition-all hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900">
+            <Card className="group relative overflow-hidden rounded-lg border border-slate-200/80 bg-white p-2 shadow-2xs transition-all hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900">
                 <Link href="/my-dashboard/verify-account?mode=phone" className="block">
                     <CardContent className="flex items-center justify-between p-4">
                         <div className="flex items-center gap-4">
@@ -38,7 +38,7 @@ export default function VerificationCardsGrid({phoneVerified, nicStatus}: Verifi
                 </Link>
             </Card>
 
-            <Card className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-2 shadow-2xs transition-all hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900">
+            <Card className="group relative overflow-hidden rounded-lg border border-slate-200/80 bg-white p-2 shadow-2xs transition-all hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900">
                 <Link href="/my-dashboard/verify-account?mode=nic" className="block">
                     <CardContent className="flex items-center justify-between p-4">
                         <div className="flex items-center gap-4">

@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { approveProfile, rejectProfile } from '@/app/actions/profile-actions';
 import toast from 'react-hot-toast';
+import { Label } from '@/components/ui/label';
 
 interface NicVerificationBannerProps {
     isAdmin?: boolean;
@@ -80,10 +81,10 @@ export default function NicVerificationBanner({
     };
 
     return (
-        <div className="w-full max-w-4xl mx-auto space-y-6 p-4">
+        <div className="w-full space-y-6">
             {/* Dynamic Status Alert Banner */}
             {verificationStatus === 'pending' && (
-                <div className="flex items-start gap-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900 shadow-xs">
+                <div className="flex items-start gap-4 rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-900 shadow-xs">
                     <AlertTriangle className="h-5 w-5 flex-shrink-0 text-amber-600 mt-0.5" />
                     <div className="space-y-1">
                         <h5 className="font-semibold text-amber-950 text-sm">NIC Verification Pending</h5>
@@ -95,10 +96,10 @@ export default function NicVerificationBanner({
             )}
 
             {verificationStatus === 'rejected' && (
-                <div className="flex items-start gap-4 rounded-xl border border-rose-200 bg-rose-50 p-4 text-rose-900 shadow-xs">
+                <div className="flex items-start gap-4 rounded-lg border border-rose-200 bg-rose-50 p-4 shadow-xs">
                     <XCircle className="h-5 w-5 flex-shrink-0 text-rose-600 mt-0.5" />
                     <div className="space-y-1">
-                        <h5 className="font-semibold text-rose-950 text-sm">Verification Rejected</h5>
+                        <span className="font-semibold text-rose-900 text-sm">Verification Rejected</span>
                         <p className="text-xs text-rose-800 leading-relaxed">
                             Reason: <span className="font-medium text-rose-900">{rejectionReason || 'Documents provided were invalid.'}</span>
                         </p>
@@ -107,7 +108,7 @@ export default function NicVerificationBanner({
             )}
 
             {verificationStatus === 'verified' && (
-                <div className="flex items-start gap-4 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-900 shadow-xs">
+                <div className="flex items-start gap-4 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-emerald-900 shadow-xs">
                     <ShieldCheck className="h-5 w-5 flex-shrink-0 text-emerald-600 mt-0.5" />
                     <div className="space-y-1">
                         <h5 className="font-semibold text-emerald-950 text-sm">Identity Verified</h5>
@@ -120,7 +121,7 @@ export default function NicVerificationBanner({
 
             {/* Admin Verification Review */}
             {isAdmin && (documentFrontUrl || documentBackUrl) && (
-                <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-xs space-y-6">
+                <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-xs space-y-6">
                     <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
                         <div className="flex items-center gap-2 text-slate-800 dark:text-slate-200">
                             <Eye className="h-5 w-5 text-slate-500" />
@@ -167,23 +168,24 @@ export default function NicVerificationBanner({
 
                     <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
                         <Button
-                            variant="outline"
+                            size={"lg"}
+                            variant="destructive"
                             disabled={isSubmitting || verificationStatus === 'rejected'}
                             onClick={() => setIsRejectModalOpen(true)}
-                            className="rounded-xl border-rose-200 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-xs font-bold"
                         >
-                            <XCircle className="mr-1.5 h-4 w-4" /> Reject Document
+                            <XCircle className="h-4 w-4" /> Reject Submission
                         </Button>
 
                         <Button
+                            size={"lg"}
                             disabled={isSubmitting || verificationStatus === 'verified'}
                             onClick={handleApprove}
-                            className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs"
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-xs"
                         >
                             {isSubmitting ? (
-                                <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+                                <Loader2 className=" h-4 w-4 animate-spin" />
                             ) : (
-                                <CheckCircle2 className="mr-1.5 h-4 w-4" />
+                                <CheckCircle2 className="h-4 w-4" />
                             )}
                             {isSubmitting ? 'Processing...' : 'Approve Submission'}
                         </Button>

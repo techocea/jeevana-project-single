@@ -67,7 +67,7 @@ const CreateUser = () => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="secondary">
+                <Button size={"lg"} variant="secondary">
                     <Plus /> Create User
                 </Button>
             </DialogTrigger>

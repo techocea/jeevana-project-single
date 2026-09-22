@@ -27,9 +27,9 @@ const UserManagementTabs = ({ currentStatus }: { currentStatus: string }) => {
       className="w-auto"
     >
       <TabsList>
-        <TabsTrigger value="all">All</TabsTrigger>
-        <TabsTrigger value="active">Active</TabsTrigger>
-        <TabsTrigger value="banned">Banned</TabsTrigger>
+        <TabsTrigger className="cursor-pointer" value="all">All</TabsTrigger>
+        <TabsTrigger className="cursor-pointer" value="active">Active</TabsTrigger>
+        <TabsTrigger className="cursor-pointer" value="banned">Banned</TabsTrigger>
       </TabsList>
     </Tabs>
   );
