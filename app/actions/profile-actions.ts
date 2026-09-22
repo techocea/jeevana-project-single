@@ -277,7 +277,7 @@ export async function createProfileByUser(
         console.error(`[WIZARD_SYNC_STEP_${stepNumber}_CRASH]:`, error);
         return {
             success: false,
-            error: error.message || "Progress transmission failed",
+            error: "Progress transmission failed",
         };
     }
 }
@@ -403,7 +403,11 @@ export async function updateProfile(
     updateData: CombinedUpdateInput,
 ) {
     try {
-        const currentUser = await getCurrentUser();
+        const {success, data: currentUser} = await getCurrentUser();
+
+        if (!success || !currentUser) {
+            return {success: false, error: "Unauthorized"};
+        }
 
         const currentProfile = await db.query.profiles.findFirst({
             where: eq(profiles.id, profileId),
@@ -413,7 +417,7 @@ export async function updateProfile(
             return {success: false, error: "Profile not found"};
         }
 
-        if (currentProfile.userId !== currentUser.data?.id) {
+        if (currentProfile.userId !== currentUser.id) {
             return {success: false, error: "Unauthorized"};
         }
 
@@ -532,10 +536,14 @@ export async function updateProfile(
 
 export async function getCurrentUserProfile() {
     try {
-        const currentUser = await getCurrentUser();
+        const {success, data: currentUser} = await getCurrentUser();
+
+        if (!success || !currentUser) {
+            return {success: false, error: "Unauthorized"};
+        }
 
         const profile = await db.query.profiles.findFirst({
-            where: eq(profiles.userId, currentUser.data?.id),
+            where: eq(profiles.userId, currentUser.id),
         });
 
         if (!profile) {
@@ -669,7 +677,7 @@ export async function recordProfileView(viewedProfileId: string) {
         // A failed view-tracking write should never break the profile page
         // itself — log it and let the caller carry on.
         console.error("[RECORD_PROFILE_VIEW_CRASH]:", error);
-        return {success: false, error: error.message || "Failed to record view."};
+        return {success: false, error: "Failed to record view."};
     }
 }
 
@@ -699,7 +707,7 @@ export async function getProfileViewCount(profileId: string) {
         };
     } catch (error: any) {
         console.error("[GET_PROFILE_VIEW_COUNT_CRASH]:", error);
-        return {success: false, error: error.message || "Failed to load view count."};
+        return {success: false, error: "Failed to load view count."};
     }
 }
 
@@ -712,6 +720,7 @@ export async function getProfileViewCount(profileId: string) {
 export async function getProfileViewers(profileId: string) {
     try {
         const {success, data: currentUser} = await getCurrentUser();
+
         if (!success || !currentUser) {
             return {success: false, error: "Unauthorized"};
         }
@@ -753,7 +762,7 @@ export async function getProfileViewers(profileId: string) {
         return {success: true, data: viewers};
     } catch (error: any) {
         console.error("[GET_PROFILE_VIEWERS_CRASH]:", error);
-        return {success: false, error: error.message || "Failed to load viewers."};
+        return {success: false, error: "Failed to load viewers."};
     }
 }
 
@@ -910,7 +919,11 @@ export async function deleteProfile(id: string) {
 
 export async function getUserProfile(profileId: string) {
     let joinedResult;
-    const currentUser = await getCurrentUser();
+    const {success, data: currentUser} = await getCurrentUser();
+
+    if (!success || !currentUser) {
+        return {success: false, error: "Unauthorized"};
+    }
 
     try {
 
@@ -940,9 +953,9 @@ export async function getUserProfile(profileId: string) {
     }
 
     const row = joinedResult[0];
-    const currentRole = currentUser.data?.role;
+    const currentRole = currentUser.role;
 
-    const isOwner = row.profiles.userId === currentUser.data?.id;
+    const isOwner = row.profiles.userId === currentUser.id;
     const isAdmin = currentRole === "admin";
 
     if (!isOwner && !isAdmin) {
@@ -1144,7 +1157,7 @@ export async function createProfileByAdmin(
         console.error("[ADMIN_PROFILE_CREATE_CRASH]:", error);
         return {
             success: false,
-            error: error.message || "Profile creation failed.",
+            error: "Profile creation failed.",
         }
     }
 }

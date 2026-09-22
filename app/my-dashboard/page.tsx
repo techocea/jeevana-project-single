@@ -6,6 +6,8 @@ import {
     getProfileViewCount,
 } from "@/app/actions/profile-actions";
 
+export const dynamic = 'force-dynamic';
+
 const DashboardPage = async () => {
     const {data: currentUser} = await getCurrentUser();
 
