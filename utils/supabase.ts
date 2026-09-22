@@ -4,8 +4,12 @@ import { cookies } from "next/headers";
 export async function createClient() {
   const cookieStore = await cookies();
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || '';
+
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error("🚨 Missing Server Supabase configuration keys.");
+  }
 
   return createServerClient(supabaseUrl, supabaseKey, {
     cookies: {
@@ -15,11 +19,10 @@ export async function createClient() {
       setAll(cookiesToSet) {
         try {
           cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options),
+              cookieStore.set(name, value, options),
           );
         } catch {
-          // The `setAll` method can be called from Server Components,
-          // which cannot write cookies natively. We catch and ignore safely.
+          // Handled safely inside Server Components where cookie sets are restricted
         }
       },
     },
