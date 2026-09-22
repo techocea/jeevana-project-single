@@ -1,12 +1,10 @@
 import Image from "next/image";
 import {Badge} from "@/components/ui/badge";
 import {
-    approveProfile,
-    getUserProfile, rejectProfile,
+    getUserProfile,
 } from "@/app/actions/profile-actions";
 import {Label} from "@/components/ui/label";
 import {getProfileStatusBadge} from "@/helpers/get-status-badge";
-import {ProfileActionsButtons} from "@/components/dashboard/profile-actions-buttons";
 import Breadcrumbs from "@/components/dashboard/breadcrumbs";
 import NicVerificationBanner from "@/components/dashboard/nic-verification-banner";
 import {createClient} from "@/utils/supabase";
@@ -38,7 +36,8 @@ const ViewProfilePage = async ({params}: PageProps) => {
     const verification = profile.verification;
     const supabase = await createClient();
 
-    console.log("profile data with verifications:", profile);
+    // console.log("profile data with verifications:", profile);
+
     const profileImage = profile.profilePic || "/images/demo-profile-pic.png";
     const hobbies = Array.isArray(profile.hobbies)
         ? profile.hobbies.join(", ")
@@ -99,7 +98,7 @@ const ViewProfilePage = async ({params}: PageProps) => {
                                     </div>
                                 </div>
                             </div>
-                            <ProfileActionsButtons profileId={profileId} status={profile.status}/>
+                            {/*<ProfileActionsButtons profileId={profileId} status={profile.status}/>*/}
                         </div>
                     </div>
                 </div>

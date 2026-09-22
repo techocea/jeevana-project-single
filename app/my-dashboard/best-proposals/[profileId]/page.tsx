@@ -3,7 +3,7 @@ import {Badge} from "@/components/ui/badge";
 import {getMatchedProfile} from "@/app/actions/profile-actions";
 import {Label} from "@/components/ui/label";
 import {getProfileStatusBadge} from "@/helpers/get-status-badge";
-import {ProfileActionsButtons} from "@/components/dashboard/profile-actions-buttons";
+// import {ProfileActionsButtons} from "@/components/dashboard/profile-actions-buttons";
 import Breadcrumbs from "@/components/dashboard/breadcrumbs";
 
 interface PageProps {
@@ -77,7 +77,7 @@ const ViewProfilePage = async ({params}: PageProps) => {
                                     </div>
                                 </div>
                             </div>
-                            <ProfileActionsButtons profileId={profileId} status={matchedProfile.status}/>
+                            {/*<ProfileActionsButtons profileId={profileId} status={matchedProfile.status}/>*/}
                         </div>
                     </div>
                 </div>
