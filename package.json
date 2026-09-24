@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "drizzle:push": "drizzle-kit push",
-    "drizzle:generate": "drizzle-kit generate"
+    "drizzle:generate": "drizzle-kit generate",
+    "db:seed": "tsx seedData/seed.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
@@ -17,6 +18,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@hookform/resolvers": "^5.2.2",
+    "@payments-lk/node": "https://payments.lk/sdks/payments-lk-node-0.3.0.tgz",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.105.4",
     "@tanstack/react-table": "^8.21.3",
@@ -24,12 +26,12 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "cn": "^0.3.0",
-    "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "embla-carousel-react": "^8.6.0",
     "lucide-react": "^1.16.0",
     "next": "16.2.6",
     "next-themes": "^0.4.6",
+    "nodemailer": "^10.0.10",
     "postcss": "^8.5.14",
     "postgres": "^3.4.5",
     "radix-ui": "^1.4.3",
@@ -50,10 +52,12 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.4.2",
     "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "tailwindcss": "^4.3.0",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   },
   "packageManager": "pnpm@12.4.2"

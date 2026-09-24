@@ -16,13 +16,14 @@ import {
     Heart,
     Loader2,
     ChevronRight,
-    User, Eye,
+    User, Eye, CheckCircle2,
 } from "lucide-react";
 import {getScoreBadgeStyle} from "@/helpers/get-status-badge";
 import {useEffect, useState, useTransition} from "react";
 import {addProfileToFavorite} from "@/app/actions/profile-actions";
 import toast from "react-hot-toast";
 import {Label} from "../ui/label";
+import {sendInvitation} from "@/app/actions/invitation-actions";
 
 interface ProfileData {
     id: string;
@@ -53,34 +54,35 @@ interface MatchingProfileCardProps {
 
 const MatchingProfileCard = ({match}: MatchingProfileCardProps) => {
     const {id, score, matchReasons, matchedProfile} = match;
+    const [isSending, setIsSending] = useState(false);
+    const [invitationSent, setInvitationSent] = useState(false);
 
-    // const [favorited, setFavorited] = useState<boolean>(matchedProfile?.isFavorited ?? false);
-    // const [isPending, startTransition] = useTransition();
-    //
-    // useEffect(() => {
-    //     // eslint-disable-next-line react-hooks/set-state-in-effect
-    //     setFavorited(matchedProfile?.isFavorited ?? false);
-    // }, [matchedProfile?.isFavorited]);
-    //
-    // const handleFavoriteClick = () => {
-    //     if (!currentProfileId || !matchedProfile?.id) return;
-    //
-    //     const previousState = favorited;
-    //     setFavorited(!previousState);
-    //
-    //     startTransition(async () => {
-    //         const result = await addProfileToFavorite(currentProfileId, matchedProfile.id);
-    //
-    //         if (!result.success) {
-    //             setFavorited(previousState);
-    //             toast.error("Failed to update favorites. Please try again.");
-    //         }else{
-    //             toast.success(
-    //                 previousState ? "Removed from favorites" : "Profile added to favorites"
-    //             );
-    //         }
-    //     });
-    // };
+    const handleSendInterest = async () => {
+        if (isSending || invitationSent) return;
+
+        setIsSending(true);
+        try {
+            const result = await sendInvitation(matchedProfile.id);
+
+            if (!result.success) {
+                if (result.error?.toLowerCase().includes("already sent")) {
+                    setInvitationSent(true);
+                    toast("You've already sent an interest to this profile.", { icon: "ℹ️" });
+                    return;
+                }
+                toast.error(result.error || "Couldn't send interest. Please try again.");
+                return;
+            }
+
+            setInvitationSent(true);
+            toast.success(`Interest sent to ${matchedProfile.fullName || "this profile"}.`);
+        } catch (error) {
+            console.error("[SEND_INTEREST_ERROR]:", error);
+            toast.error("Something went wrong. Please try again.");
+        } finally {
+            setIsSending(false);
+        }
+    };
 
     const locationStr = [matchedProfile.city, matchedProfile.country]
         .filter(Boolean)
@@ -174,17 +176,32 @@ const MatchingProfileCard = ({match}: MatchingProfileCardProps) => {
             {/* Bottom Quick Action Icons Bar */}
             <CardFooter className="grid grid-cols-2 gap-2 border-t border-border/40 px-4">
                 <Button
-                    variant="default"
                     size="lg"
+                    variant="default"
+                    disabled={isSending || invitationSent}
+                    onClick={handleSendInterest}
                 >
-                    Send Interest
+                    {isSending ? (
+                        <>
+                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                            Sending...
+                        </>
+                    ) : invitationSent ? (
+                        <>
+                            <CheckCircle2 className="h-4 w-4 mr-2" />
+                            Interest Sent
+                        </>
+                    ) : (
+                        "Send Interest"
+                    )}
                 </Button>
 
                 <Button
                     variant="link"
                     size="lg"
                 >
-                 <Link href={`/my-dashboard/best-proposals/${id}`} className="flex items-center gap-1">View Profile <ChevronRight/></Link>
+                    <Link href={`/my-dashboard/best-proposals/${id}`} className="flex items-center gap-1">View
+                        Profile <ChevronRight/></Link>
                 </Button>
             </CardFooter>
         </Card>

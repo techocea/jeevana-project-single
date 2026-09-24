@@ -15,7 +15,7 @@ const ProfilePage = async ({ params }: PageProps) => {
     const { profileId } = await params;
     const result = await getUserProfile(profileId);
 
-    // console.log("PROFILE VIEW PROFILE DATA:", result.data);
+    console.log("PROFILE VIEW PROFILE DATA:", result.data);
 
     if (!result.success || !result.data) {
         return (

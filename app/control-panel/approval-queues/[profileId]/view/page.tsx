@@ -33,10 +33,10 @@ const ViewProfilePage = async ({params}: PageProps) => {
     }
 
     const profile = result.data;
+    console.log("profile data with verifications:", profile);
     const verification = profile.verification;
     const supabase = await createClient();
 
-    // console.log("profile data with verifications:", profile);
 
     const profileImage = profile.profilePic || "/images/demo-profile-pic.png";
     const hobbies = Array.isArray(profile.hobbies)

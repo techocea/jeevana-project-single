@@ -32,8 +32,9 @@ export async function calculateUserMatchesAction(userId: string) {
         });
 
         // Calculate scores
+        let score = 0;
         const matchResults = candidates.map((candidate) => {
-            let score = 0;
+
             const reasons: string[] = [];
 
             // Age Check (25 pts)
@@ -91,17 +92,19 @@ export async function calculateUserMatchesAction(userId: string) {
         });
 
         // Upsert results into database
-        for (const match of matchResults) {
-            await db.insert(profileMatches)
-                .values(match)
-                .onConflictDoUpdate({
-                    target: [profileMatches.userId, profileMatches.matchedProfileId],
-                    set: {
-                        score: match.score,
-                        matchReasons: match.matchReasons,
-                        updatedAt: new Date(),
-                    },
-                });
+        if(score > 0){
+            for (const match of matchResults) {
+                await db.insert(profileMatches)
+                    .values(match)
+                    .onConflictDoUpdate({
+                        target: [profileMatches.userId, profileMatches.matchedProfileId],
+                        set: {
+                            score: match.score,
+                            matchReasons: match.matchReasons,
+                            updatedAt: new Date(),
+                        },
+                    });
+            }
         }
 
         revalidatePath("/best-proposals");

@@ -10,7 +10,7 @@ import {
     boolean,
     integer,
     pgEnum,
-    uniqueIndex, index,
+    uniqueIndex, index, unique,
 } from "drizzle-orm/pg-core";
 
 export const profileSeq = pgSequence("profile_id_seq", {
@@ -23,6 +23,7 @@ export const onboardingEnum = pgEnum("onboarding_status", [
     "INCOMPLETED",
     "COMPLETED",
 ]);
+
 export const onboardingStepEnum = pgEnum("onboarding_step", [
     "START",
     "RELIGION",
@@ -66,6 +67,9 @@ export const maritalStatusEnum = pgEnum("marital_status", [
     "widowed",
 ]);
 
+export const orderStatusEnum = pgEnum("order_status", ["pending", "paid", "failed", "cancelled"]);
+export const subscriptionStatusEnum = pgEnum("subscription_status", ["inactive", "active", "expired"]);
+
 export const users = pgTable("users", {
     id: uuid("id").primaryKey().defaultRandom(),
     fullName: text("full_name"),
@@ -81,6 +85,43 @@ export const users = pgTable("users", {
 
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const orders = pgTable("orders", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+
+    packageId: integer("package_id").notNull(), // matches an id in lib/pricing-packages.ts
+    packageName: text("package_name").notNull(), // snapshot at purchase time — pricing can change later without rewriting history
+    amountCents: integer("amount_cents").notNull(), // snapshot, priced server-side, never from client input
+
+    status: orderStatusEnum("status").default("pending").notNull(),
+    paymentsLkCheckoutId: text("payments_lk_checkout_id"),
+
+    paidAt: timestamp("paid_at"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const subscriptions = pgTable(
+    "subscriptions",
+    {
+        id: uuid("id").primaryKey().defaultRandom(),
+        userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+
+        packageId: integer("package_id"),
+        packageName: text("package_name"),
+        status: subscriptionStatusEnum("status").default("inactive").notNull(),
+
+        startedAt: timestamp("started_at"),
+        expiresAt: timestamp("expires_at"),
+        lastOrderId: uuid("last_order_id").references(() => orders.id),
+
+        updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    },
+    (table) => ({
+        userUnique: unique("subscriptions_user_id_unique").on(table.userId),
+    }),
+);
 
 export const favorites = pgTable(
     "favorites",
@@ -179,7 +220,7 @@ export const profiles = pgTable("profiles", {
     secondaryEmail: text("secondary_email"),
 
     status: profileStatusEnum("status").default("pending").notNull(), // 'pending' | 'approved' | 'rejected'
-    isVerified:boolean("is_verified").default(false),
+    isVerified: boolean("is_verified").default(false),
 
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),

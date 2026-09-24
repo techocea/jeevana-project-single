@@ -5,7 +5,6 @@ import {z} from "zod";
 import {getCurrentUser} from "@/app/actions/profile-actions";
 import {db} from "@/lib/db";
 import {profiles, verifications} from "@/drizzle/schema";
-import {createClient} from "@/utils/supabase";
 import {eq} from "drizzle-orm";
 
 const SubmitVerificationSchema = z.object({
@@ -64,7 +63,7 @@ export async function submitVerificationAction(input: SubmitVerificationInput) {
             });
 
         revalidatePath("/my-dashboard");
-        revalidatePath("/verify");
+        revalidatePath("/verify-account");
 
         return {
             success: true,

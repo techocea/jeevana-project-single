@@ -1,10 +1,10 @@
-import {redirect} from "next/navigation";
 import DashboardStatsGrid from "@/components/dashboard/dashboard-stats-grid";
 import {
     getCurrentUser,
     getMatchingProfilesCount,
     getProfileViewCount,
 } from "@/app/actions/profile-actions";
+import {redirect} from "next/navigation";
 
 export const dynamic = 'force-dynamic';
 
@@ -12,12 +12,10 @@ const DashboardPage = async () => {
     const {data: currentUser} = await getCurrentUser();
 
     if (!currentUser) {
-        redirect("/auth?mode=login");
+        redirect("/")
     }
 
-    if (currentUser.onboardingStatus === "INCOMPLETED") {
-        redirect("/onboarding");
-    }
+    // console.log("Current user stats:", currentUser);
 
     const [profileViewRes, totalMatchesCount] = await Promise.all([
         getProfileViewCount(currentUser.id),
@@ -39,7 +37,7 @@ const DashboardPage = async () => {
                 <p className="text-muted-foreground text-lg">Here's what's happening with your account today</p>
             </div>
 
-            <DashboardStatsGrid statsData={statsData} />
+            <DashboardStatsGrid statsData={statsData}/>
         </div>
     )
 };

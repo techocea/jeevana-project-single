@@ -198,7 +198,6 @@ export async function createProfileByUser(
             let savedPrefs: typeof partnerPreferences.$inferSelect | undefined;
 
             if (stepNumber <= 6) {
-                // Requires a UNIQUE constraint on profiles.userId for this to work.
                 const [row] = await tx
                     .insert(profiles)
                     .values({
@@ -213,34 +212,37 @@ export async function createProfileByUser(
                     .returning();
                 savedProfile = row;
             } else if (stepNumber === 7) {
-                // Requires a UNIQUE constraint on partnerPreferences.userId.
+                const prefsToInsert = {
+                    preferredMinAge: updatePayload.preferredMinAge,
+                    preferredMaxAge: updatePayload.preferredMaxAge,
+                    preferredMaritalStatus:
+                        updatePayload.preferredMaritalStatus || "never_married",
+                    preferredEducationLevels: Array.isArray(
+                        updatePayload.preferredEducationLevels,
+                    )
+                        ? updatePayload.preferredEducationLevels
+                        : [],
+                    preferredProfessions: Array.isArray(
+                        updatePayload.preferredProfessions,
+                    )
+                        ? updatePayload.preferredProfessions
+                        : [],
+                    preferredAnnualIncomeRanges: Array.isArray(
+                        updatePayload.preferredAnnualIncomeRanges,
+                    )
+                        ? updatePayload.preferredAnnualIncomeRanges
+                        : [],
+                };
+
                 const [prefRow] = await tx
                     .insert(partnerPreferences)
                     .values({
                         userId: userIdToUpdate,
-                        preferredMinAge: updatePayload.preferredMinAge,
-                        preferredMaxAge: updatePayload.preferredMaxAge,
-                        preferredMaritalStatus:
-                            updatePayload.preferredMaritalStatus || "never_married",
-                        preferredEducationLevels: Array.isArray(
-                            updatePayload.preferredEducationLevels,
-                        )
-                            ? updatePayload.preferredEducationLevels
-                            : [],
-                        preferredProfessions: Array.isArray(
-                            updatePayload.preferredProfessions,
-                        )
-                            ? updatePayload.preferredProfessions
-                            : [],
-                        preferredAnnualIncomeRanges: Array.isArray(
-                            updatePayload.preferredAnnualIncomeRanges,
-                        )
-                            ? updatePayload.preferredAnnualIncomeRanges
-                            : [],
+                        ...prefsToInsert,
                     })
                     .onConflictDoUpdate({
                         target: partnerPreferences.userId,
-                        set: {...updatePayload, updatedAt: new Date()},
+                        set: {...prefsToInsert, updatedAt: new Date()},
                     })
                     .returning();
                 savedPrefs = prefRow;
@@ -863,7 +865,7 @@ export async function approveProfile(verificationId: string, profileId: string) 
         await db
             .update(profiles)
             .set({
-                isVerified: true,
+                status: "approved",
                 updatedAt: new Date(),
             })
             .where(eq(profiles.id, profileId));
@@ -892,7 +894,7 @@ export async function rejectProfile(verificationId: string, profileId: string, r
         await db
             .update(profiles)
             .set({
-                isVerified: false,
+                status: "rejected",
                 updatedAt: new Date(),
             })
             .where(eq(profiles.id, profileId));
@@ -909,7 +911,7 @@ export async function deleteProfile(id: string) {
     try {
         await db.delete(profiles).where(eq(profiles.id, id));
 
-        revalidatePath("/control-panel");
+        revalidatePath("/control-panel/approval-queues");
         return {success: true};
     } catch (error) {
         console.error("[PROFILE_DELETION_ERROR]:", error);
@@ -919,14 +921,23 @@ export async function deleteProfile(id: string) {
 
 export async function getUserProfile(profileId: string) {
     let joinedResult;
-    const {success, data: currentUser} = await getCurrentUser();
-
-    if (!success || !currentUser) {
-        return {success: false, error: "Unauthorized"};
-    }
+    let authedUser;
 
     try {
+        const supabase = await createClient();
+        const {
+            data: { user },
+            error,
+        } = await supabase.auth.getUser();
 
+        if (error || !user) {
+            return {
+                success: false,
+                data: null,
+                error: "Unauthorized",
+            };
+        }
+        authedUser = user;
         joinedResult = await db
             .select()
             .from(profiles)
@@ -953,9 +964,9 @@ export async function getUserProfile(profileId: string) {
     }
 
     const row = joinedResult[0];
-    const currentRole = currentUser.role;
+    const currentRole = authedUser.user_metadata?.role;
 
-    const isOwner = row.profiles.userId === currentUser.id;
+    const isOwner = row.profiles.userId === authedUser.id;
     const isAdmin = currentRole === "admin";
 
     if (!isOwner && !isAdmin) {

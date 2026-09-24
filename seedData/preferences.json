@@ -1,10 +1,8 @@
 [
   {
-    "min_age": 22,
-    "max_age": 30,
-
-    "marital_status": "never_married",
-
+    "preferred_min_age": 22,
+    "preferred_max_age": 30,
+    "preferred_marital_status": "never_married",
     "preferred_education_levels": ["Bachelor's", "Master's"],
     "preferred_professions": [
       "Software Engineer",
