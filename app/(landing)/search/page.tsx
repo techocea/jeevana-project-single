@@ -1,7 +1,7 @@
 import {getProfilesByFilters} from "@/app/actions/profile-actions";
 import FilterOptions from "@/components/landing/filter-options";
 import {ProfileCard} from "@/components/landing/profile-card";
-import {SearchFilters} from "@/types";
+import {FoodHabitTypes, MaritalStatusTypes, SearchFilters} from "@/types";
 import Image from "next/image";
 import {Badge} from "@/components/ui/badge";
 import Link from "next/link";
@@ -24,11 +24,13 @@ const getSearchValue = (
 const normalizeSearchFilters = (
     searchParams: Record<string, string | string[] | undefined>,
 ): SearchFilters => ({
-    community: getSearchValue(searchParams.community),
+    community:getSearchValue(searchParams.community),
     lookingFor: getSearchValue(searchParams.lookingFor),
     minAge: getSearchValue(searchParams.minAge),
     maxAge: getSearchValue(searchParams.maxAge),
     religion: getSearchValue(searchParams.religion),
+    maritalStatus: (getSearchValue(searchParams.maritalStatus) as MaritalStatusTypes) || null,
+    foodPreferences: (getSearchValue(searchParams.foodPreferences) as FoodHabitTypes) || null,
     caste: getSearchValue(searchParams.caste),
     motherTongue: getSearchValue(searchParams.motherTongue),
     educationLevel: getSearchValue(searchParams.educationLevel),
@@ -43,11 +45,17 @@ const SearchProfiles = async ({searchParams}: PageProps) => {
     const resolvedSearchParams = await searchParams;
     const filters = normalizeSearchFilters(resolvedSearchParams);
 
-    const result = await getProfilesByFilters(filters);
+    const activeReligion = filters.religion?.toLowerCase();
+
+    const queryFilters: SearchFilters = {
+        ...filters,
+        religion: activeReligion,
+    };
+
+    const result = await getProfilesByFilters(queryFilters);
     const profiles = result.data || [];
 
-    // console.log("Current profile id:", currentProfile?.id);
-    // console.log("Returned profiles from DB:", result.data);
+    console.log("Returned profiles from DB:", profiles);
 
     if (!result.success) {
         return (
@@ -58,7 +66,7 @@ const SearchProfiles = async ({searchParams}: PageProps) => {
         );
     }
 
-    const communityTitleElement = getCommunityTitles(filters.community || "");
+    const communityTitleElement = getCommunityTitles(filters.religion || "");
 
     return (
         <main className="w-full">
@@ -97,19 +105,19 @@ const SearchProfiles = async ({searchParams}: PageProps) => {
                     </div>
                 </div>
             </section>
-            <section className="flex flex-col md:flex-row md:items-start gap-8 p-10">
+            <section className="flex flex-col md:flex-row md:items-start gap-6 max-w-6xl mx-auto w-full py-10">
                 <div className="flex-1 hidden sm:block">
                     <FilterOptions/>
                 </div>
-                <div className="flex-3 flex flex-col items-center gap-6">
-                    {profiles.length > 0 ? (
-                        profiles.map((profile) => (
-                            <ProfileCard
-                                key={profile.id}
-                                profileCardData={profile}
-                            />
-                        ))
-                    ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        {profiles.length > 0 ? (
+                            profiles.map((profile) => (
+                                <ProfileCard
+                                    key={profile.id}
+                                    profileCardData={profile}
+                                />
+                            ))
+                        ) : (
                         <div className="text-center text-muted-foreground">
                             No profiles found matching your criteria.
                         </div>

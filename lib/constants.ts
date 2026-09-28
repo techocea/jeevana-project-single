@@ -262,11 +262,11 @@ export const COMMUNITIES = [
   {
     label: "Buddhist",
     icon: "/icons/buddhist-icon.svg",
-    href: "/search?community=buddhist",
+    href: "/search?community=buddhism",
     adLength: 30,
   },
   {
-    label: "Islam",
+    label: "Muslim",
     icon: "/icons/christian-icon.svg",
     href: "/search?community=islam",
     adLength: 30,
@@ -274,7 +274,7 @@ export const COMMUNITIES = [
   {
     label: "Tamil",
     icon: "/icons/tamil-icon.svg",
-    href: "/search?community=hindu",
+    href: "/search?community=hinduism",
     adLength: 45,
   },
 ];

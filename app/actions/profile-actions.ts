@@ -12,6 +12,7 @@ import {SearchFilters} from "@/types";
 import {revalidatePath} from "next/cache";
 import {redirect} from "next/navigation";
 import {calculateUserMatchesAction} from "@/app/actions/matchmaking-action";
+import {MARITAL_STATUSES} from "@/lib/constants";
 
 const NEXT_STEP_POINTER = {
     1: "RELIGION",
@@ -771,7 +772,6 @@ export async function getProfileViewers(profileId: string) {
 
 export async function getProfilesByFilters(
     filters: SearchFilters,
-    currentProfileId?: string,
 ) {
     try {
         const {minAge, maxAge} = filters;
@@ -780,14 +780,8 @@ export async function getProfilesByFilters(
             .trim()
             .toLowerCase();
         const targetGender = TARGET_GENDER_MAP[rawLookingFor] || undefined;
-        const rawReligion = String(filters.religion || "").trim();
-        const rawCaste = String(filters.caste || "").trim();
-        const rawMotherTongue = String(filters.motherTongue || "").trim();
-        const rawEducationLevel = String(filters.educationLevel || "").trim();
-        const rawProfession = String(filters.profession || "").trim();
-        const rawIncomeRange = String(filters.annualIncomeRange || "").trim();
-        const rawCountry = String(filters.country || "").trim();
-        const rawState = String(filters.state || "").trim();
+
+        const activeReligion = filters.religion || filters.community;
 
         const parsedMinAge = minAge ? parseInt(minAge, 10) : 18;
         const parsedMaxAge = maxAge ? parseInt(maxAge, 10) : 100;
@@ -797,22 +791,21 @@ export async function getProfilesByFilters(
             lte(profiles.age, parsedMaxAge),
         ];
 
-        if (currentProfileId) {
-            conditions.push(ne(profiles.id, currentProfileId));
-        }
-
+        if (activeReligion) conditions.push(eq(profiles.religion, activeReligion));
         if (targetGender) conditions.push(eq(profiles.gender, targetGender));
-        if (rawReligion) conditions.push(eq(profiles.religion, rawReligion));
-        if (rawCaste) conditions.push(eq(profiles.caste, rawCaste));
-        if (rawMotherTongue)
-            conditions.push(eq(profiles.motherTongue, rawMotherTongue));
-        if (rawEducationLevel)
-            conditions.push(eq(profiles.educationLevel, rawEducationLevel));
-        if (rawProfession) conditions.push(eq(profiles.profession, rawProfession));
-        if (rawIncomeRange)
-            conditions.push(eq(profiles.annualIncomeRange, rawIncomeRange));
-        if (rawCountry) conditions.push(eq(profiles.country, rawCountry));
-        if (rawState) conditions.push(eq(profiles.state, rawState));
+
+        if (filters.maritalStatus) conditions.push(eq(profiles.maritalStatus, filters.maritalStatus));
+        if (filters.foodPreferences) conditions.push(eq(profiles.foodPreferences, filters.foodPreferences));
+        if (filters.caste) conditions.push(eq(profiles.caste, filters.caste));
+        if (filters.motherTongue)
+            conditions.push(eq(profiles.motherTongue, filters.motherTongue));
+        if (filters.educationLevel)
+            conditions.push(eq(profiles.educationLevel, filters.educationLevel));
+        if (filters.profession) conditions.push(eq(profiles.profession, filters.profession));
+        if (filters.annualIncomeRange)
+            conditions.push(eq(profiles.annualIncomeRange, filters.annualIncomeRange));
+        if (filters.country) conditions.push(eq(profiles.country, filters.country));
+        if (filters.state) conditions.push(eq(profiles.state, filters.state));
 
         const searchedProfiles = await db
             .select({
@@ -820,25 +813,16 @@ export async function getProfilesByFilters(
                 fullName: profiles.fullName,
                 profilePic: profiles.profilePic,
                 age: profiles.age,
+                maritalStatus: profiles.maritalStatus,
+                foodPreferences: profiles.foodPreferences,
                 height: profiles.height,
                 country: profiles.country,
                 profession: profiles.profession,
                 religion: profiles.religion,
                 caste: profiles.caste,
                 educationLevel: profiles.educationLevel,
-                isFavorited: sql<boolean>`COALESCE(${favorites.id} IS NOT NULL, false)`,
             })
             .from(profiles)
-            .leftJoin(
-                favorites,
-                and(
-                    eq(favorites.targetProfileId, profiles.id),
-                    // If currentProfileId is undefined/null, this condition won't match any row
-                    currentProfileId
-                        ? eq(favorites.favoritedByProfileId, currentProfileId)
-                        : sql`1 = 0`,
-                ),
-            )
             .where(and(...conditions))
             .orderBy(desc(profiles.createdAt))
             .limit(5);
@@ -880,7 +864,7 @@ export async function approveProfile(verificationId: string, profileId: string) 
         const {isAuthorized, error} = await validateAdmin();
 
         if (!isAuthorized) {
-            return { success: false, error};
+            return {success: false, error};
         }
 
         await db
@@ -913,7 +897,7 @@ export async function rejectProfile(verificationId: string, profileId: string, r
         const {isAuthorized, error} = await validateAdmin();
 
         if (!isAuthorized) {
-            return { success: false, error};
+            return {success: false, error};
         }
 
         await db
@@ -947,7 +931,7 @@ export async function deleteProfile(id: string) {
         const {isAuthorized, error} = await validateAdmin();
 
         if (!isAuthorized) {
-            return { success: false, error};
+            return {success: false, error};
         }
 
         await db.delete(profiles).where(eq(profiles.id, id));
@@ -1037,7 +1021,7 @@ export async function getUsersByEmail(query: string) {
         const {isAuthorized, error} = await validateAdmin();
 
         if (!isAuthorized) {
-            return { success: false, error};
+            return {success: false, error};
         }
 
         const registeredUsers = await db
@@ -1069,7 +1053,7 @@ export async function createProfileByAdmin(
         const {isAuthorized, error} = await validateAdmin();
 
         if (!isAuthorized) {
-            return { success: false, error};
+            return {success: false, error};
         }
 
         if (!targetUserId) {

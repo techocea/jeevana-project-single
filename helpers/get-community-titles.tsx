@@ -1,5 +1,5 @@
-export const getCommunityTitles = (community: string) => {
-    switch (community) {
+export const getCommunityTitles = (religion: string) => {
+    switch (religion) {
         case "islam":
             return (
                 <div className="space-y-1">
@@ -22,7 +22,7 @@ export const getCommunityTitles = (community: string) => {
                         life partners rooted in shared sacraments, heritage, and Christian family values.</p>
                 </div>
             )
-        case "buddhist":
+        case "buddhism":
             return (
                 <div className="space-y-1">
                     <h4
@@ -33,7 +33,7 @@ export const getCommunityTitles = (community: string) => {
                         partners aligned with Buddhist principles, mindfulness, and cultural background.</p>
                 </div>
             )
-        case "tamil":
+        case "hinduism":
             return (
                 <div className="space-y-1">
                     <h4

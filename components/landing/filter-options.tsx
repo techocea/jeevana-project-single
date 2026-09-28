@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import {useRouter, useSearchParams, usePathname, ReadonlyURLSearchParams} from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { Card, CardHeader, CardContent } from "../ui/card";
 import { Input } from "../ui/input";
@@ -66,13 +66,18 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
   const [loadingStates, setLoadingStates] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  const getActiveReligion = (params: ReadonlyURLSearchParams | null) => {
+    if (!params) return "";
+    return params.get("religion") || params.get("community") || "";
+  }
+
   const initialFormValues = useMemo(() => {
     if (!searchParams) return null;
     return {
       lookingFor: searchParams.get("lookingFor") || "",
       minAge: searchParams.get("minAge") || "",
       maxAge: searchParams.get("maxAge") || "",
-      religion: searchParams.get("religion") || "",
+      religion: getActiveReligion(searchParams),
       caste: searchParams.get("caste") || "",
       motherTongue: searchParams.get("motherTongue") || "",
       educationLevel: searchParams.get("educationLevel") || "",
@@ -189,7 +194,7 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
       lookingFor: searchParams.get("lookingFor") || "",
       minAge: searchParams.get("minAge") || "",
       maxAge: searchParams.get("maxAge") || "",
-      religion: searchParams.get("religion") || "",
+      religion: getActiveReligion(searchParams),
       caste: searchParams.get("caste") || "",
       motherTongue: searchParams.get("motherTongue") || "",
       educationLevel: searchParams.get("educationLevel") || "",
@@ -217,6 +222,8 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
     searchParams.forEach((value, key) => {
       params.set(key, value);
     });
+
+    params.delete("community");
 
     if (values.lookingFor) params.set("lookingFor", values.lookingFor);
     else params.delete("lookingFor");
@@ -299,7 +306,7 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
             className={
               isDashboard
                   ? "hidden"
-                  : "hidden md:block rounded-none border-r border-primary p-2 w-full ml-0"
+                  : "hidden md:block rounded-xl bg-white border border-slate-200 px-0 w-full ml-0"
             }
         >
           <CardHeader className="justify-start">
@@ -350,8 +357,8 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
   function FilterForm() {
     return (
         <>
-          <div className="border-b pb-4 text-muted">
-            <Label className="mb-2 block text-sm font-medium">Looking for</Label>
+          <div className="pb-2 text-muted border-t border-slate-200 pt-4">
+            <Label className="mb-2 block text-sm uppercase font-bold">Looking for</Label>
             <Controller
                 name="lookingFor"
                 control={control}
@@ -371,10 +378,10 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
           />
         </div>
 
-        <div className="border-b pb-4 text-muted">
+        <div className="pb-2 text-muted">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <Label className="mb-2 block text-sm font-medium">Min Age</Label>
+              <Label className="mb-2 block text-sm uppercase font-bold">Min Age</Label>
               <Input
                 {...register("minAge")}
                 placeholder="18"
@@ -383,7 +390,7 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
               />
             </div>
             <div>
-              <Label className="mb-2 block text-sm font-medium">Max Age</Label>
+              <Label className="mb-2 block text-sm uppercase font-bold">Max Age</Label>
               <Input
                 {...register("maxAge")}
                 placeholder="50"
@@ -394,8 +401,8 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
           </div>
         </div>
 
-        <div className="border-b pb-4 text-muted">
-          <Label className="mb-2 block text-sm font-medium">Religion</Label>
+        <div className="pb-2 text-muted">
+          <Label className="mb-2 block text-sm uppercase font-bold">Religion</Label>
           <Controller
             name="religion"
             control={control}
@@ -425,7 +432,7 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
 
           {religionValue && (
             <div className="mt-3">
-              <Label className="mb-2 block text-sm font-medium">Caste</Label>
+              <Label className="mb-2 block text-sm uppercase font-bold">Caste</Label>
               <Controller
                 name="caste"
                 control={control}
@@ -437,10 +444,10 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      {RELIGIONS_AND_CASTES[religionValue].map((caste) => (
-                        <SelectItem key={caste} value={caste}>
-                          {caste}
-                        </SelectItem>
+                      {(RELIGIONS_AND_CASTES[religionValue] || []).map((caste) => (
+                          <SelectItem key={caste} value={caste}>
+                            {caste}
+                          </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -450,8 +457,8 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
           )}
         </div>
 
-        <div className="border-b pb-4 text-muted">
-          <Label className="mb-2 block text-sm font-medium">
+        <div className="pb-2 text-muted">
+          <Label className="mb-2 block text-sm uppercase font-bold">
             Mother Tongue
           </Label>
           <Controller
@@ -476,8 +483,8 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
           />
         </div>
 
-        <div className="border-b pb-4 text-muted">
-          <Label className="mb-2 block text-sm font-medium">
+        <div className="pb-2 text-muted">
+          <Label className="mb-2 block text-sm uppercase font-bold">
             Education Level
           </Label>
           <Controller
@@ -502,8 +509,8 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
           />
         </div>
 
-        <div className="border-b pb-4 text-muted">
-          <Label className="mb-2 block text-sm font-medium">Profession</Label>
+        <div className="pb-2 text-muted">
+          <Label className="mb-2 block text-sm uppercase font-bold">Profession</Label>
           <Controller
             name="profession"
             control={control}
@@ -533,8 +540,8 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
           />
         </div>
 
-        <div className="border-b pb-4 text-muted">
-          <Label className="mb-2 block text-sm font-medium">
+        <div className="pb-2 text-muted">
+          <Label className="mb-2 block text-sm uppercase font-bold">
             Annual Income
           </Label>
           <Controller
@@ -559,10 +566,10 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
           />
         </div>
 
-        <div className="border-b pb-4 text-muted">
+        <div className="pb-2 text-muted">
           <div className="flex flex-col gap-3">
             <div>
-              <Label className="mb-2 block text-sm font-medium">Country</Label>
+              <Label className="mb-2 block text-sm uppercase font-bold">Country</Label>
               <Controller
                 name="country"
                 control={control}
@@ -598,7 +605,7 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
               />
             </div>
             <div>
-              <Label className="mb-2 block text-sm font-medium">
+              <Label className="mb-2 block text-sm uppercase font-bold">
                 State / Region
               </Label>
               <Controller
@@ -637,8 +644,8 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
           </div>
         </div>
 
-        <div className="border-b pb-4 text-muted">
-          <Label className="mb-2 block text-sm font-medium">Hobbies</Label>
+        <div className="pb-2 text-muted">
+          <Label className="mb-2 block text-sm uppercase font-bold">Hobbies</Label>
           <Controller
             name="hobbies"
             control={control}
@@ -670,7 +677,7 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
           />
         </div>
 
-        <div className="flex items-center gap-2 pb-2 w-full">
+        <div className="flex items-center gap-2 pb-2  w-full">
           <Button type="submit" className="w-1/2 rounded-full">
             APPLY
           </Button>

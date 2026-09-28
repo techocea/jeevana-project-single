@@ -45,7 +45,7 @@ export function convertCmToFeetInches(cm: string | number | null) {
   const totalInches = parsedCm / 2.54;
   const roundedInches = Math.round(totalInches);
   const feet = Math.floor(roundedInches / 12);
-  let inches = roundedInches % 12;
+  const inches = roundedInches % 12;
 
   if (inches === 12) {
     return {
