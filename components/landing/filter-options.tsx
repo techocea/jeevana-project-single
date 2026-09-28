@@ -281,84 +281,82 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
   };
 
   return (
-    <>
-      {/* Mobile Filter Button */}
-      <div
-        className={`${mode == "search" ? "md:hidden" : "mb-2 justify-end flex"}`}
-      >
-        <Button
-          type="button"
-          onClick={() => setDrawerOpen(true)}
-          className="w-fit  rounded-full"
-          variant="outline"
-        >
-          <SlidersHorizontal size={20} className="mr-1" />
-          FILTERS
-        </Button>
-      </div>
-
-      {/* Desktop Filter Card */}
-      <Card
-        className={
-          isDashboard
-            ? "hidden"
-            : "hidden md:block rounded-none border-r border-primary p-2 w-full ml-0"
-        }
-      >
-        <CardHeader className="justify-start">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <SlidersHorizontal size={24} className="text-primary" />
-            <h4 className="text-2xl font-medium font-newsreader">Filters</h4>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-4"
+      <>
+        {/* Mobile Filter Button */}
+        <div className="flex sm:hidden w-full">
+          <Button
+              type="button"
+              onClick={() => setDrawerOpen(true)}
+              className="w-full rounded-xl" variant="default"
           >
-            <FilterForm />
-          </form>
-        </CardContent>
-      </Card>
+            <SlidersHorizontal size={16} className="mr-2 h-4 w-4"/>
+            FILTERS
+          </Button>
+        </div>
 
-      {/* Mobile Drawer */}
-      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <DrawerContent
-          className={
-            isDashboard
-              ? "rounded-t-3xl border border-slate-200 bg-white p-4 max-w-3xl mx-auto"
-              : "md:hidden rounded-t-3xl border border-slate-200 bg-white p-4"
-          }
+        {/* Desktop Filter Card */}
+        <Card
+            className={
+              isDashboard
+                  ? "hidden"
+                  : "hidden md:block rounded-none border-r border-primary p-2 w-full ml-0"
+            }
         >
-          <DrawerHeader>
-            <DrawerTitle className="flex items-center gap-2 justify-start text-2xl font-medium font-newsreader text-black">
-              <SlidersHorizontal size={24} className="text-primary" />
-              Filters
-            </DrawerTitle>
-          </DrawerHeader>
-          <div className="overflow-y-auto max-h-[70vh] px-4">
+          <CardHeader className="justify-start">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <SlidersHorizontal size={24} className="text-primary"/>
+              <h4 className="text-2xl font-medium font-newsreader">Filters</h4>
+            </div>
+          </CardHeader>
+          <CardContent>
             <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="flex flex-col gap-4"
+                onSubmit={handleSubmit(onSubmit)}
+                className="flex flex-col gap-4"
             >
-              <FilterForm />
+              <FilterForm/>
             </form>
-          </div>
-        </DrawerContent>
-      </Drawer>
-    </>
+          </CardContent>
+        </Card>
+
+        {/* Mobile Drawer */}
+        <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+          <DrawerContent
+              className={
+                isDashboard
+                    ? "rounded-t-3xl border border-slate-200 bg-white p-4 max-w-3xl mx-auto"
+                    : "md:hidden rounded-t-3xl border border-slate-200 bg-white p-4"
+              }
+          >
+            <DrawerHeader>
+              <DrawerTitle
+                  className="flex items-center gap-2 justify-start text-2xl font-medium font-newsreader text-black">
+                <SlidersHorizontal size={24} className="text-primary"/>
+                Filters
+              </DrawerTitle>
+            </DrawerHeader>
+            <div className="overflow-y-auto max-h-[70vh] px-4">
+              <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  className="flex flex-col gap-4"
+              >
+                <FilterForm/>
+              </form>
+            </div>
+          </DrawerContent>
+        </Drawer>
+      </>
   );
 
   function FilterForm() {
     return (
-      <>
-        <div className="border-b pb-4 text-muted">
-          <Label className="mb-2 block text-sm font-medium">Looking for</Label>
-          <Controller
-            name="lookingFor"
-            control={control}
-            render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
+        <>
+          <div className="border-b pb-4 text-muted">
+            <Label className="mb-2 block text-sm font-medium">Looking for</Label>
+            <Controller
+                name="lookingFor"
+                control={control}
+                render={({field}) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select preference">
                     {field.value}

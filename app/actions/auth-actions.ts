@@ -197,11 +197,21 @@ export async function createUserByAdmin(data: CreateUserByAdminValues) {
     if (!currentUser) {
       return { error: "Unauthorized access." };
     }
-    const caller = await db.query.users.findFirst({
-      where: (u, { eq }) => eq(u.id, currentUser.id),
-    });
 
-    if (caller?.role !== "admin") {
+    const metadataRole =
+        currentUser.user_metadata?.role;
+
+    let dbRole: string | undefined = undefined;
+
+    if (!metadataRole) {
+      const caller = await db.query.users.findFirst({
+        where: (u, { eq }) => eq(u.id, currentUser.id),
+      });
+      dbRole = caller?.role;
+    }
+    const effectiveRole = (metadataRole || dbRole || "").toLowerCase();
+
+    if (effectiveRole !== "admin") {
       return { error: "Forbidden: Admin privileges required." };
     }
 

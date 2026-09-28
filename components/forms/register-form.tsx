@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 const RegisterForm = () => {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const {

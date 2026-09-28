@@ -9,9 +9,11 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import {Eye, EyeClosed} from "lucide-react";
 
 const AdminLoginForm = () => {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
   const {
@@ -25,6 +27,10 @@ const AdminLoginForm = () => {
       password: "",
     },
   });
+
+  const handleTogglePassword = () => {
+    setShowPassword(prev => !prev);
+  }
 
   const onSubmit = async (data: AuthLoginValues) => {
     setServerError(null);
@@ -76,32 +82,44 @@ const AdminLoginForm = () => {
 
         <div className="flex flex-col gap-2">
           <Label
-            htmlFor="password"
-            className="text-sm font-medium text-slate-700 uppercase"
+              htmlFor="password"
+              className="text-sm font-medium text-slate-700 uppercase"
           >
             Password
           </Label>
-          <Input
-            id="password"
-            type="password"
-            {...register("password")}
-            placeholder="********"
-          />
+          <div className="relative w-full">
+            <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                {...register("password")}
+                className="pr-10"
+                placeholder="********"
+            />
+            <Button
+                type="button"
+                variant="ghost"
+                onClick={handleTogglePassword}
+                className="absolute right-2 top-1/2 -translate-y-1/2 h-fit w-fit p-1 bg-transparent hover:bg-transparent"
+            >
+              {!showPassword ? <Eye className="text-muted-foreground"/> :
+                  <EyeClosed className="text-muted-foreground"/>}
+            </Button>
+          </div>
           {errors.password && (
-            <p className="text-sm text-red-600">{errors.password.message}</p>
+              <p className="text-sm text-red-600">{errors.password.message}</p>
           )}
         </div>
 
         {serverError ? (
-          <div className="p-3 text-sm bg-red-200 border-l-4 border-red-600 text-red-600">{serverError}</div>
+            <div className="p-3 text-sm bg-red-200 border-l-4 border-red-600 text-red-600">{serverError}</div>
         ) : null}
 
         <Button
-          type="submit"
-          size="lg"
-          variant="default"
-          className="w-full uppercase rounded-xl px-6 py-3"
-          disabled={isSubmitting}
+            type="submit"
+            size="lg"
+            variant="default"
+            className="w-full uppercase rounded-xl px-6 py-3"
+            disabled={isSubmitting}
         >
           {isSubmitting ? "Logging in..." : "Login"}
         </Button>

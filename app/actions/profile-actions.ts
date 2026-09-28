@@ -63,6 +63,7 @@ export async function getCurrentUser() {
             success: true,
             data: {
                 ...dbUser,
+                role: dbUser.role,
                 email: authedUser.email,
             },
             error: null,
@@ -849,10 +850,39 @@ export async function getProfilesByFilters(
     }
 }
 
-// ADMIN PROFILE ACTIONS
+// ADMIN ACTIONS
+export async function validateAdmin() {
+    try {
+        const result = await getCurrentUser();
+        if (!result.success || !result.data) {
+            return {isAuthorized: false, error: "Unauthorized access."};
+        }
+
+        const role = (result.data.role || "").toLowerCase();
+
+        if (role !== "admin") {
+            return {isAuthorized: false, error: "Forbidden: Admin privileges required."};
+        }
+
+        return {isAuthorized: true, user: result.data, error: null};
+    } catch (error) {
+        console.error("[VALIDATE_ADMIN_CRITICAL_ERROR]:", error);
+        return {
+            isAuthorized: false,
+            error: "Internal Server Error during validation.",
+            data: null,
+        };
+    }
+}
+
 export async function approveProfile(verificationId: string, profileId: string) {
     try {
-        // 1. Update verification record
+        const {isAuthorized, error} = await validateAdmin();
+
+        if (!isAuthorized) {
+            return { success: false, error};
+        }
+
         await db
             .update(verifications)
             .set({
@@ -880,7 +910,12 @@ export async function approveProfile(verificationId: string, profileId: string) 
 
 export async function rejectProfile(verificationId: string, profileId: string, reason: string) {
     try {
-        // 1. Update verification status and store rejection reason
+        const {isAuthorized, error} = await validateAdmin();
+
+        if (!isAuthorized) {
+            return { success: false, error};
+        }
+
         await db
             .update(verifications)
             .set({
@@ -909,6 +944,12 @@ export async function rejectProfile(verificationId: string, profileId: string, r
 
 export async function deleteProfile(id: string) {
     try {
+        const {isAuthorized, error} = await validateAdmin();
+
+        if (!isAuthorized) {
+            return { success: false, error};
+        }
+
         await db.delete(profiles).where(eq(profiles.id, id));
 
         revalidatePath("/control-panel/approval-queues");
@@ -926,7 +967,7 @@ export async function getUserProfile(profileId: string) {
     try {
         const supabase = await createClient();
         const {
-            data: { user },
+            data: {user},
             error,
         } = await supabase.auth.getUser();
 
@@ -993,6 +1034,12 @@ export async function getUserProfile(profileId: string) {
 
 export async function getUsersByEmail(query: string) {
     try {
+        const {isAuthorized, error} = await validateAdmin();
+
+        if (!isAuthorized) {
+            return { success: false, error};
+        }
+
         const registeredUsers = await db
             .select({
                 id: users.id,
@@ -1019,18 +1066,10 @@ export async function createProfileByAdmin(
     profileIdToUpdate?: string,
 ) {
     try {
-        const {success, data: currentUser} = await getCurrentUser();
+        const {isAuthorized, error} = await validateAdmin();
 
-        if (!success || !currentUser) {
-            return {success: false, error: "Unauthorized"};
-        }
-
-        const requester = await db.query.users.findFirst({
-            where: eq(users.id, currentUser.id),
-        });
-
-        if (!requester || requester.role !== "admin") {
-            return {success: false, error: "Forbidden: admin access required"};
+        if (!isAuthorized) {
+            return { success: false, error};
         }
 
         if (!targetUserId) {
@@ -1109,39 +1148,37 @@ export async function createProfileByAdmin(
         };
 
         const {savedProfile, savedPrefs} = await db.transaction(async (tx) => {
-            let savedProfile: typeof profiles.$inferSelect;
+            let rowProfile: typeof profiles.$inferSelect | undefined;
 
             if (profileIdToUpdate) {
-                const [row] = await tx
+                const [updated] = await tx
                     .update(profiles)
                     .set(profilePayload)
                     .where(eq(profiles.id, profileIdToUpdate))
                     .returning();
-                savedProfile = row;
+                rowProfile = updated;
             } else {
-                // Requires a UNIQUE constraint on profiles.userId.
-                const [row] = await tx
+                const [inserted] = await tx
                     .insert(profiles)
                     .values(profilePayload)
                     .onConflictDoUpdate({
                         target: profiles.userId,
-                        set: profilePayload,
+                        set: {...profilePayload, updatedAt: new Date()},
                     })
                     .returning();
-                savedProfile = row;
+                rowProfile = inserted;
             }
 
-            if (!savedProfile) {
-                throw new Error("Failed to create or update the profile record.");
+            if (!rowProfile) {
+                throw new Error("Failed to create or update profile record.");
             }
 
-            // Requires a UNIQUE constraint on partnerPreferences.userId.
-            const [savedPrefs] = await tx
+            const [rowPrefs] = await tx
                 .insert(partnerPreferences)
                 .values(partnerPreferencesPayload)
                 .onConflictDoUpdate({
                     target: partnerPreferences.userId,
-                    set: partnerPreferencesPayload,
+                    set: {...partnerPreferencesPayload, updatedAt: new Date()},
                 })
                 .returning();
 
@@ -1150,7 +1187,7 @@ export async function createProfileByAdmin(
                 .set({onboardingStatus: "COMPLETED", onboardingStep: "COMPLETED"})
                 .where(eq(users.id, targetUserId));
 
-            return {savedProfile, savedPrefs};
+            return {savedProfile: rowProfile, savedPrefs: rowPrefs};
         });
 
         await calculateUserMatchesAction(targetUserId);

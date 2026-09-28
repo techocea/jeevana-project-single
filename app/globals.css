@@ -140,7 +140,4 @@
   h3 {
     @apply text-3xl tracking-tight font-normal font-newsreader capitalize;
   }
-  .tagline {
-    @apply text-primary uppercase tracking-widest text-xs md:text-sm font-semibold;
-  }
 }

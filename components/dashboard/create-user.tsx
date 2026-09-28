@@ -19,13 +19,14 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
+import {Eye, EyeClosed, Plus} from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 
 const CreateUser = () => {
     const router = useRouter();
+    const [showPassword, setShowPassword] = useState<boolean>(false);
     const [serverError, setServerError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -44,25 +45,29 @@ const CreateUser = () => {
         },
     });
 
-    const onSubmit = async (data: CreateUserByAdminValues) => {
-        setServerError(null);
-        setSuccessMessage(null);
+    const handleTogglePassword = () => {
+        setShowPassword(prev => !prev);
+    }
 
-        try {
-            const result = await createUserByAdmin(data);
-            if (result?.error) {
-                setServerError(result.error);
-                return;
+        const onSubmit = async (data: CreateUserByAdminValues) => {
+            setServerError(null);
+            setSuccessMessage(null);
+
+            try {
+                const result = await createUserByAdmin(data);
+                if (result?.error) {
+                    setServerError(result.error);
+                    return;
+                }
+                if (result?.success) {
+                    reset();
+                    router.refresh();
+                }
+            } catch (error) {
+                setServerError("An unexpected error occurred during signup.");
+                console.log("ERROR:", error);
             }
-            if (result?.success) {
-                reset();
-                router.refresh();
-            }
-        } catch (error) {
-            setServerError("An unexpected error occurred during signup.");
-            console.log("ERROR:", error);
-        }
-    };
+        };
 
     return (
         <Dialog>
@@ -124,12 +129,24 @@ const CreateUser = () => {
                         >
                             Password
                         </Label>
-                        <Input
-                            id="password"
-                            type="password"
-                            {...register("password")}
-                            placeholder="********"
-                        />
+                        <div className="relative w-full">
+                            <Input
+                                id="password"
+                                type={showPassword ? "text" : "password"}
+                                {...register("password")}
+                                className="pr-10"
+                                placeholder="********"
+                            />
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={handleTogglePassword}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 h-fit w-fit p-1 bg-transparent hover:bg-transparent"
+                            >
+                                {!showPassword ? <EyeClosed className="text-muted-foreground"/> :
+                                    <Eye className="text-muted-foreground"/>}
+                            </Button>
+                        </div>
                         {errors.password && (
                             <p className="text-sm text-red-600">{errors.password.message}</p>
                         )}

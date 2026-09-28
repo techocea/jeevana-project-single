@@ -1,9 +1,9 @@
 "use server"
 
-import { db } from "@/lib/db";
-import { profiles, partnerPreferences, profileMatches } from "@/drizzle/schema";
-import { eq, ne, and } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import {db} from "@/lib/db";
+import {profiles, partnerPreferences, profileMatches} from "@/drizzle/schema";
+import {eq, ne, and} from "drizzle-orm";
+import {revalidatePath} from "next/cache";
 
 export async function calculateUserMatchesAction(userId: string) {
     try {
@@ -16,7 +16,7 @@ export async function calculateUserMatchesAction(userId: string) {
         });
 
         if (!userProfile || !prefs) {
-            return { success: false, error: "Profile or Preferences missing" };
+            return {success: false, error: "Profile or Preferences missing"};
         }
 
         // Target opposite gender
@@ -92,25 +92,25 @@ export async function calculateUserMatchesAction(userId: string) {
         });
 
         // Upsert results into database
-        if(score > 0){
-            for (const match of matchResults) {
-                await db.insert(profileMatches)
-                    .values(match)
-                    .onConflictDoUpdate({
-                        target: [profileMatches.userId, profileMatches.matchedProfileId],
-                        set: {
-                            score: match.score,
-                            matchReasons: match.matchReasons,
-                            updatedAt: new Date(),
-                        },
-                    });
-            }
+
+        for (const match of matchResults) {
+            await db.insert(profileMatches)
+                .values(match)
+                .onConflictDoUpdate({
+                    target: [profileMatches.userId, profileMatches.matchedProfileId],
+                    set: {
+                        score: match.score,
+                        matchReasons: match.matchReasons,
+                        updatedAt: new Date(),
+                    },
+                });
         }
 
+
         revalidatePath("/best-proposals");
-        return { success: true, count: matchResults.length };
+        return {success: true, count: matchResults.length};
     } catch (error: any) {
         console.error("[MATCHING_ENGINE_ERROR]:", error);
-        return { success: false, error: error.message };
+        return {success: false, error: error.message};
     }
 }

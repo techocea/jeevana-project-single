@@ -153,6 +153,7 @@ export interface ProfessionCategory {
 }
 
 export interface SearchFilters {
+  community?:string;
   lookingFor?: string;
   minAge?: string;
   maxAge?: string;
@@ -182,7 +183,7 @@ export interface ProfileCardData {
 }
 
 export interface ProfileCardProps {
-  currentProfileId: string; // The ID of the logged-in user's profile
+  currentProfileId?: string;
   profileCardData: ProfileCardData;
-  routing:string;
+  routing?:string;
 }
