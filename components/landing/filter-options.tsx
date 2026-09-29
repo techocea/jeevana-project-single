@@ -33,6 +33,7 @@ import {
   GROUPS_PROFESSIONS,
 } from "@/lib/constants";
 import { SlidersHorizontal } from "lucide-react";
+import {getCanonicalReligion} from "@/helpers/normalize-religion";
 
 type FilterFormValues = {
   lookingFor: string;
@@ -66,10 +67,7 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
   const [loadingStates, setLoadingStates] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const getActiveReligion = (params: ReadonlyURLSearchParams | null) => {
-    if (!params) return "";
-    return params.get("religion") || params.get("community") || "";
-  }
+
 
   const initialFormValues = useMemo(() => {
     if (!searchParams) return null;
@@ -77,7 +75,7 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
       lookingFor: searchParams.get("lookingFor") || "",
       minAge: searchParams.get("minAge") || "",
       maxAge: searchParams.get("maxAge") || "",
-      religion: getActiveReligion(searchParams),
+      religion:  searchParams.get("religion") || "",
       caste: searchParams.get("caste") || "",
       motherTongue: searchParams.get("motherTongue") || "",
       educationLevel: searchParams.get("educationLevel") || "",
@@ -194,7 +192,7 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
       lookingFor: searchParams.get("lookingFor") || "",
       minAge: searchParams.get("minAge") || "",
       maxAge: searchParams.get("maxAge") || "",
-      religion: getActiveReligion(searchParams),
+      religion:  searchParams.get("religion") || "",
       caste: searchParams.get("caste") || "",
       motherTongue: searchParams.get("motherTongue") || "",
       educationLevel: searchParams.get("educationLevel") || "",
@@ -223,7 +221,6 @@ const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
       params.set(key, value);
     });
 
-    params.delete("community");
 
     if (values.lookingFor) params.set("lookingFor", values.lookingFor);
     else params.delete("lookingFor");

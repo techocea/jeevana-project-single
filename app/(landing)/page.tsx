@@ -19,8 +19,8 @@ import {Badge} from "@/components/ui/badge";
 
 export default function Home() {
     return (
-        <main className="w-full">
-            <section className="relative md:h-180 h-screen w-full flex flex-col items-center justify-center">
+        <main className="w-full h-full">
+            <section className="relative min-h-[100dvh] w-full flex flex-col justify-start pb-10 px-4 sm:px-6">
                 <Image
                     src="/images/hero-bg.png"
                     alt="Elegant Sri Lankan bride dressed in traditional white Kandyan sari"
@@ -30,35 +30,35 @@ export default function Home() {
                     className="object-cover object-center"
                 />
                 {/* Dark overlay mask */}
-                <div className="absolute inset-0 bg-linear-to-b from-black/50 via-black/40 to-black z-10"/>
-
+                <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-neutral-950 z-10"/>
+                <div className="h-28 sm:h-36 w-full shrink-0 z-20"/>
                 {/* Hero Copywriting */}
                 <div
-                    className="relative -mt-24 lg:mt-16 z-20 w-full max-w-3xl px-6 flex flex-col items-center justify-center gap-6 text-center">
-                    <Badge variant={"tagline"}>#1 THE EDITORIAL CURATOR OF UNION</Badge>
-                    <h2 className="text-5xl">
+                    className="relative z-20 w-full max-w-5xl mx-auto px-4 sm:px-6 flex flex-col items-center justify-center flex-1 gap-4 sm:gap-6 text-center mt-64 sm:mt-4">
+                    <Badge variant="tagline" className="tracking-widest">#1 THE EDITORIAL CURATOR OF UNION</Badge>
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white max-w-3xl leading-[1.15]">
                         Your Trusted Matrimony Platform for Community Matchmaking
                     </h2>
                 </div>
 
                 {/* Display community cards to click*/}
-                <div className="max-w-5xl w-full mx-auto z-20">
+                <div className="relative z-20 max-w-5xl w-full mx-auto mt-6 mb-4">
                     <ExploreCommunities/>
                 </div>
 
-                <div className="mt-10 z-20 flex flex-col items-center justify-center">
-                    <p className="uppercase text-sm text-muted-foreground font-medium tracking-widest">
+                <div className="relative z-20 flex flex-col items-center justify-center mt-auto">
+                    <p className="uppercase text-[10px] sm:text-xs text-muted-foreground font-semibold tracking-widest">
                         scroll to explore
                     </p>
                     <ChevronDown
-                        size={24}
+                        size={20}
                         className="animate-bounce text-muted-foreground"
                     />
                 </div>
             </section>
 
             <section className="py-10 lg:py-20 flex items-center justify-center mx-auto w-full bg-white">
-                <CTA orientation="horizontal"/>
+            <CTA orientation="horizontal"/>
             </section>
 
             <section className="py-10 px-6 lg:py-20 lg:px-0 bg-background">

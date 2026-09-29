@@ -153,7 +153,6 @@ export interface ProfessionCategory {
 }
 
 export interface SearchFilters {
-    community?: string;
     lookingFor?: string;
     minAge?: string;
     maxAge?: string;

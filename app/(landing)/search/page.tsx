@@ -6,10 +6,11 @@ import Image from "next/image";
 import {Badge} from "@/components/ui/badge";
 import Link from "next/link";
 import {AlertCircle, ArrowLeft} from "lucide-react";
-import {getCommunityTitles} from "@/helpers/get-community-titles";
+import {getReligionTitles} from "@/helpers/get-community-titles";
+import {DB_TO_URL_RELIGION, URL_TO_DB_RELIGION} from "@/helpers/normalize-religion";
 
 type PageProps = {
-    searchParams: Promise<Record<string, string | string[] | undefined>>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 const getSearchValue = (
@@ -24,7 +25,6 @@ const getSearchValue = (
 const normalizeSearchFilters = (
     searchParams: Record<string, string | string[] | undefined>,
 ): SearchFilters => ({
-    community:getSearchValue(searchParams.community),
     lookingFor: getSearchValue(searchParams.lookingFor),
     minAge: getSearchValue(searchParams.minAge),
     maxAge: getSearchValue(searchParams.maxAge),
@@ -45,13 +45,28 @@ const SearchProfiles = async ({searchParams}: PageProps) => {
     const resolvedSearchParams = await searchParams;
     const filters = normalizeSearchFilters(resolvedSearchParams);
 
-    const activeReligion = filters.religion?.toLowerCase();
+    const rawReligion = Array.isArray(resolvedSearchParams.religion)
+        ? resolvedSearchParams.religion[0]
+        : resolvedSearchParams.religion;
+
+
+
+    if (rawReligion) {
+        const lowerInput = rawReligion.trim().toLowerCase();
+        // Convert DB string back to target lowercase URL format (e.g. "Buddhist" -> "buddhism")
+        const targetUrlParam = DB_TO_URL_RELIGION[rawReligion] || lowerInput;
+
+    }
+
+    const urlReligion = resolvedSearchParams.religion as string | undefined;
+    const dbReligionValue = urlReligion
+        ? URL_TO_DB_RELIGION[urlReligion.toLowerCase()] || urlReligion
+        : undefined;
 
     const queryFilters: SearchFilters = {
-        ...filters,
-        religion: activeReligion,
+        ...resolvedSearchParams,
+        religion: dbReligionValue,
     };
-
     const result = await getProfilesByFilters(queryFilters);
     const profiles = result.data || [];
 
@@ -66,7 +81,7 @@ const SearchProfiles = async ({searchParams}: PageProps) => {
         );
     }
 
-    const communityTitleElement = getCommunityTitles(filters.religion || "");
+    const communityTitleElement = getReligionTitles(filters.religion || "");
 
     return (
         <main className="w-full">
@@ -110,14 +125,14 @@ const SearchProfiles = async ({searchParams}: PageProps) => {
                     <FilterOptions/>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        {profiles.length > 0 ? (
-                            profiles.map((profile) => (
-                                <ProfileCard
-                                    key={profile.id}
-                                    profileCardData={profile}
-                                />
-                            ))
-                        ) : (
+                    {profiles.length > 0 ? (
+                        profiles.map((profile) => (
+                            <ProfileCard
+                                key={profile.id}
+                                profileCardData={profile}
+                            />
+                        ))
+                    ) : (
                         <div className="text-center text-muted-foreground">
                             No profiles found matching your criteria.
                         </div>

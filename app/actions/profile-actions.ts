@@ -781,7 +781,7 @@ export async function getProfilesByFilters(
             .toLowerCase();
         const targetGender = TARGET_GENDER_MAP[rawLookingFor] || undefined;
 
-        const activeReligion = filters.religion || filters.community;
+        const activeReligon = filters.religion?.toLowerCase();
 
         const parsedMinAge = minAge ? parseInt(minAge, 10) : 18;
         const parsedMaxAge = maxAge ? parseInt(maxAge, 10) : 100;
@@ -791,7 +791,7 @@ export async function getProfilesByFilters(
             lte(profiles.age, parsedMaxAge),
         ];
 
-        if (activeReligion) conditions.push(eq(profiles.religion, activeReligion));
+        if (activeReligon) conditions.push(ilike(profiles.religion, activeReligon));
         if (targetGender) conditions.push(eq(profiles.gender, targetGender));
 
         if (filters.maritalStatus) conditions.push(eq(profiles.maritalStatus, filters.maritalStatus));

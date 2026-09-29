@@ -256,25 +256,25 @@ export const COMMUNITIES = [
   {
     label: "Catholic",
     icon: "/icons/catholic-icon.svg",
-    href: "/search?community=catholic",
+    href: "/search?religion=catholicism",
     adLength: 30,
   },
   {
     label: "Buddhist",
     icon: "/icons/buddhist-icon.svg",
-    href: "/search?community=buddhism",
+    href: "/search?religion=buddhism",
     adLength: 30,
   },
   {
     label: "Muslim",
     icon: "/icons/christian-icon.svg",
-    href: "/search?community=islam",
+    href: "/search?religion=islam",
     adLength: 30,
   },
   {
     label: "Tamil",
     icon: "/icons/tamil-icon.svg",
-    href: "/search?community=hinduism",
+    href: "/search?religion=hinduism",
     adLength: 45,
   },
 ];
