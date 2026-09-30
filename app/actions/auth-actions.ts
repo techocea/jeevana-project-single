@@ -17,6 +17,63 @@ import { users } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase";
 import { getSupabaseAdmin } from "@/utils/supabase-admin";
 
+export async function sendPhoneOtp(formData: FormData) {
+  const supabase = await createClient();
+  const phoneNumber = formData.get("phoneNumber") as string;
+
+  if (!phoneNumber) {
+    return { success: false, error: "Phone number is required" };
+  }
+
+  // Ensure phoneNumber includes country code (e.g., +94771234567)
+  const { error } = await supabase.auth.signInWithOtp({
+    phone: phoneNumber,
+  });
+
+  if (error) {
+    return { success: false, error: error.message };
+  }
+
+  return { success: true };
+}
+
+export async function verifyPhoneOtp(phoneNumber: string, token: string) {
+  const supabase = await createClient();
+
+  if (!phoneNumber || !token) {
+    return { success: false, error: "Missing required fields" };
+  }
+
+  const { data:authData, error:authError } = await supabase.auth.verifyOtp({
+    phone: phoneNumber,
+    token: token,
+    type: "sms", // Use 'sms' for standard phone registration/login
+  });
+
+  if (authError || !authData.user) {
+    return { error: authError?.message || "Registration failed." };
+  }
+
+  try {
+    await db.insert(users).values({
+      id: authData.user.id,
+      fullName:"",
+      email:"",
+      onboardingStatus: "INCOMPLETED",
+      onboardingStep: "START",
+    });
+  } catch (error: any) {
+    console.error("[DRIZZLE_REGISTRATION_MIRROR_FAILURE]:", error);
+
+    return {
+      error:
+          "Account initialization failed. If this persists, your email might already be registered.",
+    };
+  }
+
+  return { success: true, user: authData.user };
+}
+
 export async function loginAdmin(data: AuthLoginValues) {
   const parsed = authLoginSchema.safeParse(data);
 

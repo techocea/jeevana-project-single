@@ -53,7 +53,7 @@ const RegisterForm = () => {
   };
 
   return (
-    <div className="flex flex-col md:max-w-sm w-full">
+    <div className="flex flex-col">
       <div className="mb-6 flex flex-col items-start justify-center">
         <h3 className="text-2xl font-semibold text-black">Create an Account</h3>
         <p className="text-sm text-muted">
@@ -127,10 +127,10 @@ const RegisterForm = () => {
           type="submit"
           size="lg"
           variant="default"
-          className="w-full uppercase rounded-xl px-6 py-3"
+          className="w-full uppercase px-6 py-3"
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Registering..." : "Register"}
+          {isSubmitting ? "Please wait..." : "Continue"}
         </Button>
       </form>
     </div>
