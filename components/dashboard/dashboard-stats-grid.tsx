@@ -55,7 +55,7 @@ export default async function DashboardStatsGrid({
                 return (
                     <Card
                         key={index}
-                        className="shadow-sm bg-card text-muted-foreground p-2"
+                        className="shadow-sm bg-white text-muted-foreground p-2"
                     >
                         <CardContent className="p-6 flex flex-col justify-between h-full min-h-[140px]">
                             <div className="flex items-start justify-between gap-2">
