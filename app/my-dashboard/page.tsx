@@ -34,7 +34,7 @@ const DashboardPage = async () => {
         <div className="flex flex-col space-y-2">
             <div className="flex flex-col gap-2">
                 <h3 className="text-black font-sans">Welcome back, {userName} 👋 </h3>
-                <p className="text-muted-foreground text-lg">Here's what's happening with your account today</p>
+                <p className="text-muted-foreground text-lg">Here&apos;s what&apos;s happening with your account today</p>
             </div>
 
             <DashboardStatsGrid statsData={statsData}/>

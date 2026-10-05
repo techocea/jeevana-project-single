@@ -12,7 +12,7 @@ export type UsersTable = {
   fullName: string | null;
   email: string | null;
   createdAt: string | Date | undefined;
-  membership: MembershipTypes | undefined;
+  membership: MembershipTypes;
   status: UserStatusTypes;
 };
 

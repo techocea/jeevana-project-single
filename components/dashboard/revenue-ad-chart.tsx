@@ -6,7 +6,7 @@ import {RevenueAdData} from '@/app/actions/dashboard-actions';
 
 export function RevenueAdChart({data = []}: { data: RevenueAdData[] }) {
     return (
-        <Card className="bg-white shadow-sm border border-neutral-200/80 rounded-xl">
+        <Card className="bg-white h-full shadow-sm border border-neutral-200/80 rounded-xl">
             <CardHeader>
                 <CardTitle className="text-xl font-bold text-neutral-900">Revenue & Paid Ads Posted</CardTitle>
                 <CardDescription className="text-sm text-neutral-500">Track paid ad creations alongside total revenue

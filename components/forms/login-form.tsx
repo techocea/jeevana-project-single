@@ -42,8 +42,8 @@ const LoginForm = () => {
                 return;
             }
 
-            if (result?.success && result.targetRoute) {
-                router.push(result.targetRoute);
+            if (result?.success) {
+                router.push("/control-panel");
                 router.refresh();
             }
         } catch (error) {

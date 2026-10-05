@@ -33,7 +33,6 @@ import {
   GROUPS_PROFESSIONS,
 } from "@/lib/constants";
 import { SlidersHorizontal } from "lucide-react";
-import {getCanonicalReligion} from "@/helpers/normalize-religion";
 
 type FilterFormValues = {
   lookingFor: string;

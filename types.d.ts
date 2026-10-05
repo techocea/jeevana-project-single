@@ -12,18 +12,18 @@ export type CreatedByTypes =
     | "parent"
     | "guardian"
     | "sibling"
-    | "friend" | null;
-export type GenderTypes = "male" | "female" | null;
-export type ResindencyTypes = "CITIZEN" | "PR" | "WORK" | null;
-export type UserStatusTypes = "active" | "banned" | null;
-export type BadHabitTypes = "never" | "occasionally" | "regularly" | null;
-export type TabTypes = "all" | "pending" | "approved" | "rejected" | null;
+    | "friend";
+export type GenderTypes = "male" | "female";
+export type ResindencyTypes = "CITIZEN" | "PR" | "WORK";
+export type UserStatusTypes = "active" | "banned";
+export type BadHabitTypes = "never" | "occasionally" | "regularly";
+export type TabTypes = "all" | "pending" | "approved" | "rejected";
 export type MailRoutingTargetTypes = "owner" | "candidate" | "both";
-export type ProfileStatusTypes = "pending" | "approved" | "rejected" | null;
-export type VerificationStatusTypes = "pending" | "verified" | "rejected" | null;
-export type FoodHabitTypes = "vegetarian" | "non-vegetarian" | "vegan" | null;
-export type MembershipTypes = "free_tier" | "classical" | "heritage" | null;
-export type MaritalStatusTypes = "never_married" | "divorced" | "widowed" | null;
+export type ProfileStatusTypes = "pending" | "approved" | "rejected";
+export type VerificationStatusTypes = "pending" | "verified" | "rejected";
+export type FoodHabitTypes = "vegetarian" | "non-vegetarian" | "vegan";
+export type MembershipTypes = "free_tier" | "classical" | "heritage";
+export type MaritalStatusTypes = "never_married" | "divorced" | "widowed";
 
 export interface StepConfig {
     id: number;
@@ -69,8 +69,8 @@ export interface InitialProfileData {
     status?: ProfileStatusTypes;
     mailRoutingTarget?: MailRoutingTargetTypes;
     secondaryEmail?: string;
-    preferredMinAge?: number | null;
-    preferredMaxAge?: number | null;
+    preferredMinAge?: number;
+    preferredMaxAge?: number;
     preferredMaritalStatus?: MaritalStatusTypes;
     preferredEducationLevels?: string[];
     preferredProfessions?: string[];
@@ -130,12 +130,12 @@ export interface StepFiveInitialData {
 
 export interface StepSevenInitialData {
     initialData: {
-        preferredMinAge?: number | null;
-        preferredMaxAge?: number | null;
-        preferredMaritalStatus?: string | null;
-        preferredEducationLevels?: string[] | null;
-        preferredProfessions?: string[] | null;
-        preferredAnnualIncomeRanges?: string[] | null;
+        preferredMinAge?: number;
+        preferredMaxAge?: number;
+        preferredMaritalStatus?: string;
+        preferredEducationLevels?: string[];
+        preferredProfessions?: string[];
+        preferredAnnualIncomeRanges?: string[];
     };
 }
 
@@ -158,8 +158,8 @@ export interface SearchFilters {
     maxAge?: string;
     religion?: string;
     caste?: string;
-    maritalStatus?: MaritalStatusTypes | null;
-    foodPreferences?: FoodHabitTypes | null;
+    maritalStatus?: MaritalStatusTypes;
+    foodPreferences?: FoodHabitTypes;
     motherTongue?: string;
     educationLevel?: string;
     profession?: string;
@@ -176,13 +176,13 @@ export interface ProfileCardData {
     age: number | null;
     height: string | number | null;
     country: string | null;
-    maritalStatus: MaritalStatusTypes | null;
-    foodPreferences: FoodHabitTypes | null | string;
     profession: string | null;
+    maritalStatus:MaritalStatusTypes | null;
+    foodPreferences:string | null;
     religion: string | null;
     caste: string | null;
     educationLevel: string | null;
-    isVerified?: boolean;
+    isVerified?: boolean; // Optional initial favorite state
 }
 
 export interface ProfileCardDataProps {

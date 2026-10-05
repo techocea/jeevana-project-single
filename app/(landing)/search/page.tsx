@@ -3,9 +3,8 @@ import FilterOptions from "@/components/landing/filter-options";
 import {ProfileCard} from "@/components/landing/profile-card";
 import {FoodHabitTypes, MaritalStatusTypes, SearchFilters} from "@/types";
 import Image from "next/image";
-import {Badge} from "@/components/ui/badge";
 import Link from "next/link";
-import {AlertCircle, ArrowLeft} from "lucide-react";
+import { ArrowLeft} from "lucide-react";
 import {getReligionTitles} from "@/helpers/get-community-titles";
 import {DB_TO_URL_RELIGION, URL_TO_DB_RELIGION} from "@/helpers/normalize-religion";
 

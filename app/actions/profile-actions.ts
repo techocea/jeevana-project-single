@@ -12,7 +12,7 @@ import {SearchFilters} from "@/types";
 import {revalidatePath} from "next/cache";
 import {redirect} from "next/navigation";
 import {calculateUserMatchesAction} from "@/app/actions/matchmaking-action";
-import {MARITAL_STATUSES} from "@/lib/constants";
+import {AppRole, MARITAL_STATUSES} from "@/lib/constants";
 
 const NEXT_STEP_POINTER = {
     1: "RELIGION",
@@ -33,50 +33,43 @@ type CombinedUpdateInput = Partial<typeof profiles.$inferInsert> &
     Partial<typeof partnerPreferences.$inferInsert>;
 
 // USER PROFILE ACTIONS
+const VALID_ROLES: AppRole[] = ["admin", "staff", "user"];
+
 export async function getCurrentUser() {
-    try {
-        const supabase = await createClient();
-        const {
-            data: {user: authedUser},
-            error: authError,
-        } = await supabase.auth.getUser();
+    const supabase = await createClient();
+    const {
+        data: {user: authedUser},
+        error: authError,
+    } = await supabase.auth.getUser();
 
-        if (authError || !authedUser) {
-            return {
-                success: false,
-                data: null,
-                error: "Unauthorized",
-            };
-        }
-
-        const dbUser = await db.query.users.findFirst({
-            where: eq(users.id, authedUser.id),
-        });
-
-        if (!dbUser) {
-            return {
-                success: false,
-                data: null,
-                error: "User record not found",
-            }
-        }
-        return {
-            success: true,
-            data: {
-                ...dbUser,
-                role: dbUser.role,
-                email: authedUser.email,
-            },
-            error: null,
-        };
-    } catch (error) {
-        console.error("[FAILED_FETCHING_CURRENT_USER]:", error);
+    if (authError || !authedUser) {
         return {
             success: false,
             data: null,
-            error: "Internal Server Error",
+            error: "Unauthorized",
         };
     }
+
+    const dbUser = await db.query.users.findFirst({
+        where: eq(users.id, authedUser.id),
+    });
+
+    const metaRole = authedUser.app_metadata?.role as AppRole | undefined;
+    const role: AppRole =
+        metaRole && VALID_ROLES.includes(metaRole) ? metaRole : "user";
+
+    const userProfile = {
+        ...(dbUser ?? {}),
+        id: authedUser.id,
+        email: authedUser.email ?? "",
+        fullName:
+            dbUser?.fullName ||
+            authedUser.user_metadata?.display_name ||
+            "Staff Member",
+        role,
+    };
+
+    return {success: true, data: userProfile, error: null};
 }
 
 export async function getMatchingProfilesCount(userId: string): Promise<number> {

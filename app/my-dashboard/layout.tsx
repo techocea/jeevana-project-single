@@ -28,6 +28,8 @@ export default async function MyDashboardLayout({
         redirect("/onboarding");
     }
 
+    const role: "admin" | "staff" | "user" | undefined = currentUser?.role;
+
   return (
     <div className="min-h-screen bg-background">
       <Toaster
@@ -45,7 +47,7 @@ export default async function MyDashboardLayout({
         >
           <UserSidebar variant="inset" />
           <SidebarInset>
-            <SiteHeader />
+            <SiteHeader userRole={role}/>
             <main suppressHydrationWarning className="min-h-screen bg-linear-to-br from-transparent to-primary/5 px-6 py-8 lg:px-10">
               {children}
             </main>

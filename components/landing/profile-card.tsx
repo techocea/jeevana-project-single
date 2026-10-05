@@ -11,7 +11,6 @@ import {ProfileCardDataProps} from "@/types";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent} from "../ui/card";
 import {convertCmToFeetInches} from "@/helpers/measurement-utils";
-import toast from "react-hot-toast";
 
 export function ProfileCard({
                                profileCardData
@@ -31,7 +30,7 @@ export function ProfileCard({
         country,
         profession,
         educationLevel,
-        isVerified,
+        isVerified
     } = data;
 
     const heightStr = convertCmToFeetInches(height).formatted;

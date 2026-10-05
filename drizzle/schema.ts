@@ -18,7 +18,7 @@ export const profileSeq = pgSequence("profile_id_seq", {
     increment: 1,
 });
 
-export const roleEnum = pgEnum("app_role", ["user", "admin"]);
+export const roleEnum = pgEnum("app_role", ["user", "staff", "admin"]);
 export const onboardingEnum = pgEnum("onboarding_status", [
     "INCOMPLETED",
     "COMPLETED",
@@ -81,14 +81,14 @@ export const users = pgTable("users", {
 
     status: userStatusEnum("user_status").default("active").notNull(),
     membership: membershipEnum("membership_plan").default("free_tier"),
-    // isVerified: boolean("is_verified").default(false),
+    isVerified: boolean("is_verified").default(false),
 
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const orders = pgTable("orders", {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+    userId: uuid("user_id").references(() => users.id, {onDelete: "cascade"}).notNull(),
 
     packageId: integer("package_id").notNull(), // matches an id in lib/pricing-packages.ts
     packageName: text("package_name").notNull(), // snapshot at purchase time — pricing can change later without rewriting history
@@ -106,7 +106,7 @@ export const subscriptions = pgTable(
     "subscriptions",
     {
         id: uuid("id").primaryKey().defaultRandom(),
-        userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+        userId: uuid("user_id").references(() => users.id, {onDelete: "cascade"}).notNull(),
 
         packageId: integer("package_id"),
         packageName: text("package_name"),

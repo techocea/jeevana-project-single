@@ -15,7 +15,7 @@ export function DemographicsChart({data = []}: { data: DemographicData[] }) {
 
 
     return (
-        <Card className="bg-white shadow-sm border border-neutral-200/80 rounded-xl">
+        <Card className="bg-white h-full shadow-sm border border-neutral-200/80 rounded-xl">
             <CardHeader className="pb-2">
                 <CardTitle className="text-lg font-bold text-neutral-900">Advertiser Demographics</CardTitle>
                 <CardDescription className="text-xs text-neutral-500">Gender distribution of registered account

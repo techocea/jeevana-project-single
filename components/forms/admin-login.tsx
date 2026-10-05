@@ -29,7 +29,7 @@ const AdminLoginForm = () => {
   });
 
   const handleTogglePassword = () => {
-    setShowPassword(prev => !prev);
+    setShowPassword((prev)=>!prev);
   }
 
   const onSubmit = async (data: AuthLoginValues) => {
@@ -42,8 +42,8 @@ const AdminLoginForm = () => {
         return;
       }
 
-      if (result?.success && result.targetRoute) {
-        router.push(result.targetRoute);
+      if (result?.success) {
+        router.push("/control-panel");
         router.refresh();
       }
     } catch (error) {
