@@ -27,8 +27,8 @@ export type MaritalStatusTypes = "never_married" | "divorced" | "widowed";
 
 export interface StepConfig {
     id: number;
-    tagline: string;
     title: string;
+    subtitle: string;
 }
 
 export interface ProgressBarHeaderProps {

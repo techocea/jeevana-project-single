@@ -46,9 +46,9 @@ export async function proxy(request: NextRequest) {
 
         const role = user.app_metadata?.role;
 
-        if (role !== "admin" && role !== "staff") {
-            return redirectTo("/admin");
-        }
+        // if (role !== "admin" && role !== "staff") {
+        //     return redirectTo("/admin");
+        // }
     }
 
     if (nextUrl.pathname === "/admin" && user) {

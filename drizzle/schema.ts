@@ -62,7 +62,7 @@ export const mailRoutingEnum = pgEnum("mail_routing", [
     "both",
 ]);
 export const maritalStatusEnum = pgEnum("marital_status", [
-    "never_married",
+    "single",
     "divorced",
     "widowed",
 ]);
@@ -232,7 +232,7 @@ export const partnerPreferences = pgTable("partner_preferences", {
     preferredMinAge: integer("preferred_min_age"),
     preferredMaxAge: integer("preferred_max_age"),
     preferredMaritalStatus: maritalStatusEnum("preferred_marital_status").default(
-        "never_married",
+        "single",
     ),
     preferredEducationLevels: text("preferred_education_levels").array(),
     preferredProfessions: text("preferred_professions").array(),

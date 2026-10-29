@@ -363,25 +363,12 @@ export const PRICING_PACKAGES = [
 ];
 
 export const ONBOARDING_STEPS: StepConfig[] = [
-    {id: 1, title: "the essentials", tagline: "the beginning"},
-    {id: 2, title: "roots & heritage", tagline: "identity & roots"},
-    {id: 3, title: "aspirations & achievements", tagline: "the journey"},
-    {id: 4, title: "location & residency", tagline: "where you call home"},
-    {
-        id: 5,
-        title: "Personal & Physical Details",
-        tagline: "complete your profile",
-    },
-    {
-        id: 6,
-        title: "Hobbies & Interests",
-        tagline: "tell us what you love",
-    },
-    {
-        id: 7,
-        title: "Partner Preferences",
-        tagline: "select your preferences",
-    },
+    { id: 1, title: 'Basic Details', subtitle: 'Demographics & Lineage' },
+    { id: 2, title: 'Family Background', subtitle: 'Household & Heritage' },
+    { id: 3, title: 'Education & Career', subtitle: 'Qualifications & Profession' },
+    { id: 4, title: 'About Me & Photo', subtitle: 'Bio & Modest Portrait' },
+    { id: 5, title: 'Partner Preferences', subtitle: 'Desired Qualities' },
+    { id: 6, title: 'Review Details', subtitle: 'Final Verification' },
 ];
 
 export const PERSONAL_DROPDOWNS = {

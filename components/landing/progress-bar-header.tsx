@@ -1,28 +1,31 @@
-import { ProgressBarHeaderProps } from "@/types";
 import React from "react";
-import { Progress } from "../ui/progress";
+import {Save} from "lucide-react";
+import {Button} from "@/components/ui/button";
+import {ProgressBarHeaderProps} from "@/types";
+import TitleHeader from "@/components/dashboard/title-header";
 
-const ProgressBarHeader = ({ currentStep, steps }: ProgressBarHeaderProps) => {
-  const currentStepData = steps.find((s) => s.id === currentStep) || steps[0];
+const ProgressBarHeader = ({currentStep, steps}: ProgressBarHeaderProps) => {
+    return (
+        <div
+            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border mb-8">
+            <TitleHeader
+                title={"create your matrimonial profile"}
+                description={`Step ${currentStep} of ${steps.length} — All sensitive contact fields remain private and staff-checked.`}
+                isGreeting={false}/>
 
-  const progressPercentage = (currentStep / steps.length) * 100;
-
-  return (
-    <div className="flex flex-col items-center justify-center gap-4 md:max-w-5xl mx-auto w-full mb-12">
-      <div className="flex flex-col md:flex-row md:items-end justify-between w-full">
-        <div className="flex flex-col gap-2">
-          <p className="tagline">{currentStepData.tagline}</p>
-          <h2 className="italic text-black capitalize font-newsreader font-light">
-            Step {currentStepData.id}: {currentStepData.title}
-          </h2>
+          <div className="flex items-center gap-2">
+            <Button
+                variant="outline"
+                type="button"
+                // onClick={handleSaveAndExit}
+              >
+              <Save className="w-3.5 h-3.5 text-secondary-foreground/80 hover:text-secondary-foreground" />
+              <span>Save & Exit</span>
+            </Button>
+          </div>
+            {/*<Progress value={progressPercentage} className="w-full" />*/}
         </div>
-        <p className="text-end text-lg font-semibold text-muted-foreground">
-          Step {currentStep} of {steps.length}
-        </p>
-      </div>
-      <Progress value={progressPercentage} className="w-full" />
-    </div>
-  );
+    );
 };
 
 export default ProgressBarHeader;
