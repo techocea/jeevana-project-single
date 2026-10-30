@@ -7,13 +7,13 @@ import { Button } from "@/components/ui/button";
 import { updateProfile } from "@/app/actions/profile-actions";
 import { ArrowLeft } from "lucide-react";
 import { InitialProfileData } from "@/types";
-import BasicInformationForm from "@/components/forms/onboarding-basic-form";
-import ReligionForm from "@/components/forms/onboarding-religion-form";
-import AchievementsForm from "@/components/forms/onboarding-achievements-form"; // or career step
-import LocationForm from "@/components/forms/onboarding-location-form";
-import PersonalForm from "@/components/forms/onboarding-personal-form";
-import HobbiesForm from "@/components/forms/onboarding-hobbies-form";
-import PartnerPreferences from "@/components/forms/partner-preferences-form";
+import BasicInformationForm from "@/components/forms/onboarding-one-form";
+import ReligionForm from "@/components/forms/onboarding-two-form";
+import AchievementsForm from "@/components/forms/onboarding-three-form"; // or career step
+import LocationForm from "@/components/forms/onboarding-four-form";
+import PersonalForm from "@/components/forms/onboarding-six-form";
+import HobbiesForm from "@/components/forms/onboarding-five-form";
+import PartnerPreferences from "@/components/forms/onboarding-six-form";
 import toast from "react-hot-toast";
 
 interface EditProfileProps {

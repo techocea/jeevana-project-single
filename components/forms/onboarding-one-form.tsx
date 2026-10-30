@@ -14,11 +14,13 @@ import {Button} from "@/components/ui/button";
 import {ArrowRight, User} from "lucide-react";
 import {useForm, Controller, useFormContext, useFormState} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {OnboardingFormValues, stepOneBasicSchema} from "@/lib/validation";
+import {OnboardingFormValues, stepOneSchema} from "@/lib/validation";
 import {formatDate} from "@/helpers/format-date";
 import TitleHeader from "@/components/dashboard/title-header";
+import {MOTHER_TONGUES, RELIGIONS_AND_CASTES} from "@/lib/constants";
+import { cn } from "@/lib/utils";
 
-type StepOneValues = z.infer<typeof stepOneBasicSchema>;
+type StepOneValues = z.infer<typeof stepOneSchema>;
 
 export const ageOptions = Array.from({length: 43}, (_, i) => 18 + i);
 
@@ -33,10 +35,16 @@ function BasicInformationFields({
                                     register,
                                     control,
                                     errors,
+                                    selectedReligion,
+                                    availableCastes,
+                                    onReligionChange,
                                 }: {
     register: ReturnType<typeof useForm<OnboardingFormValues>>["register"];
     control: ReturnType<typeof useForm<OnboardingFormValues>>["control"];
     errors: Record<string, any>;
+    selectedReligion: string | null | undefined;
+    availableCastes: string[];
+    onReligionChange: (value: string) => void;
 }) {
     return (
         <div className="space-y-8">
@@ -188,81 +196,144 @@ function BasicInformationFields({
                     )}
                 </div>
 
-                <div className="lex flex-col gap-2">
-                    <Label
-                        htmlFor="dob">
-                        Date of Birth
-                    </Label>
-                    <Input id="dob" type="date" {...register("dob")} />
-
-                    {errors.dob && (
-                        <span className="text-sm text-red-600">
-                {errors.dob.message as string}
-              </span>
-                    )}
-                </div>
-
-                <div className="lex flex-col gap-2">
-                    <Label
-                        htmlFor="dob">
-                        Date of Birth
-                    </Label>
-                    <Input id="dob" type="date" {...register("dob")} />
-
-                    {errors.dob && (
-                        <span className="text-sm text-red-600">
-                {errors.dob.message as string}
-              </span>
-                    )}
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
-                    <Label
-                        htmlFor="createdBy"
-                    >
-                        Current City Residence
+                    <Label htmlFor="religion">
+                        Religion
                     </Label>
                     <Controller
-                        name="createdBy"
                         control={control}
+                        name="religion"
                         render={({field}) => (
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <Select
+                                onValueChange={(val) => {
+                                    field.onChange(val);
+                                    onReligionChange(val);
+                                }}
+                                value={field.value || ""}
+                            >
                                 <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select relationship"/>
+                                    <SelectValue placeholder="Select Religion"/>
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="self">Myself</SelectItem>
-                                    <SelectItem value="parent">Parent / Guardian</SelectItem>
-                                    <SelectItem value="sibling">Sibling</SelectItem>
-                                    <SelectItem value="friend">Friend</SelectItem>
+                                    {Object.keys(RELIGIONS_AND_CASTES).map((rel) => (
+                                        <SelectItem key={rel} value={rel}>
+                                            {rel}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         )}
                     />
-                    {errors.createdBy && (
-                        <p className="text-xs text-red-500">
-                            {errors.createdBy.message as string}
-                        </p>
+                    {errors.religion && (
+                        <p className="text-sm text-red-600">{errors.religion.message as string}</p>
                     )}
                 </div>
 
                 <div className="flex flex-col gap-2">
-                    <Label
-                        htmlFor="fullName">
-                        Province or Region
+                    <Label htmlFor="caste">
+                        Caste
                     </Label>
-                    <Input
-                        id="fullName"
-                        type="text"
-                        placeholder="John Smith"
-                        {...register("fullName")}
+                    <Controller
+                        control={control}
+                        name="caste"
+                        render={({field}) => (
+                            <Select
+                                onValueChange={field.onChange}
+                                value={field.value || ""}
+                                disabled={!selectedReligion}
+                            >
+                                <SelectTrigger
+                                    className={cn(
+                                        "w-full",
+                                        !selectedReligion &&
+                                        "bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed",
+                                    )}
+                                >
+                                    <SelectValue
+                                        placeholder={selectedReligion ? "Select Caste" : "Choose a religion first"}
+                                    />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {availableCastes.map((caste) => (
+                                        <SelectItem key={caste} value={caste}>
+                                            {caste}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        )}
                     />
-                    {errors.fullName && (
-                        <p className="text-sm text-red-600">
-                            {errors.fullName.message as string}
-                        </p>
+                    {errors.caste && (
+                        <p className="text-sm text-red-600">{errors.caste.message as string}</p>
+                    )}
+                </div>
+
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-2">
+                    <Label htmlFor="subCaste">
+                        Sub Caste
+                    </Label>
+                    <Controller
+                        control={control}
+                        name="subCaste"
+                        render={({field}) => (
+                            <Select
+                                onValueChange={field.onChange}
+                                value={field.value || ""}
+                                disabled={!selectedReligion}
+                            >
+                                <SelectTrigger
+                                    className={cn(
+                                        "w-full",
+                                        !selectedReligion &&
+                                        "bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed",
+                                    )}
+                                >
+                                    <SelectValue
+                                        placeholder={selectedReligion ? "Select Caste" : "Choose a religion first"}
+                                    />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {availableCastes.map((caste) => (
+                                        <SelectItem key={caste} value={caste}>
+                                            {caste}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        )}
+                    />
+                    {errors.subCaste && (
+                        <p className="text-sm text-red-600">{errors.subCaste.message as string}</p>
+                    )}
+                </div>
+
+                <div className="flex flex-col gap-2">
+                    <Label htmlFor="motherTongue">
+                        Mother Tongue
+                    </Label>
+                    <Controller
+                        control={control}
+                        name="motherTongue"
+                        render={({field}) => (
+                            <Select onValueChange={field.onChange} value={field.value || ""}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select Mother Tongue"/>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {MOTHER_TONGUES.map((lang) => (
+                                        <SelectItem key={lang} value={lang}>
+                                            {lang}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        )}
+                    />
+                    {errors.motherTongue && (
+                        <p className="text-sm text-red-600">{errors.motherTongue.message as string}</p>
                     )}
                 </div>
             </div>
@@ -277,17 +348,26 @@ function BasicInformationOnboarding({onPrev, onNext, initialData}: StepOneProps)
         handleSubmit,
         formState: {errors, isSubmitting},
     } = useForm<OnboardingFormValues>({
-        resolver: zodResolver(stepOneBasicSchema as any),
+        resolver: zodResolver(stepOneSchema as any),
         defaultValues: {
             createdBy: initialData?.createdBy || undefined,
-            profilePic: initialData?.profilePic || "",
             fullName: initialData?.fullName || "",
             contact: initialData?.contact || "",
             gender: initialData?.gender || undefined,
             dob: formatDate(initialData?.dob) as unknown as Date,
             age: initialData?.age || 0,
+            religion: initialData?.religion || "",
+            caste: initialData?.caste || "",
+            subCaste: initialData?.subCaste || "",
+            motherTongue: initialData?.motherTongue || undefined,
+
         },
     });
+
+    const selectedReligion = watch("religion");
+    const availableCastes = selectedReligion
+        ? RELIGIONS_AND_CASTES[selectedReligion] || []
+        : [];
 
     return (
         <form
@@ -331,7 +411,7 @@ function BasicInformationEditing({onNext, initialData}: StepOneProps) {
         handleSubmit,
         formState: {errors, isSubmitting, isDirty},
     } = useForm<OnboardingFormValues>({
-        resolver: zodResolver(stepOneBasicSchema as any),
+        resolver: zodResolver(stepOneSchema as any),
         defaultValues: {
             createdBy: initialData?.createdBy || undefined,
             profilePic: initialData?.profilePic || "",

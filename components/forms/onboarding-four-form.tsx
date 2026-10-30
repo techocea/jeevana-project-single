@@ -24,13 +24,13 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Loader2, Map } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { OnboardingFormValues, stepFourLocationSchema } from "@/lib/validation";
+import { OnboardingFormValues, stepFourSchema } from "@/lib/validation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import {LK_DATA, MOTHER_TONGUES, RELIGIONS_AND_CASTES} from "@/lib/constants";
 import Image from "next/image";
 
-type StepFourValues = z.infer<typeof stepFourLocationSchema>;
+type StepFourValues = z.infer<typeof stepFourSchema>;
 
 interface StepFourProps {
   onPrev?: () => void;
@@ -314,7 +314,7 @@ function LocationInformationOnboarding({ onPrev, onNext, initialData }: StepFour
         handleSubmit,
         formState: { errors, isSubmitting },
     } = useForm<OnboardingFormValues>({
-        resolver: zodResolver(stepFourLocationSchema as any),
+        resolver: zodResolver(stepFourSchema as any),
         defaultValues: {
             country: initialData?.country || "",
             state: initialData?.state || "",
@@ -378,7 +378,7 @@ function LocationInformationEditing({ onNext, initialData }: StepFourProps) {
         handleSubmit,
         formState: { errors, isSubmitting, isDirty },
     } = useForm<OnboardingFormValues>({
-        resolver: zodResolver(stepFourLocationSchema as any),
+        resolver: zodResolver(stepFourSchema as any),
         defaultValues: {
             country: initialData?.country || "",
             state: initialData?.state || "",

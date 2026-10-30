@@ -192,11 +192,12 @@ export const profiles = pgTable("profiles", {
     fullName: text("full_name"),
     contact: text("contact"),
     gender: text("gender"),
-    profilePic: text("profile_pic"),
     dob: date("dob", {mode: "date"}),
     religion: text("religion"),
     caste: text("caste"),
     motherTongue: text("mother_tongue"),
+
+    profilePic: text("profile_pic"),
     educationLevel: text("education_level"),
     profession: text("profession"),
     annualIncomeRange: text("annual_income_range"),

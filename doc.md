@@ -5,7 +5,6 @@
 -gender
 -dob
 -marital_status
--no_of_children
 -living_status
 -religion
 -caste
@@ -35,7 +34,6 @@
 -hobbies (no need cards just strings and then convert to tags)
 
 ## Partner preferences
--looking_for
 -religion
 -caste
 -age

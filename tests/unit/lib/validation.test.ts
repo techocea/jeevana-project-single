@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
 import {
-  stepOneBasicSchema,
-  stepTwoReligionSchema,
-  stepThreeAchievementsSchema,
-  stepFourLocationSchema,
-  stepFivePersonalSchema,
-  stepSixHobbiesSchema,
+  stepOneSchema,
+  stepTwoSchema,
+  stepThreeSchema,
+  stepFourSchema,
+  stepTwoSchema,
+  stepSixSchema,
   stepSevenPreferencesSchema,
   authRegisterSchema,
   authLoginSchema,
@@ -26,19 +26,19 @@ describe("stepOneBasicSchema", () => {
   };
 
   it("accepts a minimal valid payload", () => {
-    expect(() => stepOneBasicSchema.parse(validBase)).not.toThrow();
+    expect(() => stepOneSchema.parse(validBase)).not.toThrow();
   });
 
   it("accepts all valid createdBy values", () => {
     const values = ["self", "parent", "guardian", "sibling", "friend"] as const;
     values.forEach((v) => {
-      const result = stepOneBasicSchema.safeParse({ ...validBase, createdBy: v });
+      const result = stepOneSchema.safeParse({ ...validBase, createdBy: v });
       expect(result.success).toBe(true);
     });
   });
 
   it("rejects createdBy values outside the enum", () => {
-    const result = stepOneBasicSchema.safeParse({
+    const result = stepOneSchema.safeParse({
       ...validBase,
       createdBy: "robot",
     });
@@ -46,7 +46,7 @@ describe("stepOneBasicSchema", () => {
   });
 
   it("rejects an invalid profilePic URL", () => {
-    const result = stepOneBasicSchema.safeParse({
+    const result = stepOneSchema.safeParse({
       ...validBase,
       profilePic: "not-a-url",
     });
@@ -54,7 +54,7 @@ describe("stepOneBasicSchema", () => {
   });
 
   it("accepts null profilePic (photo is optional)", () => {
-    const result = stepOneBasicSchema.safeParse({
+    const result = stepOneSchema.safeParse({
       ...validBase,
       profilePic: null,
     });
@@ -62,7 +62,7 @@ describe("stepOneBasicSchema", () => {
   });
 
   it("rejects a future date of birth", () => {
-    const result = stepOneBasicSchema.safeParse({
+    const result = stepOneSchema.safeParse({
       ...validBase,
       dob: new Date(Date.now() + 86_400_000),
     });
@@ -70,7 +70,7 @@ describe("stepOneBasicSchema", () => {
   });
 
   it("accepts a past date of birth", () => {
-    const result = stepOneBasicSchema.safeParse({
+    const result = stepOneSchema.safeParse({
       ...validBase,
       dob: new Date("1990-05-20"),
     });
@@ -81,7 +81,7 @@ describe("stepOneBasicSchema", () => {
   // The schema uses "single" but the database enum uses "never_married".
   // The test below FAILS until validation.ts is fixed (Task 1).
   it("KNOWN BUG — 'never_married' should be a valid maritalStatus (fails until fixed)", () => {
-    const result = stepOneBasicSchema.safeParse({
+    const result = stepOneSchema.safeParse({
       ...validBase,
       maritalStatus: "never_married",
     });
@@ -90,7 +90,7 @@ describe("stepOneBasicSchema", () => {
   });
 
   it("CURRENT BEHAVIOR — 'single' is accepted by schema but is wrong DB value", () => {
-    const result = stepOneBasicSchema.safeParse({
+    const result = stepOneSchema.safeParse({
       ...validBase,
       maritalStatus: "single",
     });
@@ -104,11 +104,11 @@ describe("stepOneBasicSchema", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 describe("stepTwoReligionSchema", () => {
   it("accepts a fully empty object (all fields optional)", () => {
-    expect(() => stepTwoReligionSchema.parse({})).not.toThrow();
+    expect(() => stepTwoSchema.parse({})).not.toThrow();
   });
 
   it("accepts valid religion, caste, and motherTongue", () => {
-    const result = stepTwoReligionSchema.safeParse({
+    const result = stepTwoSchema.safeParse({
       religion: "Buddhism",
       caste: "Sinhalese",
       motherTongue: "Sinhala",
@@ -117,7 +117,7 @@ describe("stepTwoReligionSchema", () => {
   });
 
   it("rejects religion string longer than 100 characters", () => {
-    const result = stepTwoReligionSchema.safeParse({
+    const result = stepTwoSchema.safeParse({
       religion: "a".repeat(101),
     });
     expect(result.success).toBe(false);
@@ -129,11 +129,11 @@ describe("stepTwoReligionSchema", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 describe("stepThreeAchievementsSchema", () => {
   it("accepts an empty object (all optional)", () => {
-    expect(() => stepThreeAchievementsSchema.parse({})).not.toThrow();
+    expect(() => stepThreeSchema.parse({})).not.toThrow();
   });
 
   it("accepts valid education level and profession", () => {
-    const result = stepThreeAchievementsSchema.safeParse({
+    const result = stepThreeSchema.safeParse({
       educationLevel: "Bachelor",
       profession: "Software Engineer",
       annualIncomeRange: "LKR 1M–2M",
@@ -147,18 +147,18 @@ describe("stepThreeAchievementsSchema", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 describe("stepFourLocationSchema", () => {
   it("accepts an empty object", () => {
-    expect(() => stepFourLocationSchema.parse({})).not.toThrow();
+    expect(() => stepFourSchema.parse({})).not.toThrow();
   });
 
   it("accepts valid residencyStatus values", () => {
     (["CITIZEN", "PR", "WORK"] as const).forEach((status) => {
-      const result = stepFourLocationSchema.safeParse({ residencyStatus: status });
+      const result = stepFourSchema.safeParse({ residencyStatus: status });
       expect(result.success).toBe(true);
     });
   });
 
   it("rejects invalid residencyStatus", () => {
-    const result = stepFourLocationSchema.safeParse({
+    const result = stepFourSchema.safeParse({
       residencyStatus: "TOURIST",
     });
     expect(result.success).toBe(false);
@@ -170,11 +170,11 @@ describe("stepFourLocationSchema", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 describe("stepFivePersonalSchema", () => {
   it("accepts an empty object (all optional)", () => {
-    expect(() => stepFivePersonalSchema.parse({})).not.toThrow();
+    expect(() => stepTwoSchema.parse({})).not.toThrow();
   });
 
   it("accepts a fully populated valid payload", () => {
-    const result = stepFivePersonalSchema.safeParse({
+    const result = stepTwoSchema.safeParse({
       narrative: "A".repeat(25),
       smoking: "never",
       drinking: "occasionally",
@@ -187,7 +187,7 @@ describe("stepFivePersonalSchema", () => {
   });
 
   it("rejects bio narrative shorter than 20 characters", () => {
-    const result = stepFivePersonalSchema.safeParse({
+    const result = stepTwoSchema.safeParse({
       narrative: "Too short",
     });
     expect(result.success).toBe(false);
@@ -197,25 +197,25 @@ describe("stepFivePersonalSchema", () => {
   });
 
   it("rejects bio narrative longer than 2000 characters", () => {
-    const result = stepFivePersonalSchema.safeParse({
+    const result = stepTwoSchema.safeParse({
       narrative: "a".repeat(2001),
     });
     expect(result.success).toBe(false);
   });
 
   it("rejects invalid smoking value", () => {
-    const result = stepFivePersonalSchema.safeParse({ smoking: "sometimes" });
+    const result = stepTwoSchema.safeParse({ smoking: "sometimes" });
     expect(result.success).toBe(false);
   });
 
   it("accepts all valid smoking values", () => {
     (["never", "occasionally", "regularly"] as const).forEach((v) => {
-      expect(stepFivePersonalSchema.safeParse({ smoking: v }).success).toBe(true);
+      expect(stepTwoSchema.safeParse({ smoking: v }).success).toBe(true);
     });
   });
 
   it("rejects invalid foodPreferences value", () => {
-    const result = stepFivePersonalSchema.safeParse({
+    const result = stepTwoSchema.safeParse({
       foodPreferences: "pescatarian",
     });
     expect(result.success).toBe(false);
@@ -227,7 +227,7 @@ describe("stepFivePersonalSchema", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 describe("stepSixHobbiesSchema", () => {
   it("requires at least one hobby", () => {
-    const result = stepSixHobbiesSchema.safeParse({ hobbies: [] });
+    const result = stepSixSchema.safeParse({ hobbies: [] });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0].message).toBe(
       "Please select at least one hobby"
@@ -235,12 +235,12 @@ describe("stepSixHobbiesSchema", () => {
   });
 
   it("accepts a single-item hobby array", () => {
-    const result = stepSixHobbiesSchema.safeParse({ hobbies: ["Reading"] });
+    const result = stepSixSchema.safeParse({ hobbies: ["Reading"] });
     expect(result.success).toBe(true);
   });
 
   it("accepts multiple hobbies", () => {
-    const result = stepSixHobbiesSchema.safeParse({
+    const result = stepSixSchema.safeParse({
       hobbies: ["Reading", "Cooking", "Hiking"],
     });
     expect(result.success).toBe(true);

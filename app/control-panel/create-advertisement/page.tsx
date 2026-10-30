@@ -13,13 +13,13 @@ import {
   ShieldCogCorner,
   UserCheck,
 } from "lucide-react";
-import ReligionInformation from "@/components/forms/onboarding-religion-form";
-import AchievementsForm from "@/components/forms/onboarding-achievements-form";
-import LocationInformation from "@/components/forms/onboarding-location-form";
-import PersonalInformation from "@/components/forms/onboarding-personal-form";
-import HobbiesSelector from "@/components/forms/onboarding-hobbies-form";
-import PartnerPreferences from "@/components/forms/partner-preferences-form";
-import BasicInformation from "@/components/forms/onboarding-basic-form";
+import ReligionInformation from "@/components/forms/onboarding-two-form";
+import AchievementsForm from "@/components/forms/onboarding-three-form";
+import LocationInformation from "@/components/forms/onboarding-four-form";
+import PersonalInformation from "@/components/forms/onboarding-six-form";
+import HobbiesSelector from "@/components/forms/onboarding-five-form";
+import PartnerPreferences from "@/components/forms/onboarding-six-form";
+import BasicInformation from "@/components/forms/onboarding-one-form";
 import TitleHeader from "@/components/dashboard/title-header";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { InitialProfileData } from "@/types";

@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Drum } from "lucide-react";
 import { PERSONAL_DROPDOWNS } from "@/lib/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { OnboardingFormValues, stepSixHobbiesSchema } from "@/lib/validation";
+import { OnboardingFormValues, stepSixSchema } from "@/lib/validation";
 
-type StepSixValues = z.infer<typeof stepSixHobbiesSchema>;
+type StepSixValues = z.infer<typeof stepSixSchema>;
 
 interface StepSixProps {
   onPrev?: () => void;
@@ -90,7 +90,7 @@ function HobbiesSelectorOnboarding({ onPrev, onNext, initialData }: StepSixProps
     watch,
     formState: { errors, isSubmitting },
   } = useForm<OnboardingFormValues>({
-    resolver: zodResolver(stepSixHobbiesSchema as any),
+    resolver: zodResolver(stepSixSchema as any),
     defaultValues: {
       hobbies: initialData?.hobbies || [],
     },
@@ -136,7 +136,7 @@ function HobbiesSelectorEditing({ onNext, initialData }: StepSixProps) {
     watch,
     formState: { errors, isSubmitting, isDirty },
   } = useForm<OnboardingFormValues>({
-    resolver: zodResolver(stepSixHobbiesSchema as any),
+    resolver: zodResolver(stepSixSchema as any),
     defaultValues: {
       hobbies: initialData?.hobbies || [],
     },

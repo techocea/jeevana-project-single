@@ -6,14 +6,14 @@ import {Button} from "@base-ui/react";
 import {useRouter} from "next/navigation";
 import {ONBOARDING_STEPS} from "@/lib/constants";
 import {createProfileByUser} from "@/app/actions/profile-actions";
-import BasicInformation from "@/components/forms/onboarding-basic-form";
+import BasicInformation from "@/components/forms/onboarding-one-form";
 import ProgressBarHeader from "@/components/landing/progress-bar-header";
-import HobbiesSelector from "@/components/forms/onboarding-hobbies-form";
-import PersonalInformation from "@/components/forms/onboarding-personal-form";
-import ReligionInformation from "@/components/forms/onboarding-religion-form";
-import LocationInformation from "@/components/forms/onboarding-location-form";
-import AchievementsForm from "@/components/forms/onboarding-achievements-form";
-import PartnerPreferences from "@/components/forms/partner-preferences-form";
+import HobbiesSelector from "@/components/forms/onboarding-five-form";
+import PersonalInformation from "@/components/forms/onboarding-six-form";
+import ReligionInformation from "@/components/forms/onboarding-two-form";
+import LocationInformation from "@/components/forms/onboarding-four-form";
+import AchievementsForm from "@/components/forms/onboarding-three-form";
+import PartnerPreferences from "@/components/forms/onboarding-six-form";
 
 interface OnboardingClientProps {
     initialDbData: Record<string, any> | null;

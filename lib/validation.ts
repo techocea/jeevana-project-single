@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const stepOneBasicSchema = z.object({
+export const stepOneSchema = z.object({
   createdBy: z.enum(["self", "parent", "guardian", "sibling", "friend"]),
   fullName: z
     .string()
@@ -16,72 +16,79 @@ export const stepOneBasicSchema = z.object({
     .optional(),
   gender: z.enum(["male", "female"]).nullable(),
   maritalStatus: z.enum(["divorced", "widowed", "single"]).nullable(),
-  profilePic: z.url("Invalid image path location").nullable(),
   dob: z.coerce
     .date()
     .max(new Date(), "Date of birth cannot be in the future")
     .nullable()
     .optional(),
   age: z.number().int().positive().optional(),
-});
-
-// Step 2 Schema: Professional / Cultural Background
-export const stepTwoReligionSchema = z.object({
   religion: z.string().max(100).nullable().optional(),
   caste: z.string().max(100).nullable().optional(),
+  subCaste: z.string().max(100).nullable().optional(),
   motherTongue: z.string().max(100).nullable().optional(),
 });
 
-// Step 3 Schema: Preferences & Career
-export const stepThreeAchievementsSchema = z.object({
-  educationLevel: z.string().max(100).nullable().optional(),
-  profession: z.string().max(100).nullable().optional(),
-  annualIncomeRange: z.string().max(100).nullable().optional(),
-});
-
-// Step 4 Schema: Location Architecture
-export const stepFourLocationSchema = z.object({
-  country: z.string().optional(),
-  state: z.string().max(100).nullable().optional(),
-  city: z.string().max(100).nullable().optional(),
-  residencyStatus: z.enum(["CITIZEN", "PR", "WORK"]).nullable().optional(),
-});
-
-// Step 5 Schema: Physical Attributes & Bio Narrative
-export const stepFivePersonalSchema = z.object({
+// Step 2 Schema: Habbits & Physical Attributes
+export const stepTwoSchema = z.object({
   height: z.string().optional(),
   weight: z.string().optional(),
-  narrative: z
-    .string()
-    .min(20, "Bio introduction must be at least 20 characters")
-    .max(2000)
-    .nullable()
-    .optional(),
   smoking: z.enum(["never", "occasionally", "regularly"]).nullable().optional(),
+  complexion: z.enum(["fair", "dark", "chocolate"]).nullable().optional(),
+  bodyType: z.enum(["slim", "chubby", "regular"]).nullable().optional(),
+  bloodGroup: z.enum(["O+", "O-", "A+","A-","B+","B-"]).nullable().optional(),
   drinking: z
-    .enum(["never", "occasionally", "regularly"])
-    .nullable()
-    .optional(),
+      .enum(["never", "occasionally", "regularly"])
+      .nullable()
+      .optional(),
   foodPreferences: z
-    .enum(["vegetarian", "non-vegetarian", "vegan"])
-    .nullable()
-    .optional(),
+      .enum(["vegetarian", "non-vegetarian", "vegan"])
+      .nullable()
+      .optional(),
   isDifferentlyAbled: z.boolean().default(false).optional(),
   differentlyAbledDetails: z.string().max(1000).nullable().optional(),
 });
 
-export const stepSixHobbiesSchema = z.object({
-  hobbies: z.array(z.string()).min(1, "Please select at least one hobby"),
+// Step 3 Schema: Education & Career
+export const stepThreeSchema = z.object({
+  educationQualification: z.string().max(100).nullable().optional(),
+  institute: z.string().max(100).nullable().optional(),
+  profession: z.string().max(100).nullable().optional(),
+  employedIn: z.string().max(100).nullable().optional(),
+  annualIncomeRange: z.string().max(100).nullable().optional(),
 });
 
-export const stepSevenPreferencesSchema = z.object({
+// Step 4 Schema: Location Architecture
+export const stepFourSchema = z.object({
+  country: z.string().optional(),
+  state: z.string().max(100).nullable().optional(),
+  city: z.string().max(100).nullable().optional(),
+  residencyStatus: z.enum(["CITIZEN", "PR_VISA", "WORK_VISA","STUDENT_VISA","ASYLUM"]).nullable().optional(),
+});
+
+// Step 5 Schema: About me & Photograph
+export const stepFiveSchema = z.object({
+  narrative: z
+      .string()
+      .min(20, "Bio introduction must be at least 20 characters")
+      .max(2000)
+      .nullable()
+      .optional(),
+  profilePic: z.url("Invalid image path location").nullable(),
+});
+
+// Step 6 Schema: Partner Preferences
+export const stepSixSchema = z.object({
   preferredMinAge: z.number().int().positive().optional(),
   preferredMaxAge: z.number().int().positive().optional(),
-  preferredMaritalStatus: z.string(),
+  preferredMinHeight: z.string().optional(),
+  preferredMaxHeight: z.string().optional(),
   preferredEducationLevels: z.array(z.string()).default([]),
   preferredProfessions: z.array(z.string()).default([]),
   preferredAnnualIncomeRanges: z.array(z.string()).default([]),
+  preferredResidencyCountry: z.array(z.string()).default([]),
+  preferredResidencyStatus: z.array(z.string()).default([]),
 });
+
 
 export const contactFormSchema = z.object({
   fullName: z.string().min(2, { message: "Full name is required" }),
@@ -115,13 +122,12 @@ export const forgotPasswordSchema = z.object({
   email: z.email({ message: "Enter a valid email address" }),
 });
 
-export const completeOnboardingSchema = stepOneBasicSchema
-  .merge(stepTwoReligionSchema)
-  .merge(stepThreeAchievementsSchema)
-  .merge(stepFourLocationSchema)
-  .merge(stepFivePersonalSchema)
-  .merge(stepSixHobbiesSchema)
-  .merge(stepSevenPreferencesSchema);
+export const completeOnboardingSchema = stepOneSchema
+  .merge(stepTwoSchema)
+  .merge(stepThreeSchema)
+  .merge(stepFourSchema)
+  .merge(stepFiveSchema)
+  .merge(stepSixSchema);
 
 export type OnboardingFormValues = z.infer<typeof completeOnboardingSchema>;
 export type ContactFormValues = z.infer<typeof contactFormSchema>;

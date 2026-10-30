@@ -12,14 +12,14 @@ import {Label} from "@/components/ui/label";
 import {Button} from "@/components/ui/button";
 import {ArrowRight} from "lucide-react";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {OnboardingFormValues, stepTwoReligionSchema} from "@/lib/validation";
+import {OnboardingFormValues, stepTwoSchema} from "@/lib/validation";
 import {MOTHER_TONGUES, RELIGIONS_AND_CASTES} from "@/lib/constants";
 import {cn} from "@/lib/utils";
 import {ChevronLeft} from "lucide-react"
 import {MdTempleBuddhist} from "react-icons/md";
 import TitleHeader from "@/components/dashboard/title-header";
 
-type StepTwoValues = z.infer<typeof stepTwoReligionSchema>;
+type StepTwoValues = z.infer<typeof stepTwoSchema>;
 
 interface StepTwoProps {
     onPrev?: () => void;
@@ -49,104 +49,8 @@ function ReligionInformationFields({
                          description="Helps prospective families assess compatibility of values, lineage, and upbringing."/>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="flex flex-col gap-2">
-                    <Label htmlFor="religion">
-                        Religion
-                    </Label>
-                    <Controller
-                        control={control}
-                        name="religion"
-                        render={({field}) => (
-                            <Select
-                                onValueChange={(val) => {
-                                    field.onChange(val);
-                                    onReligionChange(val);
-                                }}
-                                value={field.value || ""}
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select Religion"/>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {Object.keys(RELIGIONS_AND_CASTES).map((rel) => (
-                                        <SelectItem key={rel} value={rel}>
-                                            {rel}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        )}
-                    />
-                    {errors.religion && (
-                        <p className="text-sm text-red-600">{errors.religion.message as string}</p>
-                    )}
-                </div>
 
-                <div className="flex flex-col gap-2">
-                    <Label htmlFor="caste">
-                        Caste
-                    </Label>
-                    <Controller
-                        control={control}
-                        name="caste"
-                        render={({field}) => (
-                            <Select
-                                onValueChange={field.onChange}
-                                value={field.value || ""}
-                                disabled={!selectedReligion}
-                            >
-                                <SelectTrigger
-                                    className={cn(
-                                        "w-full",
-                                        !selectedReligion &&
-                                        "bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed",
-                                    )}
-                                >
-                                    <SelectValue
-                                        placeholder={selectedReligion ? "Select Caste" : "Choose a religion first"}
-                                    />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {availableCastes.map((caste) => (
-                                        <SelectItem key={caste} value={caste}>
-                                            {caste}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        )}
-                    />
-                    {errors.caste && (
-                        <p className="text-sm text-red-600">{errors.caste.message as string}</p>
-                    )}
-                </div>
 
-                <div className="flex flex-col gap-2">
-                    <Label htmlFor="motherTongue">
-                        Mother Tongue
-                    </Label>
-                    <Controller
-                        control={control}
-                        name="motherTongue"
-                        render={({field}) => (
-                            <Select onValueChange={field.onChange} value={field.value || ""}>
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select Mother Tongue"/>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {MOTHER_TONGUES.map((lang) => (
-                                        <SelectItem key={lang} value={lang}>
-                                            {lang}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        )}
-                    />
-                    {errors.motherTongue && (
-                        <p className="text-sm text-red-600">{errors.motherTongue.message as string}</p>
-                    )}
-                </div>
             </div>
         </div>
     );
@@ -160,7 +64,7 @@ function ReligionInformationOnboarding({onPrev, onNext, initialData}: StepTwoPro
         handleSubmit,
         formState: {errors, isSubmitting},
     } = useForm<OnboardingFormValues>({
-        resolver: zodResolver(stepTwoReligionSchema as any),
+        resolver: zodResolver(stepTwoSchema as any),
         defaultValues: {
             religion: initialData?.religion || "",
             caste: initialData?.caste || "",
@@ -184,7 +88,7 @@ function ReligionInformationOnboarding({onPrev, onNext, initialData}: StepTwoPro
                 selectedReligion={selectedReligion}
                 availableCastes={availableCastes}
                 onReligionChange={() => setValue("caste", "")}
-                columns={1}
+
             />
 
             <div className="flex justify-between w-full mt-4">
@@ -213,7 +117,7 @@ function ReligionInformationEditing({onNext, initialData}: StepTwoProps) {
         handleSubmit,
         formState: {errors, isSubmitting, isDirty},
     } = useForm<OnboardingFormValues>({
-        resolver: zodResolver(stepTwoReligionSchema as any),
+        resolver: zodResolver(stepTwoSchema as any),
         defaultValues: {
             religion: initialData?.religion || "",
             caste: initialData?.caste || "",

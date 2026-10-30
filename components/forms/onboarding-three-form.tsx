@@ -25,13 +25,13 @@ import {ArrowRight, ChevronLeft, Briefcase} from "lucide-react";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {
     OnboardingFormValues,
-    stepThreeAchievementsSchema,
+    stepThreeSchema,
 } from "@/lib/validation";
 import {GROUPS_PROFESSIONS, PERSONAL_DROPDOWNS} from "@/lib/constants";
 import {StepThreeInitialData} from "@/types";
 import TitleHeader from "@/components/dashboard/title-header";
 
-type StepThreeValues = z.infer<typeof stepThreeAchievementsSchema>;
+type StepThreeValues = z.infer<typeof stepThreeSchema>;
 
 interface StepThreeProps {
     onPrev?: () => void;
@@ -163,7 +163,7 @@ function AchievementsFormOnboarding({onPrev, onNext, initialData}: StepThreeProp
         handleSubmit,
         formState: {errors, isSubmitting},
     } = useForm<OnboardingFormValues>({
-        resolver: zodResolver(stepThreeAchievementsSchema as any),
+        resolver: zodResolver(stepThreeSchema as any),
         defaultValues: {
             educationLevel: initialData?.educationLevel || "",
             profession: initialData?.profession || "",
@@ -210,7 +210,7 @@ function AchievementsFormEditing({onNext, initialData}: StepThreeProps) {
         handleSubmit,
         formState: {errors, isSubmitting, isDirty},
     } = useForm<OnboardingFormValues>({
-        resolver: zodResolver(stepThreeAchievementsSchema as any),
+        resolver: zodResolver(stepThreeSchema as any),
         defaultValues: {
             educationLevel: initialData?.educationLevel || "",
             profession: initialData?.profession || "",
