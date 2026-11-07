@@ -261,6 +261,100 @@ export const MARITAL_STATUSES = [
     },
 ];
 
+export const COMPLEXION_TYPES = [
+    {
+        label: "Very Fair",
+        value: "very_fair",
+    },
+    {
+        label: "Fair",
+        value: "fair",
+    },
+    {
+        label: "Medium",
+        value: "medium",
+    },
+    {
+        label: "Brown",
+        value: "brown",
+    },
+    {
+        label: "Dark Brown",
+        value: "dark_brown",
+    },
+    {
+        label: "Black",
+        value: "black",
+    },
+    {
+        label: "Not Specified",
+        value: "not_specified",
+    }
+];
+
+export const BODY_TYPES = [
+    {
+        label: "Slim",
+        value: "slim",
+    },
+    {
+        label: "Athletic",
+        value: "athletic",
+    },
+    {
+        label: "Medium",
+        value: "medium",
+    },
+    {
+        label: "Average",
+        value: "average",
+    },
+    {
+        label: "Small",
+        value: "small",
+    },
+    {
+        label: "Not Specified",
+        value: "not_specified",
+    }
+];
+
+export const BLOOD_GROUPS = [
+    {
+        label: "A+",
+        value: "A+",
+    },
+    {
+        label: "A-",
+        value: "A-",
+    },
+    {
+        label: "B+",
+        value: "B+",
+    },
+    {
+        label: "B-",
+        value: "B-",
+    },
+    {
+        label: "AB+",
+        value: "AB+",
+    },
+    {
+        label: "O+",
+        value: "O+",
+    },
+    {
+        label: "O-",
+        value: "O-",
+    },
+    {
+        label: "Not Specified",
+        value: "not_specified",
+    }
+];
+
+
 export const MOTHER_TONGUES = [
     "Sinhala",
     "Tamil",
@@ -363,12 +457,12 @@ export const PRICING_PACKAGES = [
 ];
 
 export const ONBOARDING_STEPS: StepConfig[] = [
-    { id: 1, title: 'Basic Details', subtitle: 'Demographics & Lineage' },
-    { id: 2, title: 'Family Background', subtitle: 'Household & Heritage' },
-    { id: 3, title: 'Education & Career', subtitle: 'Qualifications & Profession' },
-    { id: 4, title: 'About Me & Photo', subtitle: 'Bio & Modest Portrait' },
-    { id: 5, title: 'Partner Preferences', subtitle: 'Desired Qualities' },
-    { id: 6, title: 'Review Details', subtitle: 'Final Verification' },
+    {id: 1, title: 'Basic Details', subtitle: 'Demographics & Lineage'},
+    {id: 2, title: 'Family Background', subtitle: 'Household & Heritage'},
+    {id: 3, title: 'Education & Career', subtitle: 'Qualifications & Profession'},
+    {id: 4, title: 'About Me & Photo', subtitle: 'Bio & Modest Portrait'},
+    {id: 5, title: 'Partner Preferences', subtitle: 'Desired Qualities'},
+    {id: 6, title: 'Review Details', subtitle: 'Final Verification'},
 ];
 
 export const PERSONAL_DROPDOWNS = {

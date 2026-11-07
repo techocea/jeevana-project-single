@@ -21,12 +21,12 @@ export type TabTypes = "all" | "pending" | "approved" | "rejected";
 export type MailRoutingTargetTypes = "owner" | "candidate" | "both";
 export type ProfileStatusTypes = "pending" | "approved" | "rejected";
 export type VerificationStatusTypes = "pending" | "verified" | "rejected";
-export type FoodHabitTypes = "vegetarian" | "non-vegetarian" | "vegan";
+export type FoodHabitTypes = "vegetarian" | "non_vegetarian" | "vegan";
 export type MembershipTypes = "free_tier" | "classical" | "heritage";
 export type MaritalStatusTypes = "single" | "divorced" | "widowed";
-export type ComplexionTypes = "VERY_FAIR" | "FAIR" | "MEDIUM" | "BROWN" | "DARK_BROWN" | "BLACK";
-export type BodyTypes = "SLIM" | "ATHLETIC" | "AVERAGE" | "SMALL" | "NOT_SPECIFIED";
-export type BloodGroupTypes = "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-" | "UNKNOWN";
+export type ComplexionTypes = "very_fair" | "fair" | "medium" | "brown" | "dark_brown" | "black";
+export type BodyTypes = "slim" | "athletic" | "average" | "small" | "not_specified";
+export type BloodGroupTypes = "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-" |  "not_specified";
 
 
 export interface StepConfig {

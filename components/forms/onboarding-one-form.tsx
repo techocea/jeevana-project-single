@@ -22,8 +22,6 @@ import { cn } from "@/lib/utils";
 
 type StepOneValues = z.infer<typeof stepOneSchema>;
 
-export const ageOptions = Array.from({length: 43}, (_, i) => 18 + i);
-
 interface StepOneProps {
     onPrev?: () => void;
     onNext?: (data: StepOneValues) => void;
@@ -31,7 +29,7 @@ interface StepOneProps {
     variant: "onboarding" | "editing" | "admin";
 }
 
-function BasicInformationFields({
+function OnboardingFormOneFields({
                                     register,
                                     control,
                                     errors,
@@ -81,7 +79,6 @@ function BasicInformationFields({
                         </p>
                     )}
                 </div>
-
                 <div className="flex flex-col gap-2">
                     <Label
                         htmlFor="fullName">
@@ -100,7 +97,6 @@ function BasicInformationFields({
                     )}
                 </div>
             </div>
-
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="flex flex-col gap-2">
                     <Label
@@ -119,7 +115,6 @@ function BasicInformationFields({
                         </p>
                     )}
                 </div>
-
                 <div className="flex flex-col gap-2">
                     <Label
                         htmlFor="maritalStatus">
@@ -149,7 +144,6 @@ function BasicInformationFields({
               </span>
                     )}
                 </div>
-
                 <div className="flex flex-col gap-2">
                     <Label
                         htmlFor="gender">
@@ -178,9 +172,7 @@ function BasicInformationFields({
               </span>
                     )}
                 </div>
-
             </div>
-
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="flex flex-col gap-2">
                     <Label
@@ -269,7 +261,6 @@ function BasicInformationFields({
                 </div>
 
             </div>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="subCaste">
@@ -341,7 +332,7 @@ function BasicInformationFields({
     );
 }
 
-function BasicInformationOnboarding({onPrev, onNext, initialData}: StepOneProps) {
+function OnboardingFormOneOnboarding({onPrev, onNext, initialData}: StepOneProps) {
     const {
         register,
         control,
@@ -375,7 +366,7 @@ function BasicInformationOnboarding({onPrev, onNext, initialData}: StepOneProps)
             onSubmit={handleSubmit((data) => onNext?.(data))}
             className="w-full flex flex-col gap-6"
         >
-            <BasicInformationFields
+            <OnboardingFormOneFields
                 register={register}
                 control={control}
                 errors={errors}
@@ -408,7 +399,7 @@ function BasicInformationOnboarding({onPrev, onNext, initialData}: StepOneProps)
     );
 }
 
-function BasicInformationEditing({onNext, initialData}: StepOneProps) {
+function OnboardingFormOneEditing({onNext, initialData}: StepOneProps) {
     const {
         register,
         control,
@@ -440,7 +431,7 @@ function BasicInformationEditing({onNext, initialData}: StepOneProps) {
 
     return (
         <form onSubmit={handleSubmit((data) => onNext?.(data))} className="w-full">
-            <BasicInformationFields
+            <OnboardingFormOneFields
                 register={register}
                 control={control}
                 errors={errors}
@@ -458,7 +449,7 @@ function BasicInformationEditing({onNext, initialData}: StepOneProps) {
     );
 }
 
-function BasicInformationAdmin(_props: StepOneProps) {
+function OnboardingFormOneAdmin(_props: StepOneProps) {
     const {register,
         watch, control, setValue}  = useFormContext<OnboardingFormValues>();
     const {errors} = useFormState({control});
@@ -475,7 +466,7 @@ function BasicInformationAdmin(_props: StepOneProps) {
                 <h4 className="text-black font-newsreader text-xl">Basic Details</h4>
             </div>
 
-            <BasicInformationFields
+            <OnboardingFormOneFields
                 register={register}
                 control={control}
                 errors={errors}
@@ -487,17 +478,17 @@ function BasicInformationAdmin(_props: StepOneProps) {
     );
 }
 
-const BasicInformation = ({onPrev, onNext, initialData, variant = "onboarding"}: StepOneProps) => {
+const OnboardingFormOne = ({onPrev, onNext, initialData, variant = "onboarding"}: StepOneProps) => {
     if (variant === "admin") {
-        return <BasicInformationAdmin variant={variant} initialData={initialData}/>;
+        return <OnboardingFormOneAdmin variant={variant} initialData={initialData}/>;
     }
     if (variant === "editing") {
         return (
-            <BasicInformationEditing variant={variant} onNext={onNext} initialData={initialData}/>
+            <OnboardingFormOneEditing variant={variant} onNext={onNext} initialData={initialData}/>
         );
     }
     return (
-        <BasicInformationOnboarding
+        <OnboardingFormOneOnboarding
             variant={variant}
             onPrev={onPrev}
             onNext={onNext}
@@ -506,4 +497,4 @@ const BasicInformation = ({onPrev, onNext, initialData, variant = "onboarding"}:
     );
 };
 
-export default BasicInformation;
+export default OnboardingFormOne;
