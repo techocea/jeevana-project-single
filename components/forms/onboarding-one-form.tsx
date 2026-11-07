@@ -135,7 +135,7 @@ function BasicInformationFields({
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
-                                        <SelectItem value="never_married">Never Married</SelectItem>
+                                        <SelectItem value="single">Single</SelectItem>
                                         <SelectItem value="widowed">Widowed</SelectItem>
                                         <SelectItem value="divorced">Divorced</SelectItem>
                                     </SelectGroup>
@@ -182,7 +182,7 @@ function BasicInformationFields({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="lex flex-col gap-2">
+                <div className="flex flex-col gap-2">
                     <Label
                         htmlFor="dob">
                         Date of Birth
@@ -345,6 +345,8 @@ function BasicInformationOnboarding({onPrev, onNext, initialData}: StepOneProps)
     const {
         register,
         control,
+        watch,
+        setValue,
         handleSubmit,
         formState: {errors, isSubmitting},
     } = useForm<OnboardingFormValues>({
@@ -360,7 +362,6 @@ function BasicInformationOnboarding({onPrev, onNext, initialData}: StepOneProps)
             caste: initialData?.caste || "",
             subCaste: initialData?.subCaste || "",
             motherTongue: initialData?.motherTongue || undefined,
-
         },
     });
 
@@ -378,6 +379,9 @@ function BasicInformationOnboarding({onPrev, onNext, initialData}: StepOneProps)
                 register={register}
                 control={control}
                 errors={errors}
+                selectedReligion={selectedReligion}
+                availableCastes={availableCastes}
+                onReligionChange={() => setValue("caste", "")}
             />
 
             <div className="justify-end flex w-full mt-4">
@@ -408,6 +412,8 @@ function BasicInformationEditing({onNext, initialData}: StepOneProps) {
     const {
         register,
         control,
+        watch,
+        setValue,
         handleSubmit,
         formState: {errors, isSubmitting, isDirty},
     } = useForm<OnboardingFormValues>({
@@ -420,8 +426,17 @@ function BasicInformationEditing({onNext, initialData}: StepOneProps) {
             gender: initialData?.gender || undefined,
             dob: formatDate(initialData?.dob) as unknown as Date,
             age: initialData?.age || 0,
+            religion: initialData?.religion || "",
+            caste: initialData?.caste || "",
+            subCaste: initialData?.subCaste || "",
+            motherTongue: initialData?.motherTongue || undefined,
         },
     });
+
+    const selectedReligion = watch("religion");
+    const availableCastes = selectedReligion
+        ? RELIGIONS_AND_CASTES[selectedReligion] || []
+        : [];
 
     return (
         <form onSubmit={handleSubmit((data) => onNext?.(data))} className="w-full">
@@ -429,6 +444,9 @@ function BasicInformationEditing({onNext, initialData}: StepOneProps) {
                 register={register}
                 control={control}
                 errors={errors}
+                selectedReligion={selectedReligion}
+                availableCastes={availableCastes}
+                onReligionChange={() => setValue("caste", "")}
             />
 
             <div className="justify-end flex w-full mt-4">
@@ -441,8 +459,14 @@ function BasicInformationEditing({onNext, initialData}: StepOneProps) {
 }
 
 function BasicInformationAdmin(_props: StepOneProps) {
-    const {register, control} = useFormContext<OnboardingFormValues>();
+    const {register,
+        watch, control, setValue}  = useFormContext<OnboardingFormValues>();
     const {errors} = useFormState({control});
+
+    const selectedReligion = watch("religion");
+    const availableCastes = selectedReligion
+        ? RELIGIONS_AND_CASTES[selectedReligion] || []
+        : [];
 
     return (
         <section className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
@@ -455,6 +479,9 @@ function BasicInformationAdmin(_props: StepOneProps) {
                 register={register}
                 control={control}
                 errors={errors}
+                selectedReligion={selectedReligion}
+                availableCastes={availableCastes}
+                onReligionChange={() => setValue("caste", "")}
             />
         </section>
     );

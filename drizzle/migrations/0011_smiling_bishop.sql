@@ -1,1 +1,0 @@
-ALTER TABLE "verifications" DROP COLUMN "id_type";

@@ -28,8 +28,16 @@ const normalizeSearchFilters = (
     minAge: getSearchValue(searchParams.minAge),
     maxAge: getSearchValue(searchParams.maxAge),
     religion: getSearchValue(searchParams.religion),
-    maritalStatus: (getSearchValue(searchParams.maritalStatus) as MaritalStatusTypes) || null,
-    foodPreferences: (getSearchValue(searchParams.foodPreferences) as FoodHabitTypes) || null,
+    maritalStatus: ((): MaritalStatusTypes | undefined => {
+        const v = getSearchValue(searchParams.maritalStatus);
+        const valid: MaritalStatusTypes[] = ["single", "divorced", "widowed"];
+        return v && (valid as string[]).includes(v) ? (v as MaritalStatusTypes) : undefined;
+    })(),
+    foodPreferences: ((): FoodHabitTypes | undefined => {
+        const v = getSearchValue(searchParams.foodPreferences);
+        const valid: FoodHabitTypes[] = ["vegetarian", "non-vegetarian", "vegan"];
+        return v && (valid as string[]).includes(v) ? (v as FoodHabitTypes) : undefined;
+    })(),
     caste: getSearchValue(searchParams.caste),
     motherTongue: getSearchValue(searchParams.motherTongue),
     educationLevel: getSearchValue(searchParams.educationLevel),

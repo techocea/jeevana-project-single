@@ -248,8 +248,8 @@ export const RELIGIONS_AND_CASTES: Record<string, string[]> = {
 
 export const MARITAL_STATUSES = [
     {
-        label: "Never Married",
-        value: "never_married",
+        label: "Single",
+        value: "single",
     },
     {
         label: "Divorced",

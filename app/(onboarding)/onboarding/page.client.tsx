@@ -9,11 +9,9 @@ import {createProfileByUser} from "@/app/actions/profile-actions";
 import BasicInformation from "@/components/forms/onboarding-one-form";
 import ProgressBarHeader from "@/components/landing/progress-bar-header";
 import HobbiesSelector from "@/components/forms/onboarding-five-form";
-import PersonalInformation from "@/components/forms/onboarding-six-form";
 import ReligionInformation from "@/components/forms/onboarding-two-form";
 import LocationInformation from "@/components/forms/onboarding-four-form";
 import AchievementsForm from "@/components/forms/onboarding-three-form";
-import PartnerPreferences from "@/components/forms/onboarding-six-form";
 
 interface OnboardingClientProps {
     initialDbData: Record<string, any> | null;
@@ -175,24 +173,9 @@ const OnboardingPageClient = ({
                             onPrev={onPrev}
                         />
                     )}
-                    {currentStep === 5 && (
-                        <PersonalInformation
-                            variant="onboarding"
-                            initialData={initialData}
-                            onPrev={onPrev}
-                            onNext={onNext}
-                        />
-                    )}
+
                     {currentStep === 6 && (
                         <HobbiesSelector
-                            variant="onboarding"
-                            initialData={initialData}
-                            onPrev={onPrev}
-                            onNext={onNext}
-                        />
-                    )}
-                    {currentStep === 7 && (
-                        <PartnerPreferences
                             variant="onboarding"
                             initialData={initialData}
                             onPrev={onPrev}

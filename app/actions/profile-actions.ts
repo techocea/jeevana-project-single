@@ -166,7 +166,7 @@ export async function createProfileByUser(
                 preferredMinAge: minAge ? Number(minAge) : 18,
                 preferredMaxAge: maxAge ? Number(maxAge) : 50,
                 preferredMaritalStatus:
-                    payload.preferredMaritalStatus || "never_married",
+                    payload.preferredMaritalStatus || "single",
                 preferredEducationLevels: Array.isArray(
                     payload.preferredEducationLevels,
                 )
@@ -211,7 +211,7 @@ export async function createProfileByUser(
                     preferredMinAge: updatePayload.preferredMinAge,
                     preferredMaxAge: updatePayload.preferredMaxAge,
                     preferredMaritalStatus:
-                        updatePayload.preferredMaritalStatus || "never_married",
+                        updatePayload.preferredMaritalStatus || "single",
                     preferredEducationLevels: Array.isArray(
                         updatePayload.preferredEducationLevels,
                     )
@@ -1109,7 +1109,7 @@ export async function createProfileByAdmin(
             userId: targetUserId,
             preferredMinAge: minAge ? Number(minAge) : 18,
             preferredMaxAge: maxAge ? Number(maxAge) : 50,
-            preferredMaritalStatus: payload.preferredMaritalStatus || "never_married",
+            preferredMaritalStatus: payload.preferredMaritalStatus || "single",
             preferredEducationLevels: Array.isArray(payload.preferredEducationLevels)
                 ? payload.preferredEducationLevels
                 : [],

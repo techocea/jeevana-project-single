@@ -66,6 +66,9 @@ export const maritalStatusEnum = pgEnum("marital_status", [
     "divorced",
     "widowed",
 ]);
+export const residencyStatusEnum = pgEnum("residency_status", [
+    "CITIZEN", "PR_VISA", "WORK_VISA", "STUDENT_VISA", "ASYLUM"
+]);
 
 export const orderStatusEnum = pgEnum("order_status", ["pending", "paid", "failed", "cancelled"]);
 export const subscriptionStatusEnum = pgEnum("subscription_status", ["inactive", "active", "expired"]);
@@ -184,37 +187,49 @@ export const verifications = pgTable("verifications", {
 export const profiles = pgTable("profiles", {
     id: uuid("id").primaryKey().defaultRandom(),
     profileID: varchar("profile_id", {length: 20})
-        .default(sql`concat('JV', nextval('profile_id_seq'))`)
+        .default(sql`concat
+        ('JV', nextval('profile_id_seq'))`)
         .notNull()
         .unique(),
     userId: uuid("user_id").references(() => users.id, {onDelete: "cascade"}).unique(),
     createdBy: text("created_by"), // 'self' | 'parent' | 'guardian' | 'sibling' | 'friend' | 'admin'
     fullName: text("full_name"),
-    contact: text("contact"),
     gender: text("gender"),
+    maritalStatus: maritalStatusEnum("marital_status"),
     dob: date("dob", {mode: "date"}),
     religion: text("religion"),
     caste: text("caste"),
+    subCaste: text("sub_caste"),
     motherTongue: text("mother_tongue"),
 
-    profilePic: text("profile_pic"),
-    educationLevel: text("education_level"),
-    profession: text("profession"),
-    annualIncomeRange: text("annual_income_range"),
-    country: text("country"),
-    state: text("state"),
-    city: text("city"),
-    residencyStatus: text("residency_status"),
-    maritalStatus: maritalStatusEnum("marital_status"),
+    //step 2
     height: text("height_cm"),
     weight: text("weight_kg"),
-    age: integer("age"),
-    narrative: text("narrative"),
+    complexion: text("complexion"), //fair | dark | brown
+    bodyType: text("body_type"), // slim | medium | fat
+    bloodGroup: text("blood_group"), //O+ | 0- | A/B+-
     smoking: text("smoking_habits"), // 'never' | 'occasionally' | 'regularly'
     drinking: text("drinking_habits"), // 'never' | 'occasionally' | 'regularly'
     foodPreferences: text("food_preferences"), // 'vegetarian' | 'non-vegetarian' | 'vegan'
     isDifferentlyAbled: boolean("is_differently_abled").default(false),
     differentlyAbledDetails: text("differently_abled_details"),
+
+    //step 3
+    educationLevel: text("education_level"),
+    educationDescription: text("education_description"),
+    profession: text("profession"),
+    employedIn: text("employed_in"),
+    annualIncomeRange: text("annual_income_range"),
+
+    //step 4
+    country: text("country"),
+    state: text("state"),
+    city: text("city"),
+    residencyStatus: residencyStatusEnum("residency_status"),
+
+    //step 5
+    profilePic: text("profile_pic"),
+    narrative: text("narrative"),
     hobbies: text("hobbies").array(),
 
     mailRoutingTarget: mailRoutingEnum("mail_routing_target").default("owner"),
@@ -232,12 +247,15 @@ export const partnerPreferences = pgTable("partner_preferences", {
     userId: uuid("user_id").references(() => users.id, {onDelete: "cascade"}).unique(),
     preferredMinAge: integer("preferred_min_age"),
     preferredMaxAge: integer("preferred_max_age"),
-    preferredMaritalStatus: maritalStatusEnum("preferred_marital_status").default(
-        "single",
-    ),
+    preferredMinHeight: integer("preferred_min_height"),
+    preferredMaxHeight: integer("preferred_max_height"),
+    preferredReligions: text("preferred_religions").array(),
+    preferredCastes: text("preferred_castes").array(),
+    preferredMaritalStatuses: text("preferred_marital_statuses").array(),
     preferredEducationLevels: text("preferred_education_levels").array(),
     preferredProfessions: text("preferred_professions").array(),
     preferredAnnualIncomeRanges: text("preferred_annual_income_ranges").array(),
+    preferredResidencyStatuses: text("preferred_residency_statuses").array(),
 
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),

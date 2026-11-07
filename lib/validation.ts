@@ -50,8 +50,8 @@ export const stepTwoSchema = z.object({
 
 // Step 3 Schema: Education & Career
 export const stepThreeSchema = z.object({
-  educationQualification: z.string().max(100).nullable().optional(),
-  institute: z.string().max(100).nullable().optional(),
+  educationLevel: z.string().max(100).nullable().optional(),
+  educationDescription: z.string().max(100).nullable().optional(),
   profession: z.string().max(100).nullable().optional(),
   employedIn: z.string().max(100).nullable().optional(),
   annualIncomeRange: z.string().max(100).nullable().optional(),

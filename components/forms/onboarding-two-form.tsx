@@ -138,7 +138,6 @@ function ReligionInformationEditing({onNext, initialData}: StepTwoProps) {
                 selectedReligion={selectedReligion}
                 availableCastes={availableCastes}
                 onReligionChange={() => setValue("caste", "")}
-                columns={1}
             />
 
             <div className="justify-end flex w-full mt-6">
@@ -172,7 +171,6 @@ function ReligionInformationAdmin(_props: StepTwoProps) {
                 selectedReligion={selectedReligion}
                 availableCastes={availableCastes}
                 onReligionChange={() => setValue("caste", "")}
-                columns={2}
             />
         </section>
     );

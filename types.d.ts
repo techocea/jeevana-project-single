@@ -14,7 +14,7 @@ export type CreatedByTypes =
     | "sibling"
     | "friend";
 export type GenderTypes = "male" | "female";
-export type ResindencyTypes = "CITIZEN" | "PR" | "WORK";
+export type ResindencyTypes = "CITIZEN" | "PR_VISA" | "WORK_VISA" | "STUDENT_VISA" | "ASYLUM";
 export type UserStatusTypes = "active" | "banned";
 export type BadHabitTypes = "never" | "occasionally" | "regularly";
 export type TabTypes = "all" | "pending" | "approved" | "rejected";
@@ -23,7 +23,11 @@ export type ProfileStatusTypes = "pending" | "approved" | "rejected";
 export type VerificationStatusTypes = "pending" | "verified" | "rejected";
 export type FoodHabitTypes = "vegetarian" | "non-vegetarian" | "vegan";
 export type MembershipTypes = "free_tier" | "classical" | "heritage";
-export type MaritalStatusTypes = "never_married" | "divorced" | "widowed";
+export type MaritalStatusTypes = "single" | "divorced" | "widowed";
+export type ComplexionTypes = "VERY_FAIR" | "FAIR" | "MEDIUM" | "BROWN" | "DARK_BROWN" | "BLACK";
+export type BodyTypes = "SLIM" | "ATHLETIC" | "AVERAGE" | "SMALL" | "NOT_SPECIFIED";
+export type BloodGroupTypes = "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-" | "UNKNOWN";
+
 
 export interface StepConfig {
     id: number;
@@ -39,42 +43,58 @@ export interface ProgressBarHeaderProps {
 export interface InitialProfileData {
     userId?: string;
     createdBy?: CreatedByTypes;
-    profilePic?: string;
     fullName?: string;
     contact?: string;
     gender?: GenderTypes;
     dob?: Date;
     age?: number;
     religion?: string;
+    maritalStatus?: MaritalStatusTypes;
     caste?: string;
+    subCaste?: string;
     motherTongue?: string;
-    educationLevel?: string;
-    profession?: string;
-    annualIncomeRange?: string;
-    country?: string;
-    state?: string;
-    city?: string;
-    residencyStatus?: ResindencyTypes;
+
     height?: string | undefined;
     weight?: string | undefined;
-
+    complexion?: ComplexionTypes;
+    bodyType?: BodyTypes;
+    bloodGroup?: BloodGroupTypes;
     smoking?: BadHabitTypes;
     drinking?: BadHabitTypes;
     foodPreferences?: FoodHabitTypes;
     isDifferentlyAbled?: boolean;
     differentlyAbledDetails?: string;
-    narrative?: string;
 
+    educationLevel?: string;
+    educationDescription?:string;
+    profession?: string;
+    employedIn?: string;
+    annualIncomeRange?: string;
+
+    country?: string;
+    state?: string;
+    city?: string;
+    residencyStatus?: ResindencyTypes;
+
+    narrative?: string;
+    profilePic?: string;
     hobbies?: string[];
+
     status?: ProfileStatusTypes;
     mailRoutingTarget?: MailRoutingTargetTypes;
     secondaryEmail?: string;
+
     preferredMinAge?: number;
     preferredMaxAge?: number;
+    preferredMinHeight?: number;
+    preferredMaxHeight?: number;
     preferredMaritalStatus?: MaritalStatusTypes;
+    preferredReligions?: string[];
+    preferredCastes?: string[];
     preferredEducationLevels?: string[];
     preferredProfessions?: string[];
     preferredAnnualIncomeRanges?: string[];
+    preferredResidencyStatuses?: string[];
 }
 
 export interface StepOneInitialData {
@@ -86,21 +106,35 @@ export interface StepOneInitialData {
         gender?: GenderTypes;
         dob?: Date;
         age?: number;
+        religion?: string;
+        maritalStatus?: MaritalStatusTypes;
+        caste?: string;
+        subCaste?: string;
+        motherTongue?: string;
     };
 }
 
 export interface StepTwoInitialData {
     initialData: {
-        religion?: string;
-        caste?: string;
-        motherTongue?: string;
+        height?: string | undefined;
+        weight?: string | undefined;
+        complexion?: ComplexionTypes;
+        bodyType?: BodyTypes;
+        bloodGroup?: BloodGroupTypes;
+        smoking?: BadHabitTypes;
+        drinking?: BadHabitTypes;
+        foodPreferences?: FoodHabitTypes;
+        isDifferentlyAbled?: boolean;
+        differentlyAbledDetails?: string;
     };
 }
 
 export interface StepThreeInitialData {
     initialData: {
         educationLevel?: string;
+        educationDescription?:string;
         profession?: string;
+        employedIn?: string;
         annualIncomeRange?: string;
     };
 }
@@ -116,26 +150,25 @@ export interface StepFourInitialData {
 
 export interface StepFiveInitialData {
     initialData: {
-        height?: string | number;
-        weight?: string | number;
-        age?: number;
-        smoking?: BadHabitTypes;
-        drinking?: BadHabitTypes;
-        foodPreferences?: FoodHabitTypes;
-        isDifferentlyAbled?: boolean;
-        differentlyAbledDetails?: string;
         narrative?: string;
+        profilePic?: string;
+        hobbies?: string[];
     };
 }
 
-export interface StepSevenInitialData {
+export interface StepSixInitialData {
     initialData: {
         preferredMinAge?: number;
         preferredMaxAge?: number;
-        preferredMaritalStatus?: string;
+        preferredMinHeight?: number;
+        preferredMaxHeight?: number;
+        preferredMaritalStatus?: MaritalStatusTypes;
+        preferredReligions?: string[];
+        preferredCastes?: string[];
         preferredEducationLevels?: string[];
         preferredProfessions?: string[];
         preferredAnnualIncomeRanges?: string[];
+        preferredResidencyStatuses?: string[];
     };
 }
 
@@ -177,8 +210,8 @@ export interface ProfileCardData {
     height: string | number | null;
     country: string | null;
     profession: string | null;
-    maritalStatus:MaritalStatusTypes | null;
-    foodPreferences:string | null;
+    maritalStatus: MaritalStatusTypes | null;
+    foodPreferences: string | null;
     religion: string | null;
     caste: string | null;
     educationLevel: string | null;

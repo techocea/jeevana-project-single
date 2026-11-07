@@ -9,7 +9,7 @@
     "lint": "eslint",
     "drizzle:push": "drizzle-kit push",
     "drizzle:generate": "drizzle-kit generate",
-    "dev:clean": "rm -rf .next && next dev --turbopack",
+    "type-check": "npx tsc --noEmit",
     "db:seed": "tsx seedData/seed.ts"
   },
   "dependencies": {
