@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/combobox";
 import {useForm, Controller, useFormContext, useFormState} from "react-hook-form";
 import {Label} from "@/components/ui/label";
+import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {ArrowRight, ChevronLeft, Briefcase} from "lucide-react";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -40,14 +41,16 @@ interface StepThreeProps {
     variant?: "onboarding" | "editing" | "admin";
 }
 
-function AchievementsFieldset({
-                                  control,
-                                  errors,
-                              }: {
+function OnboardingFormThreeFields({
+                                       register,
+                                       control,
+                                       errors,
+                                   }: {
+    register: ReturnType<typeof useForm<OnboardingFormValues>>["register"];
     control: ReturnType<typeof useForm<OnboardingFormValues>>["control"];
     errors: Record<string, any>;
 }) {
-    const {education_levels, annual_income_ranges} = PERSONAL_DROPDOWNS;
+    const {education_levels, employed_in, annual_income_ranges} = PERSONAL_DROPDOWNS;
 
     return (
         <div
@@ -56,10 +59,10 @@ function AchievementsFieldset({
             <TitleHeader title="Step 3: Education & Career"
                          description="Academic qualifications and professional standing."/>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="educationLevel">
-                        Highest Education Level
+                        Highest Education Attained
                     </Label>
                     <Controller
                         control={control}
@@ -85,10 +88,23 @@ function AchievementsFieldset({
                         <p className="text-sm text-red-600">{errors.educationLevel.message as string}</p>
                     )}
                 </div>
-
+                <div className="flex flex-col gap-2">
+                    <Label htmlFor="educationDescription">
+                        Institution / University
+                    </Label>
+                    <Input
+                        id="educationDescription"
+                        type="text"
+                        placeholder="Please enter description"
+                        {...register("educationDescription")}
+                    />
+                    {errors.educationDescription && (
+                        <p className="text-sm text-red-600">{errors.educationDescription.message as string}</p>
+                    )}
+                </div>
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="profession">
-                        Current Profession
+                        Current Occupation / Designation
                     </Label>
                     <Controller
                         control={control}
@@ -122,8 +138,35 @@ function AchievementsFieldset({
                         <p className="text-sm text-red-600">{errors.profession.message as string}</p>
                     )}
                 </div>
-
                 <div className="flex flex-col gap-2">
+                    <Label htmlFor="employedIn">
+                        Employed Sector
+                    </Label>
+                    <Controller
+                        control={control}
+                        name="employedIn"
+                        render={({field}) => (
+                            <Select onValueChange={field.onChange} value={field.value ?? ""}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select employed sector"/>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {employed_in.map((range) => (
+                                            <SelectItem key={range} value={range}>
+                                                {range}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        )}
+                    />
+                    {errors.employedIn && (
+                        <p className="text-sm text-red-600">{errors.employedIn.message as string}</p>
+                    )}
+                </div>
+                <div className="flex flex-col gap-2 col-span-2">
                     <Label htmlFor="annualIncomeRange">
                         Annual Income Range
                     </Label>
@@ -157,8 +200,9 @@ function AchievementsFieldset({
 }
 
 
-function AchievementsFormOnboarding({onPrev, onNext, initialData}: StepThreeProps) {
+function OnboardingFormThreeOnboarding({onPrev, onNext, initialData}: StepThreeProps) {
     const {
+        register,
         control,
         handleSubmit,
         formState: {errors, isSubmitting},
@@ -166,7 +210,9 @@ function AchievementsFormOnboarding({onPrev, onNext, initialData}: StepThreeProp
         resolver: zodResolver(stepThreeSchema as any),
         defaultValues: {
             educationLevel: initialData?.educationLevel || "",
+            educationDescription: initialData?.educationDescription || "",
             profession: initialData?.profession || "",
+            employedIn: initialData?.employedIn || "",
             annualIncomeRange: initialData?.annualIncomeRange || undefined,
         },
     });
@@ -175,7 +221,7 @@ function AchievementsFormOnboarding({onPrev, onNext, initialData}: StepThreeProp
         <form
             onSubmit={handleSubmit((data) => onNext?.(data))}
             className="w-full flex flex-col gap-6">
-            <AchievementsFieldset control={control} errors={errors}/>
+            <OnboardingFormThreeFields register={register} control={control} errors={errors}/>
 
             <div className="flex justify-between w-full mt-4">
                 {onPrev && (
@@ -195,17 +241,18 @@ function AchievementsFormOnboarding({onPrev, onNext, initialData}: StepThreeProp
                     Save & Continue <ArrowRight/>
                 </Button>
             </div>
-</form>
-)
-    ;
+        </form>
+    )
+        ;
 }
 
 /* ------------------------------------------------------------------ */
 /* EDITING                                                              */
 
 /* ------------------------------------------------------------------ */
-function AchievementsFormEditing({onNext, initialData}: StepThreeProps) {
+function OnboardingFormThreeEditing({onNext, initialData}: StepThreeProps) {
     const {
+        register,
         control,
         handleSubmit,
         formState: {errors, isSubmitting, isDirty},
@@ -213,14 +260,16 @@ function AchievementsFormEditing({onNext, initialData}: StepThreeProps) {
         resolver: zodResolver(stepThreeSchema as any),
         defaultValues: {
             educationLevel: initialData?.educationLevel || "",
+            educationDescription: initialData?.educationDescription || "",
             profession: initialData?.profession || "",
+            employedIn: initialData?.employedIn || "",
             annualIncomeRange: initialData?.annualIncomeRange || undefined,
         },
     });
 
     return (
         <form onSubmit={handleSubmit((data) => onNext?.(data))} className="w-full">
-            <AchievementsFieldset control={control} errors={errors} columns={2}/>
+            <OnboardingFormThreeFields register={register} control={control} errors={errors}/>
             <div className="justify-end flex w-full mt-6">
                 <Button size="lg" type="submit" variant="default" disabled={isSubmitting || !isDirty}>
                     {isSubmitting ? "Saving..." : "Save Changes"}
@@ -231,8 +280,8 @@ function AchievementsFormEditing({onNext, initialData}: StepThreeProps) {
 }
 
 
-function AchievementsFormAdmin(_props: StepThreeProps) {
-    const {control} = useFormContext<OnboardingFormValues>();
+function OnboardingFormThreeAdmin(_props: StepThreeProps) {
+    const {register, control} = useFormContext<OnboardingFormValues>();
     const {errors} = useFormState({control});
 
     return (
@@ -241,21 +290,21 @@ function AchievementsFormAdmin(_props: StepThreeProps) {
                 <Briefcase size={26} className="text-secondary"/>
                 <h4 className="text-black font-newsreader text-xl">Career & Profession</h4>
             </div>
-            <AchievementsFieldset control={control} errors={errors} columns={2}/>
+            <OnboardingFormThreeFields register={register} control={control} errors={errors}/>
         </section>
     );
 }
 
-const AchievementsForm = ({onNext, onPrev, initialData, variant = "onboarding"}: StepThreeProps) => {
+const OnboardingFormThree = ({onNext, onPrev, initialData, variant = "onboarding"}: StepThreeProps) => {
     if (variant === "admin") {
-        return <AchievementsFormAdmin variant={variant} initialData={initialData}/>;
+        return <OnboardingFormThreeAdmin variant={variant} initialData={initialData}/>;
     }
     if (variant === "editing") {
-        return <AchievementsFormEditing variant={variant} onNext={onNext} initialData={initialData}/>;
+        return <OnboardingFormThreeEditing variant={variant} onNext={onNext} initialData={initialData}/>;
     }
     return (
-        <AchievementsFormOnboarding variant={variant} onPrev={onPrev} onNext={onNext} initialData={initialData}/>
+        <OnboardingFormThreeOnboarding variant={variant} onPrev={onPrev} onNext={onNext} initialData={initialData}/>
     );
 };
 
-export default AchievementsForm;
+export default OnboardingFormThree;

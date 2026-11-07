@@ -6,12 +6,12 @@ import {Button} from "@base-ui/react";
 import {useRouter} from "next/navigation";
 import {ONBOARDING_STEPS} from "@/lib/constants";
 import {createProfileByUser} from "@/app/actions/profile-actions";
-import BasicInformation from "@/components/forms/onboarding-one-form";
 import ProgressBarHeader from "@/components/landing/progress-bar-header";
-import HobbiesSelector from "@/components/forms/onboarding-five-form";
-import ReligionInformation from "@/components/forms/onboarding-two-form";
-import LocationInformation from "@/components/forms/onboarding-four-form";
-import AchievementsForm from "@/components/forms/onboarding-three-form";
+import OnboardingFormFive from "@/components/forms/onboarding-five-form";
+import OnboardingFormTwo from "@/components/forms/onboarding-two-form";
+import OnboardingFormFour from "@/components/forms/onboarding-four-form";
+import OnboardingFormThree from "@/components/forms/onboarding-three-form";
+import OnboardingFormOne from "@/components/forms/onboarding-one-form";
 
 interface OnboardingClientProps {
     initialDbData: Record<string, any> | null;
@@ -143,14 +143,14 @@ const OnboardingPageClient = ({
                 {/* Step Content Area */}
                 <div className="lg:col-span-9 bg-white border border-[#E8E2D7] rounded-lg p-6 sm:p-8 shadow-2xs">
                     {currentStep === 1 && (
-                        <BasicInformation
+                        <OnboardingFormOne
                             variant="onboarding"
                             initialData={initialData}
                             onNext={onNext}
                         />
                     )}
                     {currentStep === 2 && (
-                        <ReligionInformation
+                        <OnboardingFormTwo
                             variant="onboarding"
                             initialData={initialData}
                             onNext={onNext}
@@ -158,7 +158,7 @@ const OnboardingPageClient = ({
                         />
                     )}
                     {currentStep === 3 && (
-                        <AchievementsForm
+                        <OnboardingFormThree
                             variant="onboarding"
                             initialData={initialData}
                             onNext={onNext}
@@ -166,7 +166,7 @@ const OnboardingPageClient = ({
                         />
                     )}
                     {currentStep === 4 && (
-                        <LocationInformation
+                        <OnboardingFormFour
                             variant="onboarding"
                             initialData={initialData}
                             onNext={onNext}
@@ -175,7 +175,7 @@ const OnboardingPageClient = ({
                     )}
 
                     {currentStep === 6 && (
-                        <HobbiesSelector
+                        <OnboardingFormFive
                             variant="onboarding"
                             initialData={initialData}
                             onPrev={onPrev}

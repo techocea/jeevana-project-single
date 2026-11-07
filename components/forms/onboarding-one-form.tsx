@@ -18,7 +18,7 @@ import {OnboardingFormValues, stepOneSchema} from "@/lib/validation";
 import {formatDate} from "@/helpers/format-date";
 import TitleHeader from "@/components/dashboard/title-header";
 import {MOTHER_TONGUES, RELIGIONS_AND_CASTES} from "@/lib/constants";
-import { cn } from "@/lib/utils";
+import {cn} from "@/lib/utils";
 
 type StepOneValues = z.infer<typeof stepOneSchema>;
 
@@ -30,13 +30,13 @@ interface StepOneProps {
 }
 
 function OnboardingFormOneFields({
-                                    register,
-                                    control,
-                                    errors,
-                                    selectedReligion,
-                                    availableCastes,
-                                    onReligionChange,
-                                }: {
+                                     register,
+                                     control,
+                                     errors,
+                                     selectedReligion,
+                                     availableCastes,
+                                     onReligionChange,
+                                 }: {
     register: ReturnType<typeof useForm<OnboardingFormValues>>["register"];
     control: ReturnType<typeof useForm<OnboardingFormValues>>["control"];
     errors: Record<string, any>;
@@ -450,8 +450,10 @@ function OnboardingFormOneEditing({onNext, initialData}: StepOneProps) {
 }
 
 function OnboardingFormOneAdmin(_props: StepOneProps) {
-    const {register,
-        watch, control, setValue}  = useFormContext<OnboardingFormValues>();
+    const {
+        register,
+        watch, control, setValue
+    } = useFormContext<OnboardingFormValues>();
     const {errors} = useFormState({control});
 
     const selectedReligion = watch("religion");

@@ -56,7 +56,7 @@ export interface InitialProfileData {
 
     height?: string | undefined;
     weight?: string | undefined;
-    complexion?: ComplexionTypes;
+    complexion?: ComplexionTypes | undefined;
     bodyType?: BodyTypes;
     bloodGroup?: BloodGroupTypes;
     smoking?: BadHabitTypes;

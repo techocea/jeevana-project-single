@@ -354,7 +354,6 @@ export const BLOOD_GROUPS = [
     }
 ];
 
-
 export const MOTHER_TONGUES = [
     "Sinhala",
     "Tamil",
@@ -473,6 +472,7 @@ export const PERSONAL_DROPDOWNS = {
         "Bachelor's Degree",
         "Graduate / Professional Degree",
     ],
+    employed_in: ["Government Sector", "Private Corporate", "Self-Employed / Business", "Academic / Research", "NGO / International Agency"],
     annual_income_ranges: [
         "Under LKR 600,000",
         "LKR 600,000 to LKR 1,199,999",

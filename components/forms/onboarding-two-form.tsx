@@ -36,6 +36,18 @@ interface StepTwoProps {
     variant?: "onboarding" | "editing" | "admin";
 }
 
+function useHeightWeightOptions() {
+    const heightDataObjects = useMemo(() => generateHeightOptions(), []);
+    const weightDataObjects = useMemo(() => generateWeightOptions(), []);
+    return {
+        heightDataObjects,
+        weightDataObjects,
+        heightValuesList: heightDataObjects.map((h) => h.value),
+        weightValuesList: weightDataObjects.map((w) => w.value),
+    };
+}
+
+
 function OnboardingFormTwoFields({
                                      register,
                                      control,
@@ -73,7 +85,7 @@ function OnboardingFormTwoFields({
                         name="complexion"
                         control={control}
                         render={({field}) => (
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <Select onValueChange={field.onChange} value={field.value ?? ""}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Select complexion"/>
                                 </SelectTrigger>
@@ -101,7 +113,7 @@ function OnboardingFormTwoFields({
                         name="bodyType"
                         control={control}
                         render={({field}) => (
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <Select onValueChange={field.onChange} value={field.value ?? ""}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Select body type"/>
                                 </SelectTrigger>
@@ -131,7 +143,7 @@ function OnboardingFormTwoFields({
                         name="bloodGroup"
                         control={control}
                         render={({field}) => (
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <Select onValueChange={field.onChange} value={field.value ?? ""}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Select blood group"/>
                                 </SelectTrigger>
@@ -351,16 +363,7 @@ function OnboardingFormTwoFields({
     );
 }
 
-function useHeightWeightOptions() {
-    const heightDataObjects = useMemo(() => generateHeightOptions(), []);
-    const weightDataObjects = useMemo(() => generateWeightOptions(), []);
-    return {
-        heightDataObjects,
-        weightDataObjects,
-        heightValuesList: heightDataObjects.map((h) => h.value),
-        weightValuesList: weightDataObjects.map((w) => w.value),
-    };
-}
+
 
 function OnboardingFormTwoOnboarding({onPrev, onNext, initialData}: StepTwoProps) {
     const {
@@ -422,33 +425,36 @@ function OnboardingFormTwoEditing({onNext, initialData}: StepTwoProps) {
     const {
         watch,
         control,
-        setValue,
+        register,
         handleSubmit,
         formState: {errors, isSubmitting, isDirty},
     } = useForm<OnboardingFormValues>({
         resolver: zodResolver(stepTwoSchema as any),
         defaultValues: {
-            religion: initialData?.religion || "",
-            caste: initialData?.caste || "",
-            motherTongue: initialData?.motherTongue || undefined,
+            height: initialData?.height ? String(initialData.height) : "",
+            weight: initialData?.weight ? String(initialData.weight) : "",
+            smoking: initialData?.smoking || "never",
+            complexion: initialData?.complexion || "not_specified",
+            bodyType: initialData?.bodyType || "not_specified",
+            bloodGroup: initialData?.bloodGroup || "not_specified",
+            drinking: initialData?.drinking || "never",
+            foodPreferences: initialData?.foodPreferences || undefined,
+            isDifferentlyAbled: initialData?.isDifferentlyAbled || undefined,
+            differentlyAbledDetails: initialData?.differentlyAbledDetails || undefined,
         },
     });
 
-    const selectedReligion = watch("religion");
-    const availableCastes = selectedReligion
-        ? RELIGIONS_AND_CASTES[selectedReligion] || []
-        : [];
+    const heightWeight = useHeightWeightOptions();
 
     return (
         <form onSubmit={handleSubmit((data) => onNext?.(data))} className="w-full">
             <OnboardingFormTwoFields
+                register={register}
                 control={control}
                 errors={errors}
-                selectedReligion={selectedReligion}
-                availableCastes={availableCastes}
-                onReligionChange={() => setValue("caste", "")}
+                watch={watch}
+                {...heightWeight}
             />
-
             <div className="justify-end flex w-full mt-6">
                 <Button size="lg" type="submit" variant="default" disabled={isSubmitting || !isDirty}>
                     {isSubmitting ? "Saving..." : "Save Changes"}
@@ -459,13 +465,10 @@ function OnboardingFormTwoEditing({onNext, initialData}: StepTwoProps) {
 }
 
 function OnboardingFormTwoAdmin(_props: StepTwoProps) {
-    const {watch, control, setValue} = useFormContext<OnboardingFormValues>();
+    const {watch, control, register} = useFormContext<OnboardingFormValues>();
     const {errors} = useFormState({control});
 
-    const selectedReligion = watch("religion");
-    const availableCastes = selectedReligion
-        ? RELIGIONS_AND_CASTES[selectedReligion] || []
-        : [];
+    const heightWeight = useHeightWeightOptions();
 
     return (
         <section className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
@@ -475,11 +478,11 @@ function OnboardingFormTwoAdmin(_props: StepTwoProps) {
             </div>
 
             <OnboardingFormTwoFields
+                register={register}
                 control={control}
                 errors={errors}
-                selectedReligion={selectedReligion}
-                availableCastes={availableCastes}
-                onReligionChange={() => setValue("caste", "")}
+                watch={watch}
+                {...heightWeight}
             />
         </section>
     );
