@@ -165,6 +165,7 @@ const OnboardingPageClient = ({
                             onPrev={onPrev}
                         />
                     )}
+
                     {currentStep === 4 && (
                         <OnboardingFormFour
                             variant="onboarding"
@@ -174,14 +175,14 @@ const OnboardingPageClient = ({
                         />
                     )}
 
-                    {currentStep === 6 && (
-                        <OnboardingFormFive
-                            variant="onboarding"
-                            initialData={initialData}
-                            onPrev={onPrev}
-                            onNext={onNext}
-                        />
-                    )}
+                    {/*{currentStep === 6 && (*/}
+                    {/*    <OnboardingFormFive*/}
+                    {/*        variant="onboarding"*/}
+                    {/*        initialData={initialData}*/}
+                    {/*        onPrev={onPrev}*/}
+                    {/*        onNext={onNext}*/}
+                    {/*    />*/}
+                    {/*)}*/}
                 </div>
             </div>
         </div>

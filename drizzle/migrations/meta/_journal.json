@@ -8,6 +8,13 @@
       "when": 1794039128023,
       "tag": "0000_high_miek",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794150076400,
+      "tag": "0001_curious_electro",
+      "breakpoints": true
     }
   ]
 }

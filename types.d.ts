@@ -78,6 +78,7 @@ export interface InitialProfileData {
 
     narrative?: string;
     profilePic?: string;
+    photoVisible?:boolean;
     hobbies?: string[];
 
     status?: ProfileStatusTypes;
@@ -139,24 +140,25 @@ export interface StepThreeInitialData {
     };
 }
 
-export interface StepFourInitialData {
-    initialData: {
-        country?: string;
-        state?: string;
-        city?: string;
-        residencyStatus?: ResindencyTypes;
-    };
-}
+// export interface StepFourInitialData {
+//     initialData: {
+//         country?: string;
+//         state?: string;
+//         city?: string;
+//         residencyStatus?: ResindencyTypes;
+//     };
+// }
 
-export interface StepFiveInitialData {
+export interface StepFourInitialData {
     initialData: {
         narrative?: string;
         profilePic?: string;
+        photoVisible?:boolean;
         hobbies?: string[];
     };
 }
 
-export interface StepSixInitialData {
+export interface StepFiveInitialData {
     initialData: {
         preferredMinAge?: number;
         preferredMaxAge?: number;

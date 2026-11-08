@@ -229,6 +229,7 @@ export const profiles = pgTable("profiles", {
 
     //step 5
     profilePic: text("profile_pic"),
+    photoVisible: boolean("photo_visible").notNull().default(false),
     narrative: text("narrative"),
     hobbies: text("hobbies").array(),
 

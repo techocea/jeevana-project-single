@@ -57,16 +57,16 @@ export const stepThreeSchema = z.object({
     annualIncomeRange: z.string().max(100).nullable().optional(),
 });
 
-// Step 4 Schema: Location Architecture
-export const stepFourSchema = z.object({
-    country: z.string().optional(),
-    state: z.string().max(100).nullable().optional(),
-    city: z.string().max(100).nullable().optional(),
-    residencyStatus: z.enum(["CITIZEN", "PR_VISA", "WORK_VISA", "STUDENT_VISA", "ASYLUM"]).nullable().optional(),
-});
+// Step 4 Schema: Location Architecture - NOT SURE , NOT GIVEN IN THE EXCEL SHEET
+// export const stepFourSchema = z.object({
+//     country: z.string().optional(),
+//     state: z.string().max(100).nullable().optional(),
+//     city: z.string().max(100).nullable().optional(),
+//     residencyStatus: z.enum(["CITIZEN", "PR_VISA", "WORK_VISA", "STUDENT_VISA", "ASYLUM"]).nullable().optional(),
+// });
 
-// Step 5 Schema: About me & Photograph
-export const stepFiveSchema = z.object({
+// Step 4 Schema: About me & Photograph
+export const stepFourSchema = z.object({
     narrative: z
         .string()
         .min(20, "Bio introduction must be at least 20 characters")
@@ -74,10 +74,11 @@ export const stepFiveSchema = z.object({
         .nullable()
         .optional(),
     profilePic: z.url("Invalid image path location").nullable(),
+    photoVisible: z.boolean(),
 });
 
-// Step 6 Schema: Partner Preferences
-export const stepSixSchema = z.object({
+// Step 5 Schema: Partner Preferences
+export const stepFiveSchema = z.object({
     preferredMinAge: z.number().int().positive().optional(),
     preferredMaxAge: z.number().int().positive().optional(),
     preferredMinHeight: z.string().optional(),
@@ -127,7 +128,6 @@ export const completeOnboardingSchema = stepOneSchema
     .merge(stepThreeSchema)
     .merge(stepFourSchema)
     .merge(stepFiveSchema)
-    .merge(stepSixSchema);
 
 export type OnboardingFormValues = z.infer<typeof completeOnboardingSchema>;
 export type ContactFormValues = z.infer<typeof contactFormSchema>;

@@ -46,7 +46,7 @@ function OnboardingFormOneFields({
 }) {
     return (
         <div className="space-y-8">
-            <TitleHeader title=" Step 1: Basic Personal Details"
+            <TitleHeader title="Step 1: Basic Personal Details"
                          description="General details used to build your advertisement. Private identifying data like exact NIC and mobile will not be made public."/>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
