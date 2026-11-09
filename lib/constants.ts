@@ -112,44 +112,6 @@ export const ADMIN_DASHBOARD_SIDEBAR: { navMain: NavMainGroup[] } = {
     ],
 };
 
-export const USER_DASHBOARD_SIDEBAR = [
-    {
-        title: "Overview",
-        icon: LucideLayoutDashboard,
-        url: "/my-dashboard",
-    },
-    {
-        title: "My Profile",
-        icon: User,
-        url: "/my-dashboard/my-profile",
-    },
-    {
-        title: "Recieved Invitations",
-        icon: HeartPlus,
-        url: "/my-dashboard/recieved-invitations",
-    },
-    {
-        title: "Sent Invitations",
-        icon: HeartPlus,
-        url: "/my-dashboard/sent-invitations",
-    },
-    {
-        title: "Best Proposals",
-        icon: Spotlight,
-        url: "/my-dashboard/best-proposals",
-    },
-    {
-        title: "Verify Account",
-        icon: ShieldCheck,
-        url: "/my-dashboard/verify-account",
-    },
-    {
-        title: "Advanced Settings",
-        icon: Settings,
-        url: "/my-dashboard/settings",
-    },
-];
-
 export const SIGN_UP_FEATURES = [
     {
         title: "sign up",
@@ -205,37 +167,6 @@ export const PRICING_FEATURES = [
         title: "24/7 Support",
         description: "Personal support for every inquiry",
         icon: Headset,
-    },
-];
-
-export const ONBOARDING_HIGHLIGHTS = [
-    {
-        id: 1,
-        title: "Privacy Friendly",
-        description:
-            "We protect your profile data with strict privacy controls and secure onboarding checks.",
-        icon: ShieldCheck,
-    },
-    {
-        id: 2,
-        title: "Genuine Profiles",
-        description:
-            "Every account is reviewed so you connect only with genuine members and verified listings.",
-        icon: Sparkles,
-    },
-    {
-        id: 3,
-        title: "Live Support",
-        description:
-            "Our support team is available to help you through registration, profile setup, and membership questions.",
-        icon: Headset,
-    },
-    {
-        id: 4,
-        title: "Paid Accounts",
-        description:
-            "Premium membership gives you priority access to curated matches and elite visibility.",
-        icon: CreditCard,
     },
 ];
 
@@ -706,5 +637,158 @@ export const GROUPS_PROFESSIONS = [
             "UI/UX Designer",
             "Product Manager",
         ],
+    },
+];
+
+export const sampleProposals = [
+    {
+        id: 'JV-71042',
+        displayName: 'Kasun P.',
+        age: 30,
+        height: "5' 10\"",
+        location: 'Nugegoda, Western Province',
+        education: 'MSc in Computer Science (UCSC), BSc Eng (Moratuwa)',
+        occupation: 'Lead Solutions Architect at Global FinTech',
+        religion: 'Buddhist',
+        maritalStatus: 'Never Married',
+        photoUrl: '/images/profile-1.png',
+        photoVisible: true,
+        phoneVerified: true,
+        nicVerified: true,
+        summary: 'Solutions architect with a passion for innovation, nature photography, and traditional arts.',
+        aboutMe: 'Brought up in a respectable Buddhist family with strong educational foundations. Father is a chartered civil engineer, mother is a homemaker. Enjoys road trips, playing cricket, and community service.',
+        diet: 'Non-Vegetarian',
+        partnerPreferences: {
+            ageRange: '26 - 31 years',
+            education: 'Bachelor or Postgraduate Degree',
+            location: 'Colombo, Gampaha or Overseas',
+            profession: 'Doctor, Engineer, Banker, or Corporate Professional',
+        },
+        registeredDate: '2026-10-12',
+    },
+    {
+        id: 'JV-63914',
+        displayName: 'Priyanka F.',
+        age: 27,
+        height: "5' 5\"",
+        location: 'Kandy, Central Province',
+        education: 'CFA Charterholder, BSc in Economics (LSE Online / Colombo)',
+        occupation: 'Senior Equity Research Analyst',
+        religion: 'Christian (Catholic)',
+        maritalStatus: 'Never Married',
+        photoUrl: '/images/profile-1.png',
+        photoVisible: true,
+        phoneVerified: true,
+        nicVerified: true,
+        summary: 'Chartered financial analyst from Kandy, values faith, close-knit family bonds, and classical piano.',
+        aboutMe: 'A balanced individual who enjoys quiet weekends, reading historical fiction, and volunteering at youth education centres. Respectable family background from Kandy.',
+        diet: 'Non-Vegetarian',
+        partnerPreferences: {
+            ageRange: '28 - 33 years',
+            education: 'Professional Qualification / Degree',
+            location: 'Kandy, Colombo or UK/Australia',
+            profession: 'Finance, Medicine, Law, or Management',
+        },
+        registeredDate: '2026-10-15',
+    },
+    {
+        id: 'JV-88231',
+        displayName: 'Dilshan W.',
+        age: 32,
+        height: "6' 0\"",
+        location: 'Mount Lavinia, Colombo',
+        education: 'BSc Civil Engineering (Hons), Moratuwa',
+        occupation: 'Senior Project Manager, Marine Engineering',
+        religion: 'Buddhist',
+        maritalStatus: 'Never Married',
+        photoUrl: '/src/assets/images/profile_dilshan_1793045050200.jpg',
+        photoVisible: true,
+        phoneVerified: true,
+        nicVerified: true,
+        summary: 'Senior civil engineer passionate about coastal sustainability, badminton, and acoustic guitar.',
+        aboutMe: 'Raised in a warm, traditional family. Looking for an educated partner who appreciates simple life pleasures, mutual respect, and cheerful conversation.',
+        diet: 'Vegetarian',
+        partnerPreferences: {
+            ageRange: '26 - 31 years',
+            education: 'Degree Holder',
+            location: 'Western Province / Southern Province',
+            profession: 'Professional or Academic background',
+        },
+        registeredDate: '2026-10-20',
+    },
+    {
+        id: 'JV-92147',
+        displayName: 'Dr. Thivanka S.',
+        age: 31,
+        height: "5' 9\"",
+        location: 'Kurunegala / Colombo',
+        education: 'MBBS, MD Anaesthesiology trainee',
+        occupation: 'Medical Doctor, Teaching Hospital Kurunegala',
+        religion: 'Buddhist',
+        maritalStatus: 'Never Married',
+        photoUrl: '', // Photo hidden / privacy mode
+        photoVisible: false,
+        phoneVerified: true,
+        nicVerified: true,
+        summary: 'Dedicated doctor from a respected medical family. Photo kept confidential per family request.',
+        aboutMe: 'Values simplicity, patient care, and Buddhist mindfulness principles. Both parents are retired educators. Looking for a cultured, kind-hearted companion.',
+        diet: 'Non-Vegetarian',
+        partnerPreferences: {
+            ageRange: '25 - 30 years',
+            education: 'Medicine, Dentistry, or Postgraduate Degree',
+            location: 'North Western / Western / Central',
+            profession: 'Doctor, Lecturer, or Executive',
+        },
+        registeredDate: '2026-10-22',
+    },
+    {
+        id: 'JV-79822',
+        displayName: 'Ravi S.',
+        age: 29,
+        height: "5' 8\"",
+        location: 'Jaffna / Colombo',
+        education: 'BSc Accounting & Finance, ACCA Member',
+        occupation: 'Tax & Assurance Manager, Big 4 Colombo',
+        religion: 'Hindu',
+        maritalStatus: 'Never Married',
+        photoUrl: '',
+        photoVisible: false,
+        phoneVerified: true,
+        nicVerified: false,
+        summary: 'Chartered accountant with strong family values and analytical discipline.',
+        aboutMe: 'Grew up in Jaffna and Colombo. Enjoys South Indian classical music, tennis, and culinary exploration. Seeking a partner with mutual understanding and warmth.',
+        diet: 'Vegetarian',
+        partnerPreferences: {
+            ageRange: '24 - 29 years',
+            education: 'Degree / Professional qualification',
+            location: 'Colombo or Northern Province',
+            profession: 'Banking, Accounting, or IT',
+        },
+        registeredDate: '2026-10-24',
+    },
+    {
+        id: 'JV-83419',
+        displayName: 'Ashan K.',
+        age: 33,
+        height: "5' 11\"",
+        location: 'Melbourne, Australia (Expat)',
+        education: 'Master of Data Science (Monash), BEng (Peradeniya)',
+        occupation: 'Principal Data Scientist, Australian Banking Group',
+        religion: 'Buddhist',
+        maritalStatus: 'Never Married',
+        photoUrl: '/src/assets/images/profile_kasun_1793045049586.jpg', // Reusing placeholder
+        photoVisible: true,
+        phoneVerified: true,
+        nicVerified: true,
+        summary: 'Australian PR holder visiting Sri Lanka twice a year. Looking for an open-minded partner willing to settle in Melbourne.',
+        aboutMe: 'Educated at Peradeniya University, currently living in Hawthorn, Melbourne. Enjoys trail running, specialty coffee brewing, and reading books on philosophy.',
+        diet: 'Non-Vegetarian',
+        partnerPreferences: {
+            ageRange: '27 - 32 years',
+            education: 'Bachelor or Masters Degree',
+            location: 'Sri Lanka or Australia',
+            profession: 'Open to any professional career',
+        },
+        registeredDate: '2026-10-08',
     },
 ];

@@ -1,6 +1,15 @@
-import {Card, CardContent} from "@/components/ui/card";
-import {CircleDollarSign, Users, UserCheck, HandCoins} from "lucide-react";
+"use client"
+
+import {
+    Card,
+    CardHeader,
+    CardDescription,
+    CardFooter
+} from "@/components/ui/card";
+import {CircleDollarSign, Users, UserCheck, Sparkles, ChevronRight} from "lucide-react";
 import {getProfileViewCount} from "@/app/actions/profile-actions";
+import {Button} from "@/components/ui/button";
+import {useRouter} from "next/navigation";
 
 interface DashboardStatsProps {
     totalSpend?: string;
@@ -9,13 +18,13 @@ interface DashboardStatsProps {
     acceptedInvites?: number;
 }
 
-interface DashboardStatsGridProps{
+interface DashboardStatsGridProps {
     statsData: DashboardStatsProps;
 }
 
-export default async function DashboardStatsGrid({
-                                                     statsData
-                                                 }: DashboardStatsGridProps) {
+export default function DashboardStatsGrid({
+                                               statsData
+                                           }: DashboardStatsGridProps) {
 
     const {
         totalSpend = "LKR 0.00",
@@ -23,61 +32,74 @@ export default async function DashboardStatsGrid({
         viewedProfiles = 0,
     } = statsData;
 
+    const router = useRouter();
+
     const stats = [
         {
-            title: "Total Spend",
+            title: "Matches Today",
             value: totalSpend,
-            subtitle: "From successful payments",
+            subtitle: "New matching candidates today",
             icon: CircleDollarSign,
-            color: "text-amber-600 bg-amber-50 dark:bg-amber-950/40",
+            label: "browse matches",
+            href: "/best-proposals",
         },
         {
-            title: "Total Matches",
+            title: "Received Invitations",
             value: totalMatches.toLocaleString(),
-            subtitle: "Matches for today",
+            subtitle: "Awaiting your response",
             icon: Users,
-            color: "text-indigo-600 bg-indigo-50 dark:bg-indigo-950/40",
+            label: "view invitations",
+            href: "/recieved-invitations",
         },
         {
-            title: "Profile Views",
+            title: "Profile & Account",
             value: viewedProfiles.toLocaleString(),
-            subtitle: "Profiles who viewed me",
+            subtitle: "Advertisement:",
             icon: UserCheck,
-            color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40",
+            label: "manage profile",
+            href: "/my-profile",
         },
     ];
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mt-8">
             {stats.map((stat, index) => {
                 const Icon = stat.icon;
 
                 return (
                     <Card
                         key={index}
-                        className="shadow-sm bg-white text-muted-foreground p-2"
-                    >
-                        <CardContent className="p-6 flex flex-col justify-between h-full min-h-[140px]">
-                            <div className="flex items-start justify-between gap-2">
-                                <div className="space-y-1">
-                                    <h4 className="font-sans text-2xl font-medium text-muted-foreground">
-                                        {stat.title}
-                                    </h4>
-                                    <h3 className="font-sans font-semibold text-black">
-                                        {stat.value}
-                                    </h3>
-                                </div>
+                        className="flex flex-col pb-2 justify-between hover:border-strong transition-colors">
 
-                                <div
-                                    className={`flex items-center justify-center h-10 w-10 rounded-xl shrink-0 ${stat.color}`}>
-                                    <Icon className="h-5 w-5"/>
-                                </div>
+                        <CardHeader>
+                            <div className="flex items-center justify-between">
+              <span className="text-xs pb-1 font-semibold text-muted-foreground uppercase tracking-wider">
+                {stat.title}
+              </span>
+                                <Icon className="w-4 h-4 text-primary"/>
                             </div>
 
-                            <p className="text-xs font-normal text-muted-foreground mt-4">
-                                {stat.subtitle}
-                            </p>
-                        </CardContent>
+                            <CardDescription className="text-xs text-muted-foreground">
+                                <span>
+                                  New matching candidates today <br/>
+                                  <span className="text-[11px] text-muted-foreground">
+                                    ({} total qualified in directory)
+                                  </span>
+                                </span>
+                            </CardDescription>
+                        </CardHeader>
+
+                        <CardFooter className="border-t border-strong flex items-center justify-between">
+                            <Button
+                                variant={"link"}
+                                type={"button"}
+                                onClick={() => router.push(`/my-dashboard/${stat.href}`)}
+                                className="text-xs p-0 uppercase"
+                            >
+                                {stat.label}
+                                <ChevronRight className="w-3.5 h-3.5"/>
+                            </Button>
+                        </CardFooter>
                     </Card>
                 );
             })}
