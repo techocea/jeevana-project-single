@@ -59,7 +59,7 @@ function OnboardingFormThreeFields({
             <TitleHeader title="Step 3: Education & Career"
                          description="Academic qualifications and professional standing."/>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="educationLevel">
                         Highest Education Attained
@@ -166,7 +166,7 @@ function OnboardingFormThreeFields({
                         <p className="text-sm text-red-600">{errors.employedIn.message as string}</p>
                     )}
                 </div>
-                <div className="flex flex-col gap-2 col-span-2">
+                <div className="flex flex-col gap-2 col-span-1 sm:col-span-2">
                     <Label htmlFor="annualIncomeRange">
                         Annual Income Range
                     </Label>

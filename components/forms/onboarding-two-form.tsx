@@ -74,7 +74,7 @@ function OnboardingFormTwoFields({
             <TitleHeader title=" Step 2: Physical Attributes & Habits"
                          description="Helps prospective families assess compatibility of values, lineage, and upbringing."/>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-4">
                 <div className="flex flex-col gap-2">
                     <Label
                         htmlFor="complexion"
@@ -164,8 +164,7 @@ function OnboardingFormTwoFields({
                     )}
                 </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-4">
                 <div className="space-y-3">
                     <Label htmlFor="height">
                         Height
@@ -229,8 +228,7 @@ function OnboardingFormTwoFields({
                     {errors.weight && <p className="text-sm text-red-600">{errors.weight.message as string}</p>}
                 </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-4">
                 <div className="space-y-3">
                     <Label>Smoking Habits</Label>
                     <Controller
@@ -318,7 +316,7 @@ function OnboardingFormTwoFields({
                 </div>
             </div>
             <div>
-                <div className="flex gap-6 items-center w-full">
+                <div className="flex gap-8 sm:gap-4 items-center w-full">
                     <div className="space-y-3">
                         <Label>Differently Abled?</Label>
                         <Controller
@@ -328,7 +326,7 @@ function OnboardingFormTwoFields({
                                 <RadioGroup
                                     value={field.value === true ? "yes" : "no"}
                                     onValueChange={(val) => field.onChange(val === "yes")}
-                                    className="flex flex-row gap-6"
+                                    className="flex flex-row gap-8 sm:gap-4"
                                 >
                                     <div className="flex items-center space-x-2">
                                         <RadioGroupItem value="yes" id="differently-abled-yes"/>
@@ -393,7 +391,7 @@ function OnboardingFormTwoOnboarding({onPrev, onNext, initialData}: StepTwoProps
     return (
         <form
             onSubmit={handleSubmit((data) => onNext?.(data))}
-            className="w-full flex flex-col gap-6"
+            className="w-full flex flex-col gap-8 sm:gap-4"
         >
             <OnboardingFormTwoFields
                 register={register}

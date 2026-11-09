@@ -106,7 +106,7 @@ export function MultiSelectField<TFieldValues extends FieldValues>({
 
                 return (
                     <div className="flex flex-col w-full gap-2">
-                        <Label className="text-sm font-medium text-slate-700 uppercase">
+                        <Label>
                             {label}
                         </Label>
 
@@ -117,7 +117,7 @@ export function MultiSelectField<TFieldValues extends FieldValues>({
                                     aria-expanded={open}
                                     disabled={loading}
                                     className={cn(
-                                        "border border-input bg-white hover:bg-white w-full justify-between font-normal text-left h-10",
+                                        "border border-input bg-white overflow-hidden  hover:bg-white w-full justify-between font-normal text-left h-10",
                                         !currentValues.length && "text-muted-foreground",
                                         error &&
                                         "border-destructive text-destructive focus-visible:ring-destructive",
@@ -137,7 +137,7 @@ export function MultiSelectField<TFieldValues extends FieldValues>({
                                                     <Badge
                                                         key={val}
                                                         variant="secondary"
-                                                        className="bg-[#f1f5f9] text-[#334155] border-none pr-1 pl-2.5 gap-1 text-xs py-0.5 rounded-md font-medium hover:bg-[#e2e8f0]"
+                                                        className="bg-[#f1f5f9] text-[#334155] border-none pr-1 pl-2.5 gap-1 text-xs py-0.5 rounded-xl font-medium hover:bg-[#e2e8f0]"
                                                     >
                                                         <span className="truncate max-w-[150px]">
                                                             {matchedOption ? matchedOption.label : val}

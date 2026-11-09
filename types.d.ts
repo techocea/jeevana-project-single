@@ -87,15 +87,16 @@ export interface InitialProfileData {
 
     preferredMinAge?: number;
     preferredMaxAge?: number;
-    preferredMinHeight?: number;
-    preferredMaxHeight?: number;
+    preferredMinHeight?: string;
+    preferredMaxHeight?: string;
     preferredMaritalStatus?: MaritalStatusTypes;
     preferredReligions?: string[];
     preferredCastes?: string[];
     preferredEducationLevels?: string[];
     preferredProfessions?: string[];
     preferredAnnualIncomeRanges?: string[];
-    preferredResidencyStatuses?: string[];
+    preferredResidentialStatus?: string[];
+    preferredResidentialCountry?: string[];
 }
 
 export interface StepOneInitialData {
@@ -162,15 +163,16 @@ export interface StepFiveInitialData {
     initialData: {
         preferredMinAge?: number;
         preferredMaxAge?: number;
-        preferredMinHeight?: number;
-        preferredMaxHeight?: number;
+        preferredMinHeight?: string;
+        preferredMaxHeight?: string;
         preferredMaritalStatus?: MaritalStatusTypes;
         preferredReligions?: string[];
         preferredCastes?: string[];
         preferredEducationLevels?: string[];
         preferredProfessions?: string[];
         preferredAnnualIncomeRanges?: string[];
-        preferredResidencyStatuses?: string[];
+        preferredResidentialStatus?: string[];
+        preferredResidentialCountry?: string[];
     };
 }
 

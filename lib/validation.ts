@@ -83,11 +83,14 @@ export const stepFiveSchema = z.object({
     preferredMaxAge: z.number().int().positive().optional(),
     preferredMinHeight: z.string().optional(),
     preferredMaxHeight: z.string().optional(),
+    preferredMaritalStatus: z.string().optional(),
+    preferredReligions: z.array(z.string()).default([]),
+    preferredCastes: z.array(z.string()).default([]),
     preferredEducationLevels: z.array(z.string()).default([]),
     preferredProfessions: z.array(z.string()).default([]),
     preferredAnnualIncomeRanges: z.array(z.string()).default([]),
-    preferredResidencyCountry: z.array(z.string()).default([]),
-    preferredResidencyStatus: z.array(z.string()).default([]),
+    preferredResidentialCountry: z.array(z.string()).default([]),
+    preferredResidentialStatus: z.array(z.string()).default([]),
 });
 
 

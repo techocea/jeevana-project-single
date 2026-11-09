@@ -49,7 +49,7 @@ function OnboardingFormOneFields({
             <TitleHeader title="Step 1: Basic Personal Details"
                          description="General details used to build your advertisement. Private identifying data like exact NIC and mobile will not be made public."/>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-4">
                 <div className="flex flex-col gap-2">
                     <Label
                         htmlFor="createdBy"
@@ -97,7 +97,7 @@ function OnboardingFormOneFields({
                     )}
                 </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-4">
                 <div className="flex flex-col gap-2">
                     <Label
                         htmlFor="contact">
@@ -173,7 +173,7 @@ function OnboardingFormOneFields({
                     )}
                 </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-4">
                 <div className="flex flex-col gap-2">
                     <Label
                         htmlFor="dob">
@@ -187,7 +187,6 @@ function OnboardingFormOneFields({
               </span>
                     )}
                 </div>
-
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="religion">
                         Religion
@@ -220,7 +219,6 @@ function OnboardingFormOneFields({
                         <p className="text-sm text-red-600">{errors.religion.message as string}</p>
                     )}
                 </div>
-
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="caste">
                         Caste
@@ -259,9 +257,8 @@ function OnboardingFormOneFields({
                         <p className="text-sm text-red-600">{errors.caste.message as string}</p>
                     )}
                 </div>
-
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-4">
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="subCaste">
                         Sub Caste
