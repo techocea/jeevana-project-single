@@ -197,6 +197,18 @@ const RegisterForm = () => {
                     {isSubmitting ? "Please wait..." : "Register Now"}
                 </Button>
             </form>
+
+            <div className="mt-6 text-center text-xs text-[#665D52]">
+                Already a member?
+                <Button
+                    type="button"
+                    variant="link"
+                    onClick={() => router.push('/auth?mode=login')}
+                    className="text-xs"
+                >
+                    Sign In
+                </Button>
+            </div>
         </div>
     );
 };

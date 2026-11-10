@@ -233,10 +233,6 @@ export const BODY_TYPES = [
         value: "athletic",
     },
     {
-        label: "Medium",
-        value: "medium",
-    },
-    {
         label: "Average",
         value: "average",
     },

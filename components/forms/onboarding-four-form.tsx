@@ -40,6 +40,7 @@ function OnboardingFormFourFieldset({
                     About Me
                 </Label>
                 <Textarea id="narrative"
+                          {...register("narrative")}
                           rows={4}
                           placeholder="Write a courteous overview  of personality, lifestyle, family, family values,and what you cherish in life..." {...register("narrative")}/>
                 <span className="text-muted-foreground text-[10px]">Do NOT include private phone numbers, physical residential addresses, or personal emails here.</span>
@@ -94,7 +95,7 @@ function OnboardingFormFourOnboarding({onPrev, onNext, initialData}: StepFourPro
         resolver: zodResolver(stepFourSchema as any),
         defaultValues: {
             narrative: initialData?.narrative || "",
-            profilePic: initialData?.profilePic ?? null,
+            profilePic: initialData?.profilePic ?? "",
             photoVisible: initialData?.photoVisible ?? false,
         },
     });
@@ -140,7 +141,7 @@ function OnboardingFormFourEditing({onNext, initialData}: StepFourProps) {
         resolver: zodResolver(stepFourSchema as any),
         defaultValues: {
             narrative: initialData?.narrative || "",
-            profilePic: initialData?.profilePic ?? null,
+            profilePic: initialData?.profilePic ?? "",
             photoVisible: initialData?.photoVisible ?? false,
         },
     });

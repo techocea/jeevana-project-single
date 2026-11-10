@@ -1,7 +1,6 @@
 import type {Metadata} from "next";
 import {SiteHeader} from "@/components/layout/site-header";
 import {AdminSidebar} from "@/components/layout/admin-sidebar";
-import {SidebarInset, SidebarProvider} from "@/components/ui/sidebar";
 import {TooltipProvider} from "@/components/ui/tooltip";
 import {Toaster} from "react-hot-toast";
 import {getCurrentUser} from "@/app/actions/profile-actions";
@@ -26,20 +25,9 @@ export default async function DashboardLayout({
         <div className="min-h-screen bg-background">
             <Toaster position="top-center" reverseOrder={false}/>
             <TooltipProvider>
-                <SidebarProvider
-                    style={
-                        {
-                            "--sidebar-width": "calc(var(--spacing) * 72)",
-                            "--header-height": "calc(var(--spacing) * 12)",
-                        } as React.CSSProperties
-                    }
-                >
-                    <AdminSidebar variant={"inset"} userRole={role ?? "admin"}/>
-                    <SidebarInset>
-                        <SiteHeader userRole={role ?? "admin"}/>
-                        <main className="min-h-screen px-6 py-8 lg:px-10">{children}</main>
-                    </SidebarInset>
-                </SidebarProvider>
+                <AdminSidebar/>
+                {/*<SiteHeader userRole={role ?? "admin"}/>*/}
+                <main className="min-h-screen px-6 py-8 lg:px-10">{children}</main>
             </TooltipProvider>
         </div>
     );

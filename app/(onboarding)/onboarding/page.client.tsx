@@ -62,18 +62,6 @@ const OnboardingPageClient = ({
 
     return (
         <div className="w-full py-10 px-6 md:px-0 mx-auto max-w-6xl min-h-full">
-            {/*{isSyncing && (*/}
-            {/*    <div*/}
-            {/*        className="absolute inset-0 bg-white/40 z-50 backdrop-blur-[1px] flex items-center justify-center pointer-events-auto h-full">*/}
-            {/*        <div className="flex items-center gap-2 bg-white shadow-md border rounded-xl px-4 py-2">*/}
-            {/*            <Loader2 className="h-5 w-5 animate-spin text-secondary"/>*/}
-            {/*            <span className="text-sm font-medium text-slate-600">*/}
-            {/*  Saving progress...*/}
-            {/*</span>*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*)}*/}
-
             <ProgressBarHeader currentStep={currentStep} steps={ONBOARDING_STEPS}/>
 
             {/* Wizard Layout: Desktop Step Sidebar & Content */}

@@ -21,7 +21,6 @@ export const stepOneSchema = z.object({
         .max(new Date(), "Date of birth cannot be in the future")
         .nullable()
         .optional(),
-    age: z.number().int().positive().optional(),
     religion: z.string().max(100).nullable().optional(),
     caste: z.string().max(100).nullable().optional(),
     subCaste: z.string().max(100).nullable().optional(),

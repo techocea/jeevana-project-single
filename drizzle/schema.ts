@@ -26,12 +26,10 @@ export const onboardingEnum = pgEnum("onboarding_status", [
 
 export const onboardingStepEnum = pgEnum("onboarding_step", [
     "START",
-    "RELIGION",
-    "ACHIEVEMENTS",
-    "LOCATION",
-    "PERSONAL",
-    "HOBBIES",
-    "PREFERENCES",
+    "PHYSICAL_ATTRIBUTES",
+    "EDUCATION_CAREER",
+    "ABOUT_ME",
+    "PARTNER_PREFERENCES",
     "COMPLETED",
 ]);
 
@@ -194,6 +192,7 @@ export const profiles = pgTable("profiles", {
     userId: uuid("user_id").references(() => users.id, {onDelete: "cascade"}).unique(),
     createdBy: text("created_by"), // 'self' | 'parent' | 'guardian' | 'sibling' | 'friend' | 'admin'
     fullName: text("full_name"),
+    contact: text("contact"),
     gender: text("gender"),
     maritalStatus: maritalStatusEnum("marital_status"),
     dob: date("dob", {mode: "date"}),
@@ -227,7 +226,7 @@ export const profiles = pgTable("profiles", {
     city: text("city"),
     residencyStatus: residencyStatusEnum("residency_status"),
 
-    //step 5
+    //step 5 -> CURRENTLY 4
     profilePic: text("profile_pic"),
     photoVisible: boolean("photo_visible").notNull().default(false),
     narrative: text("narrative"),
@@ -248,11 +247,11 @@ export const partnerPreferences = pgTable("partner_preferences", {
     userId: uuid("user_id").references(() => users.id, {onDelete: "cascade"}).unique(),
     preferredMinAge: integer("preferred_min_age"),
     preferredMaxAge: integer("preferred_max_age"),
-    preferredMinHeight: integer("preferred_min_height"),
-    preferredMaxHeight: integer("preferred_max_height"),
+    preferredMinHeight: text("preferred_min_height"),
+    preferredMaxHeight: text("preferred_max_height"),
     preferredReligions: text("preferred_religions").array(),
     preferredCastes: text("preferred_castes").array(),
-    preferredMaritalStatuses: text("preferred_marital_statuses").array(),
+    preferredMaritalStatuses: text("preferred_marital_statuses"),
     preferredEducationLevels: text("preferred_education_levels").array(),
     preferredProfessions: text("preferred_professions").array(),
     preferredAnnualIncomeRanges: text("preferred_annual_income_ranges").array(),

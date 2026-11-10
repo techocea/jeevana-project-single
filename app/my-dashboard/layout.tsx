@@ -1,6 +1,6 @@
 import type {Metadata} from "next";
 import {Toaster} from 'react-hot-toast';
-import {TooltipProvider} from "@/components/ui/tooltip";
+import {AppRole} from "@/lib/constants";
 import {SiteHeader} from "@/components/layout/site-header";
 import {getCurrentUser} from "@/app/actions/profile-actions";
 import {redirect} from "next/navigation";
@@ -28,7 +28,6 @@ export default async function MyDashboardLayout({
     //     redirect("/onboarding");
     // }
 
-    const role: "admin" | "staff" | "user" | undefined = currentUser?.role;
 
     return (
         <div className="min-h-screen bg-background flex flex-col">
@@ -36,7 +35,7 @@ export default async function MyDashboardLayout({
                 position="top-center"
                 reverseOrder={false}
             />
-            <SiteHeader userRole={role}/>
+            <SiteHeader currentUser={currentUser}/>
             <div
                 className="max-w-7xl mx-auto px-4 sm:px-6 py-6 w-full flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 <UserSidebar/>

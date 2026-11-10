@@ -15,13 +15,11 @@ import {calculateUserMatchesAction} from "@/app/actions/matchmaking-action";
 import {AppRole, MARITAL_STATUSES} from "@/lib/constants";
 
 const NEXT_STEP_POINTER = {
-    1: "RELIGION",
-    2: "ACHIEVEMENTS",
-    3: "LOCATION",
-    4: "PERSONAL",
-    5: "HOBBIES",
-    6: "PREFERENCES",
-    7: "COMPLETED",
+    1: "PHYSICAL_ATTRIBUTES",
+    2: "EDUCATION_CAREER",
+    3: "ABOUT_ME",
+    4: "PARTNER_PREFERENCES",
+    5: "COMPLETED",
 } as const;
 
 const TARGET_GENDER_MAP: Record<string, string> = {
@@ -108,9 +106,6 @@ export async function createProfileByUser(
             const parsedDate =
                 rawDob && !isNaN(Date.parse(rawDob)) ? new Date(rawDob) : null;
 
-            const parsedAge = payload.age !== undefined && payload.age !== null && payload.age !== ""
-                ? parseInt(String(payload.age), 10)
-                : null;
 
             updatePayload = {
                 createdBy: payload.createdBy,
@@ -119,33 +114,18 @@ export async function createProfileByUser(
                 gender: payload.gender,
                 maritalStatus: payload.maritalStatus,
                 dob: parsedDate,
-                age: parsedAge,
-                profilePic: payload.profilePic,
+                religion: payload.religion,
+                caste: payload.caste,
+                subCaste: payload.subCaste,
+                motherTongue: payload.motherTongue,
             };
         } else if (stepNumber === 2) {
             updatePayload = {
-                religion: payload.religion,
-                caste: payload.caste,
-                motherTongue: payload.motherTongue,
-            };
-        } else if (stepNumber === 3) {
-            updatePayload = {
-                educationLevel: payload.educationLevel,
-                profession: payload.profession,
-                annualIncomeRange: payload.annualIncomeRange,
-            };
-        } else if (stepNumber === 4) {
-            updatePayload = {
-                country: payload.country,
-                state: payload.state,
-                city: payload.city,
-                residencyStatus: payload.residencyStatus,
-            };
-        } else if (stepNumber === 5) {
-            updatePayload = {
                 height: payload.height,
                 weight: payload.weight,
-                narrative: payload.narrative,
+                complexion: payload.complexion,
+                bodyType: payload.bodyType,
+                bloodGroup: payload.bloodGroup,
                 smoking: payload.smoking,
                 drinking: payload.drinking,
                 foodPreferences: payload.foodPreferences,
@@ -154,19 +134,41 @@ export async function createProfileByUser(
                     payload.isDifferentlyAbled === "yes",
                 differentlyAbledDetails: payload.differentlyAbledDetails,
             };
-        } else if (stepNumber === 6) {
+        } else if (stepNumber === 3) {
             updatePayload = {
-                hobbies: Array.isArray(payload.hobbies) ? payload.hobbies : [],
+                educationLevel: payload.educationLevel,
+                educationDescription: payload.educationDescription,
+                profession: payload.profession,
+                employedIn: payload.employedIn,
+                annualIncomeRange: payload.annualIncomeRange,
             };
-        } else if (stepNumber === 7) {
+        } else if (stepNumber === 4) {
+            updatePayload = {
+                profilePic: payload.profilePic,
+                narrative: payload.narrative,
+                photoVisible: payload.photoVisible,
+            };
+        } else if (stepNumber === 5) {
             const minAge = payload.preferredMinAge;
             const maxAge = payload.preferredMaxAge;
 
             updatePayload = {
                 preferredMinAge: minAge ? Number(minAge) : 18,
                 preferredMaxAge: maxAge ? Number(maxAge) : 50,
-                preferredMaritalStatus:
-                    payload.preferredMaritalStatus || "single",
+                preferredMinHeight: payload.preferredMinHeight,
+                preferredMaxHeight: payload.preferredMaxHeight,
+                preferredReligions: Array.isArray(
+                    payload.preferredReligions,
+                )
+                    ? payload.preferredReligions
+                    : [],
+                preferredCastes: Array.isArray(
+                    payload.preferredCastes,
+                )
+                    ? payload.preferredCastes
+                    : [],
+                preferredMaritalStatuses:
+                    payload.preferredMaritalStatuses || "single",
                 preferredEducationLevels: Array.isArray(
                     payload.preferredEducationLevels,
                 )
@@ -183,7 +185,7 @@ export async function createProfileByUser(
             };
         }
 
-        const isFinished = stepNumber === 7;
+        const isFinished = stepNumber === 5;
         const nextProgressString =
             NEXT_STEP_POINTER[stepNumber as keyof typeof NEXT_STEP_POINTER] ||
             "COMPLETED";
@@ -192,7 +194,7 @@ export async function createProfileByUser(
             let savedProfile: typeof profiles.$inferSelect | undefined;
             let savedPrefs: typeof partnerPreferences.$inferSelect | undefined;
 
-            if (stepNumber <= 6) {
+            if (stepNumber <= 4) {
                 const [row] = await tx
                     .insert(profiles)
                     .values({
@@ -206,26 +208,36 @@ export async function createProfileByUser(
                     })
                     .returning();
                 savedProfile = row;
-            } else if (stepNumber === 7) {
+            } else if (stepNumber === 5) {
                 const prefsToInsert = {
                     preferredMinAge: updatePayload.preferredMinAge,
                     preferredMaxAge: updatePayload.preferredMaxAge,
-                    preferredMaritalStatus:
-                        updatePayload.preferredMaritalStatus || "single",
-                    preferredEducationLevels: Array.isArray(
-                        updatePayload.preferredEducationLevels,
+                    preferredMinHeight: payload.preferredMinHeight,
+                    preferredMaxHeight: payload.preferredMaxHeight,
+                    preferredReligions: Array.isArray(
+                        payload.preferredReligions,
                     )
-                        ? updatePayload.preferredEducationLevels
+                        ? payload.preferredReligions
                         : [],
-                    preferredProfessions: Array.isArray(
-                        updatePayload.preferredProfessions,
+                    preferredCastes: Array.isArray(
+                        payload.preferredCastes,
                     )
-                        ? updatePayload.preferredProfessions
+                        ? payload.preferredCastes
+                        : [],
+                    preferredMaritalStatuses:
+                        payload.preferredMaritalStatuses || "single",
+                    preferredEducationLevels: Array.isArray(
+                        payload.preferredEducationLevels,
+                    )
+                        ? payload.preferredEducationLevels
+                        : [],
+                    preferredProfessions: Array.isArray(payload.preferredProfessions)
+                        ? payload.preferredProfessions
                         : [],
                     preferredAnnualIncomeRanges: Array.isArray(
-                        updatePayload.preferredAnnualIncomeRanges,
+                        payload.preferredAnnualIncomeRanges,
                     )
-                        ? updatePayload.preferredAnnualIncomeRanges
+                        ? payload.preferredAnnualIncomeRanges
                         : [],
                 };
 

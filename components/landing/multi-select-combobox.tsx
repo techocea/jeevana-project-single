@@ -158,7 +158,7 @@ export function MultiSelectField<TFieldValues extends FieldValues>({
                                                 );
                                             })
                                         ) : (
-                                            <span className="text-sm text-gray-400 font-light">
+                                            <span className="text-sm text-muted-foreground">
                                                 {placeholder}
                                             </span>
                                         )}
