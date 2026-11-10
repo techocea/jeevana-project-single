@@ -57,7 +57,7 @@ function UserSidebar() {
                         <Button
                             key={item.href}
                             variant={isActive ? "secondary" : "ghost"}
-                            onClick={() => router.push(item.href)}
+                            onClick={() => router.push(`/my-dashboard/${item.href}`)}
                             className={"w-full justify-start"}
                         >
                             <div className="flex items-center gap-3">

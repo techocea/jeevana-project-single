@@ -3,8 +3,10 @@ import {Button} from "@/components/ui/button";
 import {Card} from "@/components/ui/card";
 import Link from "next/link";
 import DashboardStatsGrid from "@/components/dashboard/dashboard-stats-grid";
-import {Plus} from "lucide-react";
+import {AlertCircle, Pen} from "lucide-react";
 import MyProfileCard from "@/components/dashboard/my-profile-card";
+import TitleHeader from "@/components/dashboard/title-header";
+import {Separator} from "@/components/ui/separator";
 
 export const dynamic = "force-dynamic";
 
@@ -15,34 +17,42 @@ const ProfilePage = async () => {
 
     if (!profile) {
         return (
-            <div className="min-h-screen flex items-center justify-center px-4 py-20">
-                <div className="max-w-lg rounded-xl border border-slate-200 bg-white p-10 text-center shadow-sm">
-                    <h2 className="text-2xl font-semibold text-slate-950">
-                        Profile unavailable
-                    </h2>
-                    <p className="mt-4 text-muted">
-                        We could not locate your profile. Please complete your onboarding or
-                        try again later.
-                    </p>
+            <div className="bg-white p-8 rounded-lg border border-[#FCA5A5] text-center shadow-2xs">
+                <div
+                    className="w-12 h-12 rounded-full bg-[#FEF2F2] text-[#B91C1C] flex items-center justify-center mx-auto mb-3">
+                    <AlertCircle className="w-6 h-6"/>
                 </div>
+                <h3 className="font-editorial text-lg font-semibold text-[#1F1B18]">
+                    Unable to Load Candidate Registry
+                </h3>
+                <p className="text-xs text-[#554D45] max-w-md mx-auto mt-1">
+                    A temporary connection issue prevented loading the matchmaking directory. Please check your network
+                    connection and retry.
+                </p>
+                <Button>
+                    Retry
+                </Button>
             </div>
         );
     }
 
     return (
-        <div className="flex flex-col space-y-2">
+        <div className="space-y-8">
             <div className="flex items-center justify-between w-full">
-                <div className="flex flex-col">
-                    <h3 className="text-black font-sans">My Profiles </h3>
-                    <p className="text-muted-foreground text-lg">Manage your matrimonial profiles here</p>
-                </div>
-                <Button size={"lg"}><Plus/>Create Profile</Button>
+                <TitleHeader title={"My Matrimonial Profile & Advertisement"}
+                             description={"Manage your verified advertisement, confidentiality settings, and review requests."}/>
+                <Button size={"lg"}><Pen/>Edit Profile</Button>
             </div>
 
+            <Separator/>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <MyProfileCard id={profile.id} profileId={profile.profileID} status={profile.status} gender={profile.gender} />
+                <MyProfileCard id={profile.id} profileId={profile.profileID} status={profile.status}
+                               gender={profile.gender}/>
             </div>
         </div>
+
+
+
     )
 };
 

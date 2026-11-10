@@ -106,7 +106,7 @@
   }
 
   h1 {
-    @apply md:text-3xl text-2xl leading-8;
+    @apply text-2xl leading-8;
   }
 
   h2 {

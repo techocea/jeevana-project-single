@@ -11,9 +11,7 @@ import BasicInformationForm from "@/components/forms/onboarding-one-form";
 import ReligionForm from "@/components/forms/onboarding-two-form";
 import AchievementsForm from "@/components/forms/onboarding-three-form"; // or career step
 import LocationForm from "@/components/forms/onboarding-four-form";
-import PersonalForm from "@/components/forms/onboarding-six-form";
 import HobbiesForm from "@/components/forms/onboarding-five-form";
-import PartnerPreferences from "@/components/forms/onboarding-six-form";
 import toast from "react-hot-toast";
 
 interface EditProfileProps {

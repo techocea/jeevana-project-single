@@ -106,7 +106,6 @@ export async function createProfileByUser(
             const parsedDate =
                 rawDob && !isNaN(Date.parse(rawDob)) ? new Date(rawDob) : null;
 
-
             updatePayload = {
                 createdBy: payload.createdBy,
                 fullName: payload.fullName,
