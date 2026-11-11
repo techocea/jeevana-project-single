@@ -1,694 +1,654 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import {useRouter, useSearchParams, usePathname, ReadonlyURLSearchParams} from "next/navigation";
-import { useForm, Controller } from "react-hook-form";
-import { Card, CardHeader, CardContent } from "../ui/card";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { Label } from "../ui/label";
+import {useEffect, useId, useState, useTransition} from "react";
 import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
+    usePathname,
+    useRouter,
+    useSearchParams,
+} from "next/navigation";
+import {Controller, useForm} from "react-hook-form";
+import {
+    ArrowDownWideNarrow,
+    Check,
+    ImageIcon,
+    Loader2,
+    Search,
+    ShieldCheck,
+    SlidersHorizontal,
+    X,
+} from "lucide-react";
+
+import {Input} from "../ui/input";
+import {Button} from "../ui/button";
+import {Label} from "../ui/label";
+import {Checkbox} from "../ui/checkbox";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "../ui/select";
-import { Checkbox } from "../ui/checkbox";
 import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from "../ui/combobox";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "../ui/drawer";
-import { LocationNode } from "@/types";
-import {
-  RELIGIONS_AND_CASTES,
-  MOTHER_TONGUES,
-  PERSONAL_DROPDOWNS,
-  LK_DATA,
-  GROUPS_PROFESSIONS,
-} from "@/lib/constants";
-import { SlidersHorizontal } from "lucide-react";
+    Drawer,
+    DrawerContent,
+    DrawerDescription,
+    DrawerHeader,
+    DrawerTitle,
+} from "../ui/drawer";
+
+import {RELIGIONS_AND_CASTES} from "@/lib/constants";
+
+type SortBy = "recent" | "age_asc" | "age_desc";
 
 type FilterFormValues = {
-  lookingFor: string;
-  minAge: string;
-  maxAge: string;
-  religion: string;
-  caste: string;
-  motherTongue: string;
-  educationLevel: string;
-  profession: string;
-  annualIncomeRange: string;
-  country: string;
-  state: string;
-  hobbies: string[];
+    search: string;
+    religion: string;
+    country: string;
+    verifiedOnly: boolean;
+    photosOnly: boolean;
+    sortBy: SortBy;
+};
+
+type Option = {
+    label: string;
+    value: string;
 };
 
 type FilterOptionsProps = {
-  mode?: "search" | "dashboard";
+    countryOptions?: Option[];
+
+    /**
+     * Pass the total returned by your filtered database query.
+     * Do not use the length of a single paginated page.
+     */
+    totalResults?: number;
 };
 
-const FilterOptions = ({ mode = "search" }: FilterOptionsProps) => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+const EMPTY_FILTERS: FilterFormValues = {
+    search: "",
+    religion: "",
+    country: "",
+    verifiedOnly: false,
+    photosOnly: false,
+    sortBy: "recent",
+};
 
-  const isDashboard = mode === "dashboard";
+const FILTER_KEYS = [
+    "search",
+    "religion",
+    "country",
+    "verifiedOnly",
+    "photosOnly",
+    "sortBy",
+] as const;
 
-  const [countries, setCountries] = useState<LocationNode[]>([]);
-  const [states, setStates] = useState<LocationNode[]>([]);
-  const [loadingCountries, setLoadingCountries] = useState(false);
-  const [loadingStates, setLoadingStates] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+const ALL_OPTION = "__all__";
 
+const religionOptions: Option[] = Object.keys(
+    RELIGIONS_AND_CASTES,
+).map((religion) => ({
+    label: religion,
+    value: religion,
+}));
 
+const sortOptions: { label: string; value: SortBy }[] = [
+    {label: "Recently joined", value: "recent"},
+    {label: "Age: youngest first", value: "age_asc"},
+    {label: "Age: oldest first", value: "age_desc"},
+];
 
-  const initialFormValues = useMemo(() => {
-    if (!searchParams) return null;
+function readFilters(params: URLSearchParams): FilterFormValues {
+    const sort = params.get("sortBy");
+
     return {
-      lookingFor: searchParams.get("lookingFor") || "",
-      minAge: searchParams.get("minAge") || "",
-      maxAge: searchParams.get("maxAge") || "",
-      religion:  searchParams.get("religion") || "",
-      caste: searchParams.get("caste") || "",
-      motherTongue: searchParams.get("motherTongue") || "",
-      educationLevel: searchParams.get("educationLevel") || "",
-      profession: searchParams.get("profession") || "",
-      annualIncomeRange: searchParams.get("annualIncomeRange") || "",
-      country: searchParams.get("country") || "",
-      state: searchParams.get("state") || "",
-      hobbies: (searchParams.get("hobbies") || "").split(",").filter(Boolean),
+        search: params.get("search") ?? "",
+        religion: params.get("religion") ?? "",
+        country: params.get("country") ?? "",
+        verifiedOnly: params.get("verifiedOnly") === "true",
+        photosOnly: params.get("photosOnly") === "true",
+        sortBy:
+            sort === "age_asc" || sort === "age_desc"
+                ? sort
+                : "recent",
     };
-  }, [searchParams]);
+}
 
-  const { register, control, handleSubmit, reset, watch, setValue } =
-    useForm<FilterFormValues>({
-      defaultValues: initialFormValues || {
-        lookingFor: "",
-        minAge: "",
-        maxAge: "",
-        religion: "",
-        caste: "",
-        motherTongue: "",
-        educationLevel: "",
-        profession: "",
-        annualIncomeRange: "",
-        country: "",
-        state: "",
-        hobbies: [],
-      },
-    });
+function countFilters(values: FilterFormValues) {
+    return [
+        values.search.trim(),
+        values.religion,
+        values.country,
+        values.verifiedOnly,
+        values.photosOnly,
+    ].filter(Boolean).length;
+}
 
-  const religionValue = watch("religion");
-  const countryValue = watch("country");
-  const selectedCountry = countries.find((item) => item.value === countryValue);
+type FilterSelectProps = {
+    label: string;
+    value: string;
+    options: Option[];
+    onChange: (value: string) => void;
+    placeholder?: string;
+    allowAll?: boolean;
+    disabled?: boolean;
+};
 
-  useEffect(() => {
-    const loadCountries = async () => {
-      setLoadingCountries(true);
-      try {
-        const response = await fetch("/api/location?type=countries");
-        const data = await response.json();
-        const normalized = Array.isArray(data)
-          ? data.map((item: any) => ({
-            value: item.value,
-            isoCode: item.isoCode,
-          }))
-          : [];
-        const complete = normalized.some((item) => item.isoCode === "LK")
-          ? normalized
-          : [{ value: "Sri Lanka", isoCode: "LK" }, ...normalized];
-        setCountries(complete);
-      } catch (error) {
-        setCountries([{ value: "Sri Lanka", isoCode: "LK" }]);
-      } finally {
-        setLoadingCountries(false);
-      }
-    };
+function FilterSelect({
+                          label,
+                          value,
+                          options,
+                          onChange,
+                          placeholder = "All",
+                          allowAll = true,
+                          disabled = false,
+                      }: FilterSelectProps) {
+    const id = useId();
 
-    loadCountries();
-  }, []);
+    return (
+        <div className="min-w-0 space-y-2">
+            <Label
+                htmlFor={id}
+                className="text-xs font-medium text-card-foreground/70"
+            >
+                {label}
+            </Label>
 
-  useEffect(() => {
-    const loadStates = async () => {
-      if (!countryValue) {
-        setStates([]);
-        return;
-      }
+            <Select
+                value={allowAll ? value || ALL_OPTION : value}
+                onValueChange={(nextValue) =>
+                    onChange(
+                        nextValue === ALL_OPTION ? "" : nextValue,
+                    )
+                }
+                disabled={disabled}
+            >
+                <SelectTrigger
+                    id={id}
+                    className="h-10 w-full min-w-0 border-input bg-card text-sm text-card-foreground shadow-none"
+                >
+                    <SelectValue placeholder={placeholder}/>
+                </SelectTrigger>
 
-      if (selectedCountry?.isoCode === "LK") {
-        setStates(
-          Object.keys(LK_DATA).map((district) => ({
-            value: district,
-            isoCode: district,
-          })),
-        );
-        return;
-      }
+                <SelectContent>
+                    {allowAll && (
+                        <SelectItem value={ALL_OPTION}>
+                            {placeholder}
+                        </SelectItem>
+                    )}
 
-      if (!selectedCountry?.isoCode) {
-        setStates([]);
-        return;
-      }
-
-      setLoadingStates(true);
-      try {
-        const response = await fetch(
-          `/api/location?type=states&countryCode=${selectedCountry.isoCode}`,
-        );
-        const data = await response.json();
-        const normalized = Array.isArray(data)
-          ? data.map((item: any) => ({
-            value: item.value,
-            isoCode: item.isoCode,
-          }))
-          : [];
-        setStates(normalized);
-      } catch (error) {
-        setStates([]);
-      } finally {
-        setLoadingStates(false);
-      }
-    };
-
-    loadStates();
-  }, [countryValue, selectedCountry]);
-
-  useEffect(() => {
-    if (initialFormValues) {
-      reset(initialFormValues, { keepDefaultValues: true });
-    }
-  }, [initialFormValues, reset]);
-
-  useEffect(() => {
-    if (!searchParams) return;
-    reset({
-      lookingFor: searchParams.get("lookingFor") || "",
-      minAge: searchParams.get("minAge") || "",
-      maxAge: searchParams.get("maxAge") || "",
-      religion:  searchParams.get("religion") || "",
-      caste: searchParams.get("caste") || "",
-      motherTongue: searchParams.get("motherTongue") || "",
-      educationLevel: searchParams.get("educationLevel") || "",
-      profession: searchParams.get("profession") || "",
-      annualIncomeRange: searchParams.get("annualIncomeRange") || "",
-      country: searchParams.get("country") || "",
-      state: searchParams.get("state") || "",
-      hobbies: (searchParams.get("hobbies") || "").split(",").filter(Boolean),
-    });
-  }, [reset, searchParams]);
-
-  useEffect(() => {
-    if (!religionValue) {
-      setValue("caste", "");
-    }
-  }, [religionValue, setValue]);
-
-  useEffect(() => {
-    setValue("state", "");
-  }, [countryValue, setValue]);
-
-  const onSubmit = (values: FilterFormValues) => {
-    const params = new URLSearchParams();
-
-    searchParams.forEach((value, key) => {
-      params.set(key, value);
-    });
-
-
-    if (values.lookingFor) params.set("lookingFor", values.lookingFor);
-    else params.delete("lookingFor");
-
-    if (values.religion) params.set("religion", values.religion);
-    else params.delete("religion");
-
-    if (values.caste) params.set("caste", values.caste);
-    else params.delete("caste");
-
-    if (values.motherTongue) params.set("motherTongue", values.motherTongue);
-    else params.delete("motherTongue");
-
-    if (values.educationLevel)
-      params.set("educationLevel", values.educationLevel);
-    else params.delete("educationLevel");
-
-    if (values.profession) params.set("profession", values.profession);
-    else params.delete("profession");
-
-    if (values.annualIncomeRange)
-      params.set("annualIncomeRange", values.annualIncomeRange);
-    else params.delete("annualIncomeRange");
-
-    if (values.country) params.set("country", values.country);
-    else params.delete("country");
-
-    if (values.state) params.set("state", values.state);
-    else params.delete("state");
-
-    if (values.hobbies.length) params.set("hobbies", values.hobbies.join(","));
-    else params.delete("hobbies");
-
-    if (values.minAge) params.set("minAge", values.minAge);
-    else params.delete("minAge");
-
-    if (values.maxAge) params.set("maxAge", values.maxAge);
-    else params.delete("maxAge");
-
-    const query = params.toString();
-    const url = query ? `${pathname}?${query}` : pathname;
-    router.replace(url);
-    setDrawerOpen(false);
-  };
-
-  const resetFilters = () => {
-    reset({
-      lookingFor: "",
-      minAge: "",
-      maxAge: "",
-      religion: "",
-      caste: "",
-      motherTongue: "",
-      educationLevel: "",
-      profession: "",
-      annualIncomeRange: "",
-      country: "",
-      state: "",
-      hobbies: [],
-    });
-    router.replace(pathname);
-  };
-
-  return (
-      <>
-        {/* Mobile Filter Button */}
-        <div className="flex sm:hidden w-full">
-          <Button
-              type="button"
-              onClick={() => setDrawerOpen(true)}
-              className="w-full rounded-xl" variant="default"
-          >
-            <SlidersHorizontal size={16} className="mr-2 h-4 w-4"/>
-            FILTERS
-          </Button>
+                    {options.map((option) => (
+                        <SelectItem
+                            key={option.value}
+                            value={option.value}
+                        >
+                            {option.label}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
         </div>
+    );
+}
 
-        {/* Desktop Filter Card */}
-        <Card
-            className={
-              isDashboard
-                  ? "hidden"
-                  : "hidden md:block rounded-xl bg-white border border-slate-200 px-0 w-full ml-0"
-            }
+export default function FilterOptions({
+                                          countryOptions = [],
+                                          totalResults,
+                                      }: FilterOptionsProps) {
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [isPending, startTransition] = useTransition();
+
+    const searchId = useId();
+    const verifiedId = useId();
+    const photosId = useId();
+
+    const queryString = searchParams.toString();
+    const appliedFilters = readFilters(
+        new URLSearchParams(queryString),
+    );
+
+    const {control, register, handleSubmit, reset, setValue} =
+        useForm<FilterFormValues>({
+            defaultValues: appliedFilters,
+        });
+
+    // Keep the form aligned with browser back/forward navigation.
+    useEffect(() => {
+        reset(readFilters(new URLSearchParams(queryString)));
+    }, [queryString, reset]);
+
+    const activeFilterCount = countFilters(appliedFilters);
+
+    const navigateWithFilters = (values: FilterFormValues) => {
+        const params = new URLSearchParams(queryString);
+
+        // Preserve unrelated query parameters.
+        FILTER_KEYS.forEach((key) => params.delete(key));
+
+        const search = values.search.trim();
+
+        if (search) params.set("search", search);
+        if (values.religion) {
+            params.set("religion", values.religion);
+        }
+        if (values.country) {
+            params.set("country", values.country);
+        }
+        if (values.verifiedOnly) {
+            params.set("verifiedOnly", "true");
+        }
+        if (values.photosOnly) {
+            params.set("photosOnly", "true");
+        }
+        if (values.sortBy !== "recent") {
+            params.set("sortBy", values.sortBy);
+        }
+
+        // Filtering starts again from the first page.
+        // Rename this if your project uses a different page parameter.
+        params.delete("page");
+
+        const query = params.toString();
+
+        startTransition(() => {
+            router.replace(
+                query ? `${pathname}?${query}` : pathname,
+                {scroll: false},
+            );
+        });
+    };
+
+    const onSubmit = (values: FilterFormValues) => {
+        const nextValues = {
+            ...values,
+            search: values.search.trim(),
+        };
+
+        reset(nextValues);
+        navigateWithFilters(nextValues);
+        setDrawerOpen(false);
+    };
+
+    const clearAll = () => {
+        reset({...EMPTY_FILTERS});
+        navigateWithFilters({...EMPTY_FILTERS});
+        setDrawerOpen(false);
+    };
+
+    const removeFilter = (
+        key:
+            | "search"
+            | "religion"
+            | "country"
+            | "verifiedOnly"
+            | "photosOnly",
+    ) => {
+        const nextValues = {...appliedFilters};
+
+        if (key === "verifiedOnly" || key === "photosOnly") {
+            nextValues[key] = false;
+        } else {
+            nextValues[key] = "";
+        }
+
+        reset(nextValues);
+        navigateWithFilters(nextValues);
+    };
+
+    const countryLabel =
+        countryOptions.find(
+            (option) => option.value === appliedFilters.country,
+        )?.label ?? appliedFilters.country;
+
+    const chips: {
+        key:
+            | "search"
+            | "religion"
+            | "country"
+            | "verifiedOnly"
+            | "photosOnly";
+        label: string;
+    }[] = [];
+
+    if (appliedFilters.search) {
+        chips.push({
+            key: "search",
+            label: `Search: ${appliedFilters.search}`,
+        });
+    }
+
+    if (appliedFilters.religion) {
+        chips.push({
+            key: "religion",
+            label: appliedFilters.religion,
+        });
+    }
+
+    if (appliedFilters.country) {
+        chips.push({
+            key: "country",
+            label: countryLabel,
+        });
+    }
+
+    if (appliedFilters.verifiedOnly) {
+        chips.push({
+            key: "verifiedOnly",
+            label: "NIC verified",
+        });
+    }
+
+    if (appliedFilters.photosOnly) {
+        chips.push({
+            key: "photosOnly",
+            label: "Visible photo",
+        });
+    }
+
+    const renderSelectFields = () => (
+        <>
+            <Controller
+                control={control}
+                name="religion"
+                render={({field}) => (
+                    <FilterSelect
+                        label="Religion"
+                        value={field.value}
+                        onChange={field.onChange}
+                        options={religionOptions}
+                        placeholder="All religions"
+                        disabled={isPending}
+                    />
+                )}
+            />
+
+            <Controller
+                control={control}
+                name="country"
+                render={({field}) => (
+                    <FilterSelect
+                        label="Country of residence"
+                        value={field.value}
+                        onChange={field.onChange}
+                        options={countryOptions}
+                        placeholder={
+                            countryOptions.length
+                                ? "All countries"
+                                : "No country options provided"
+                        }
+                        disabled={
+                            isPending || countryOptions.length === 0
+                        }
+                    />
+                )}
+            />
+
+            <Controller
+                control={control}
+                name="sortBy"
+                render={({field}) => (
+                    <FilterSelect
+                        label="Sort results"
+                        value={field.value}
+                        onChange={field.onChange}
+                        options={sortOptions}
+                        allowAll={false}
+                        disabled={isPending}
+                    />
+                )}
+            />
+        </>
+    );
+
+    return (
+        <section
+            aria-label="Filter proposals"
+            aria-busy={isPending}
+            className="overflow-hidden rounded-xl border border-input bg-card text-card-foreground shadow-sm"
         >
-          <CardHeader className="justify-start">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <SlidersHorizontal size={24} className="text-primary"/>
-              <h4 className="text-2xl font-medium font-newsreader">Filters</h4>
-            </div>
-          </CardHeader>
-          <CardContent>
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="flex flex-col gap-4"
+                className="space-y-5 p-4 sm:p-5"
             >
-              <FilterForm/>
-            </form>
-          </CardContent>
-        </Card>
+                {/* Search and mobile drawer trigger */}
+                <div className="space-y-4">
+                    {/* Search field */}
+                    <div className="relative">
+                        <Label htmlFor={searchId} className="sr-only">
+                            Search profiles
+                        </Label>
 
-        {/* Mobile Drawer */}
-        <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-          <DrawerContent
-              className={
-                isDashboard
-                    ? "rounded-t-3xl border border-slate-200 bg-white p-4 max-w-3xl mx-auto"
-                    : "md:hidden rounded-t-3xl border border-slate-200 bg-white p-4"
-              }
-          >
-            <DrawerHeader>
-              <DrawerTitle
-                  className="flex items-center gap-2 justify-start text-2xl font-medium font-newsreader text-black">
-                <SlidersHorizontal size={24} className="text-primary"/>
-                Filters
-              </DrawerTitle>
-            </DrawerHeader>
-            <div className="overflow-y-auto max-h-[70vh] px-4">
-              <form
-                  onSubmit={handleSubmit(onSubmit)}
-                  className="flex flex-col gap-4"
-              >
-                <FilterForm/>
-              </form>
-            </div>
-          </DrawerContent>
-        </Drawer>
-      </>
-  );
+                        <Search
+                            aria-hidden="true"
+                            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-card-foreground/45"
+                        />
 
-  function FilterForm() {
-    return (
-        <>
-          <div className="pb-2 text-muted border-t border-slate-200 pt-4">
-            <Label className="mb-2 block text-sm uppercase font-bold">Looking for</Label>
-            <Controller
-                name="lookingFor"
-                control={control}
-                render={({field}) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select preference">
-                    {field.value}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="bride">Bride</SelectItem>
-                  <SelectItem value="groom">Groom</SelectItem>
-                </SelectContent>
-              </Select>
-            )}
-          />
-        </div>
-
-        <div className="pb-2 text-muted">
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <Label className="mb-2 block text-sm uppercase font-bold">Min Age</Label>
-              <Input
-                {...register("minAge")}
-                placeholder="18"
-                type="number"
-                min={18}
-              />
-            </div>
-            <div>
-              <Label className="mb-2 block text-sm uppercase font-bold">Max Age</Label>
-              <Input
-                {...register("maxAge")}
-                placeholder="50"
-                type="number"
-                min={18}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="pb-2 text-muted">
-          <Label className="mb-2 block text-sm uppercase font-bold">Religion</Label>
-          <Controller
-            name="religion"
-            control={control}
-            render={({ field }) => (
-              <Select
-                value={field.value}
-                onValueChange={(value) => {
-                  field.onChange(value);
-                  setValue("caste", "");
-                }}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select religion">
-                    {field.value}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(RELIGIONS_AND_CASTES).map((religion) => (
-                    <SelectItem key={religion} value={religion}>
-                      {religion}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-
-          {religionValue && (
-            <div className="mt-3">
-              <Label className="mb-2 block text-sm uppercase font-bold">Caste</Label>
-              <Controller
-                name="caste"
-                control={control}
-                render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select caste">
-                        {field.value}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {(RELIGIONS_AND_CASTES[religionValue] || []).map((caste) => (
-                          <SelectItem key={caste} value={caste}>
-                            {caste}
-                          </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </div>
-          )}
-        </div>
-
-        <div className="pb-2 text-muted">
-          <Label className="mb-2 block text-sm uppercase font-bold">
-            Mother Tongue
-          </Label>
-          <Controller
-            name="motherTongue"
-            control={control}
-            render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select language">
-                    {field.value}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {MOTHER_TONGUES.map((tongue) => (
-                    <SelectItem key={tongue} value={tongue}>
-                      {tongue}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-        </div>
-
-        <div className="pb-2 text-muted">
-          <Label className="mb-2 block text-sm uppercase font-bold">
-            Education Level
-          </Label>
-          <Controller
-            name="educationLevel"
-            control={control}
-            render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select education">
-                    {field.value}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {PERSONAL_DROPDOWNS.education_levels.map((option) => (
-                    <SelectItem key={option} value={option}>
-                      {option}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-        </div>
-
-        <div className="pb-2 text-muted">
-          <Label className="mb-2 block text-sm uppercase font-bold">Profession</Label>
-          <Controller
-            name="profession"
-            control={control}
-            render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select profession">
-                    {field.value}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {GROUPS_PROFESSIONS.map((group) => (
-                    <div key={group.category} className="p-1">
-                      <div className="px-2 py-1 text-xs font-medium text-muted">
-                        {group.category}
-                      </div>
-                      {group.roles.map((role) => (
-                        <SelectItem key={role} value={role}>
-                          {role}
-                        </SelectItem>
-                      ))}
+                        <Input
+                            {...register("search")}
+                            id={searchId}
+                            type="search"
+                            placeholder="Search occupation, education, city..."
+                            disabled={isPending}
+                            className="h-11 border-input bg-background/60 pl-10 pr-10 text-sm text-card-foreground shadow-none"
+                        />
                     </div>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-        </div>
 
-        <div className="pb-2 text-muted">
-          <Label className="mb-2 block text-sm uppercase font-bold">
-            Annual Income
-          </Label>
-          <Controller
-            name="annualIncomeRange"
-            control={control}
-            render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select income range">
-                    {field.value}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {PERSONAL_DROPDOWNS.annual_income_ranges.map((range) => (
-                    <SelectItem key={range} value={range}>
-                      {range}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-        </div>
+                    {/* Desktop filters */}
+                    <div className="hidden grid-cols-3 gap-4 lg:grid">
+                        {renderSelectFields()}
+                    </div>
 
-        <div className="pb-2 text-muted">
-          <div className="flex flex-col gap-3">
-            <div>
-              <Label className="mb-2 block text-sm uppercase font-bold">Country</Label>
-              <Controller
-                name="country"
-                control={control}
-                render={({ field }) => (
-                  <Combobox
-                    items={countries.map((item) => item.value)}
-                    value={field.value}
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      setValue("state", "");
-                    }}
-                  >
-                    <ComboboxInput
-                      placeholder={
-                        loadingCountries
-                          ? "Loading countries..."
-                          : "Select country"
-                      }
-                      disabled={loadingCountries}
-                    />
-                    <ComboboxContent>
-                      <ComboboxEmpty>No countries found.</ComboboxEmpty>
-                      <ComboboxList>
-                        {(item, idx) => (
-                          <ComboboxItem key={idx} value={item}>
-                            {item}
-                          </ComboboxItem>
-                        )}
-                      </ComboboxList>
-                    </ComboboxContent>
-                  </Combobox>
-                )}
-              />
-            </div>
-            <div>
-              <Label className="mb-2 block text-sm uppercase font-bold">
-                State / Region
-              </Label>
-              <Controller
-                name="state"
-                control={control}
-                render={({ field }) => (
-                  <Combobox
-                    items={states.map((item) => item.value)}
-                    value={field.value}
-                    onValueChange={field.onChange}
-                  >
-                    <ComboboxInput
-                      placeholder={
-                        countryValue
-                          ? loadingStates
-                            ? "Loading regions..."
-                            : "Select state"
-                          : "Select country first"
-                      }
-                      disabled={!countryValue || loadingStates}
-                    />
-                    <ComboboxContent>
-                      <ComboboxEmpty>No regions found.</ComboboxEmpty>
-                      <ComboboxList>
-                        {(item, idx) => (
-                          <ComboboxItem key={idx} value={item}>
-                            {item}
-                          </ComboboxItem>
-                        )}
-                      </ComboboxList>
-                    </ComboboxContent>
-                  </Combobox>
-                )}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="pb-2 text-muted">
-          <Label className="mb-2 block text-sm uppercase font-bold">Hobbies</Label>
-          <Controller
-            name="hobbies"
-            control={control}
-            render={({ field }) => (
-              <div className="flex flex-wrap gap-2">
-                {PERSONAL_DROPDOWNS.hobbies.map((hobby) => {
-                  const selected = field.value?.includes(hobby.label) || false;
-                  return (
-                    <label
-                      key={hobby.label}
-                      className="inline-flex items-center gap-2 rounded-md border border-input px-2 py-1 text-sm"
+                    {/* Mobile filters */}
+                    <Button
+                        type="button"
+                        variant="outline"
+                        disabled={isPending}
+                        onClick={() => setDrawerOpen(true)}
+                        className="h-11 w-full gap-2 border-input text-card-foreground lg:hidden"
                     >
-                      <Checkbox
-                        checked={selected}
-                        onCheckedChange={(checked) => {
-                          const current = field.value || [];
-                          const next = checked
-                            ? [...current, hobby.label]
-                            : current.filter((value) => value !== hobby.label);
-                          field.onChange(next);
-                        }}
-                      />
-                      <span>{hobby.label}</span>
-                    </label>
-                  );
-                })}
-              </div>
+                        <SlidersHorizontal className="h-4 w-4" />
+                        Filters
+                        {activeFilterCount > 0 && (
+                            <span className="rounded-full bg-primary/20 px-1.5 py-0.5 text-[10px]">
+                {activeFilterCount}
+            </span>
+                        )}
+                    </Button>
+                </div>
+
+                {/* Quick filters and submit */}
+                <div
+                    className="flex flex-col gap-4 border-t border-input/70 pt-4 xl:flex-row xl:items-center xl:justify-between">
+                    <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+                        <Controller
+                            control={control}
+                            name="verifiedOnly"
+                            render={({field}) => (
+                                <div className="flex items-center gap-2">
+                                    <Checkbox
+                                        id={verifiedId}
+                                        checked={field.value}
+                                        onCheckedChange={(checked) =>
+                                            field.onChange(
+                                                checked === true,
+                                            )
+                                        }
+                                        disabled={isPending}
+                                    />
+
+                                    <Label
+                                        htmlFor={verifiedId}
+                                        className="flex cursor-pointer items-center gap-1.5 text-xs font-normal text-card-foreground/80"
+                                    >
+                                        <ShieldCheck
+                                            aria-hidden="true"
+                                            className="h-3.5 w-3.5 text-primary"
+                                        />
+                                        NIC verified
+                                    </Label>
+                                </div>
+                            )}
+                        />
+
+                        <Controller
+                            control={control}
+                            name="photosOnly"
+                            render={({field}) => (
+                                <div className="flex items-center gap-2">
+                                    <Checkbox
+                                        id={photosId}
+                                        checked={field.value}
+                                        onCheckedChange={(checked) =>
+                                            field.onChange(
+                                                checked === true,
+                                            )
+                                        }
+                                        disabled={isPending}
+                                    />
+
+                                    <Label
+                                        htmlFor={photosId}
+                                        className="flex cursor-pointer items-center gap-1.5 text-xs font-normal text-card-foreground/80"
+                                    >
+                                        <ImageIcon
+                                            aria-hidden="true"
+                                            className="h-3.5 w-3.5 text-primary"
+                                        />
+                                        With visible photo
+                                    </Label>
+                                </div>
+                            )}
+                        />
+                    </div>
+
+                    <div className="flex items-center justify-between gap-3 xl:justify-end">
+                        {typeof totalResults === "number" && (
+                            <p
+                                role="status"
+                                className="text-xs tabular-nums text-card-foreground/60"
+                            >
+                                <span className="font-semibold text-card-foreground">
+                                    {totalResults.toLocaleString()}
+                                </span>{" "}
+                                matching{" "}
+                                {totalResults === 1
+                                    ? "profile"
+                                    : "profiles"}
+                            </p>
+                        )}
+
+                        <Button
+                            type="submit"
+                            disabled={isPending}
+                            className="h-10 gap-2 bg-primary px-5 text-accent-foreground hover:bg-primary/90"
+                        >
+                            {isPending ? (
+                                <Loader2 className="h-4 w-4 animate-spin"/>
+                            ) : (
+                                <Search className="h-4 w-4"/>
+                            )}
+                            {isPending
+                                ? "Applying..."
+                                : "Apply filters"}
+                        </Button>
+                    </div>
+                </div>
+            </form>
+
+            {/* Applied URL filters */}
+            {chips.length > 0 && (
+                <div
+                    className="flex flex-wrap items-center gap-2 border-t border-input/70 bg-background/60 px-4 py-3 sm:px-5">
+                    <span className="mr-1 text-[11px] font-medium text-card-foreground/55">
+                        Applied:
+                    </span>
+
+                    {chips.map((chip) => (
+                        <button
+                            key={chip.key}
+                            type="button"
+                            disabled={isPending}
+                            onClick={() => removeFilter(chip.key)}
+                            aria-label={`Remove ${chip.label} filter`}
+                            className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-input bg-card px-2.5 py-1 text-xs text-card-foreground/80 transition-colors hover:border-secondary/40 hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+                        >
+                            <span className="truncate">
+                                {chip.label}
+                            </span>
+                            <X
+                                aria-hidden="true"
+                                className="h-3 w-3 shrink-0"
+                            />
+                        </button>
+                    ))}
+
+                    <button
+                        type="button"
+                        onClick={clearAll}
+                        disabled={isPending}
+                        className="rounded px-1.5 py-1 text-xs font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+                    >
+                        Clear all
+                    </button>
+                </div>
             )}
-          />
-        </div>
 
-        <div className="flex items-center gap-2 pb-2  w-full">
-          <Button type="submit" className="w-1/2 rounded-full">
-            APPLY
-          </Button>
-          <Button
-            variant="outline"
-            type="button"
-            className="w-1/2 rounded-full"
-            onClick={resetFilters}
-          >
-            RESET
-          </Button>
-        </div>
-      </>
+            {/* Mobile filters */}
+            <Drawer
+                open={drawerOpen}
+                onOpenChange={setDrawerOpen}
+            >
+                <DrawerContent className="max-h-[90dvh] border-input bg-card text-card-foreground">
+                    <div className="mx-auto flex w-full max-w-lg flex-col overflow-y-auto">
+                        <DrawerHeader className="text-left">
+                            <DrawerTitle className="flex items-center gap-2 text-base">
+                                <ArrowDownWideNarrow className="h-4 w-4 text-primary"/>
+                                Refine your search
+                            </DrawerTitle>
+
+                            <DrawerDescription className="text-card-foreground/60">
+                                Choose your preferences, then apply
+                                them to update the results.
+                            </DrawerDescription>
+                        </DrawerHeader>
+
+                        <div className="space-y-5 px-4 pb-6">
+                            {renderSelectFields()}
+                        </div>
+
+                        <div
+                            className="flex gap-3 border-t border-input bg-card px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                disabled={isPending}
+                                onClick={clearAll}
+                                className="h-11 border-input text-card-foreground"
+                            >
+                                Reset all
+                            </Button>
+
+                            <Button
+                                type="button"
+                                disabled={isPending}
+                                onClick={handleSubmit(onSubmit)}
+                                className="h-11 flex-1 gap-2 bg-primary text-accent-foreground hover:bg-primary/90"
+                            >
+                                {isPending ? (
+                                    <Loader2 className="h-4 w-4 animate-spin"/>
+                                ) : (
+                                    <Check className="h-4 w-4"/>
+                                )}
+                                Apply filters
+                            </Button>
+                        </div>
+                    </div>
+                </DrawerContent>
+            </Drawer>
+        </section>
     );
-  }
-};
-
-export default FilterOptions;
+}

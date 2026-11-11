@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { users, profiles } from "@/drizzle/schema";
+import { users, profiles, partnerPreferences } from "@/drizzle/schema";
 import { createClient } from "@/utils/supabase";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
@@ -15,7 +15,17 @@ const STEP_STRING_TO_NUMBER: Record<string, number> = {
   PREFERENCES: 7,
 };
 
-const OnboardingPage = async () => {
+interface PageProps {
+  searchParams?: Promise<{ mode?: string; step?: string }>;
+}
+
+const OnboardingPage = async ({ searchParams }: PageProps) => {
+  const resolvedSearchParams = searchParams ? await searchParams : {};
+  const isReviewMode =
+    resolvedSearchParams.mode === "review" ||
+    resolvedSearchParams.mode === "edit" ||
+    !!resolvedSearchParams.step;
+
   const supabase = await createClient();
   const {
     data: { user: authedUser },
@@ -25,9 +35,12 @@ const OnboardingPage = async () => {
     redirect("/auth?mode=login");
   }
 
-  const [userRecord, profileRecord] = await Promise.all([
+  const [userRecord, profileRecord, partnerPrefsRecord] = await Promise.all([
     db.query.users.findFirst({ where: eq(users.id, authedUser.id) }),
     db.query.profiles.findFirst({ where: eq(profiles.userId, authedUser.id) }),
+    db.query.partnerPreferences.findFirst({
+      where: eq(partnerPreferences.userId, authedUser.id),
+    }),
   ]);
 
   if (!userRecord) {
@@ -36,16 +49,28 @@ const OnboardingPage = async () => {
 
   const savedStepString = userRecord?.onboardingStep || "START";
 
-  if (savedStepString === "COMPLETED") {
+  if (savedStepString === "COMPLETED" && !isReviewMode) {
     redirect(`/my-dashboard/my-profile`);
-    // redirect(`/pricing?profileId=${profileRecord?.id}`);
   }
 
-  const activeStepInt = STEP_STRING_TO_NUMBER[savedStepString] || 1;
+  const stepFromQuery = resolvedSearchParams.step
+    ? parseInt(resolvedSearchParams.step, 10)
+    : undefined;
+  const activeStepInt =
+    stepFromQuery && !isNaN(stepFromQuery)
+      ? stepFromQuery
+      : STEP_STRING_TO_NUMBER[savedStepString] || 1;
+
+  const mergedInitialData = profileRecord
+    ? {
+        ...profileRecord,
+        ...(partnerPrefsRecord || {}),
+      }
+    : null;
 
   return (
     <OnboardingPageClient
-      initialDbData={profileRecord || null}
+      initialDbData={mergedInitialData}
       savedStep={activeStepInt}
     />
   );

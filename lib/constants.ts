@@ -636,6 +636,339 @@ export const GROUPS_PROFESSIONS = [
     },
 ];
 
+// ─── Demo Profiles ────────────────────────────────────────────────────────────
+// MAIN_DEMO_PROFILE  –  the account used for quick walkthroughs / screenshots.
+// Raw credentials are intentionally stored here (dev/demo only, never production).
+export const MAIN_DEMO_PROFILE = {
+    // Auth credentials
+    email: "demo.kasun@jeevana.lk",
+    password: "Demo@123456",
+
+    // Profile
+    createdBy: "self",
+    fullName: "Kasun Rajapaksha",
+    contact: "+94771234567",
+    gender: "male",
+    dob: "1995-04-10",
+    religion: "Buddhism",
+    caste: "Govi",
+    motherTongue: "Sinhala",
+    maritalStatus: "single",
+
+    // Physical
+    height: "175",
+    weight: "72",
+    complexion: "medium",
+    bodyType: "athletic",
+    bloodGroup: "B+",
+    smoking: "never",
+    drinking: "never",
+    foodPreferences: "non-vegetarian",
+    isDifferentlyAbled: false,
+
+    // Education & Career
+    educationLevel: "Bachelor's Degree",
+    educationDescription: "BSc (Hons) Software Engineering – University of Moratuwa",
+    profession: "Software Engineer",
+    employedIn: "Private Corporate",
+    annualIncomeRange: "LKR 2,400,000 to LKR 4,799,999",
+
+    // Location
+    country: "Sri Lanka",
+    state: "Colombo",
+    city: "Nugegoda",
+    residencyStatus: "CITIZEN",
+
+    // About
+    narrative:
+        "A detail-oriented software engineer who enjoys clean code, trail running, and weekend drives to the hill country. Family-oriented with strong Buddhist values.",
+    hobbies: ["Fitness", "Traveling", "Reading", "Photography"],
+    profilePic: "/images/demo-profile-pic.png",
+    photoVisible: true,
+    status: "approved",
+
+    // Partner preferences
+    partnerPreferences: {
+        preferredMinAge: 23,
+        preferredMaxAge: 30,
+        preferredReligions: ["Buddhism", "Christianity"],
+        preferredCastes: [],
+        preferredMaritalStatuses: "single",
+        preferredEducationLevels: ["Bachelor's Degree", "Graduate / Professional Degree"],
+        preferredProfessions: [
+            "Software Engineer",
+            "Financial Analyst",
+            "Data Scientist",
+            "Doctor",
+            "UI/UX Designer",
+            "Accountant",
+        ],
+        preferredAnnualIncomeRanges: [
+            "LKR 1,200,000 to LKR 2,399,999",
+            "LKR 2,400,000 to LKR 4,799,999",
+        ],
+        preferredResidencyStatuses: ["CITIZEN", "PR_VISA"],
+    },
+};
+
+// SAMPLE_PROFILES  –  6 female profiles that satisfy MAIN_DEMO_PROFILE's
+// partner preferences (age 23-30, Buddhist/Christian, degree+, matching
+// profession & income bracket, single, Sri Lankan citizen / PR).
+export const sampleProfiles = [
+    {
+        // ── Match 1 ──────────────────────────────────────────────────────────
+        email: "dilini.perera@jeevana.lk",
+        createdBy: "self",
+        fullName: "Dilini Perera",
+        contact: "+94778901234",
+        gender: "female",
+        dob: "2000-08-14", // age 26 ✓
+        religion: "Buddhism", // ✓
+        caste: "Govi",
+        motherTongue: "Sinhala",
+        maritalStatus: "single", // ✓
+
+        height: "165",
+        weight: "55",
+        complexion: "fair",
+        bodyType: "slim",
+        bloodGroup: "A+",
+        smoking: "never",
+        drinking: "never",
+        foodPreferences: "vegetarian",
+        isDifferentlyAbled: false,
+
+        educationLevel: "Bachelor's Degree", // ✓
+        educationDescription: "BSc (Hons) Information Technology – UCSC",
+        profession: "UI/UX Designer", // ✓
+        employedIn: "Private Corporate",
+        annualIncomeRange: "LKR 1,200,000 to LKR 2,399,999", // ✓
+
+        country: "Sri Lanka",
+        state: "Colombo",
+        city: "Colombo",
+        residencyStatus: "CITIZEN", // ✓
+
+        narrative:
+            "Design enthusiast who believes great experiences start with empathy. Art galleries, coffee tasting, and beach getaways keep me inspired.",
+        hobbies: ["Painting", "Traveling", "Fitness"],
+        profilePic:
+            "https://njmjwpwawggmyqvjdbwu.supabase.co/storage/v1/object/public/profile_images/avatars/dilini.png",
+        photoVisible: true,
+        status: "approved",
+    },
+    {
+        // ── Match 2 ──────────────────────────────────────────────────────────
+        email: "kavindi.silva@jeevana.lk",
+        createdBy: "self",
+        fullName: "Kavindi Silva",
+        contact: "+94712345678",
+        gender: "female",
+        dob: "1999-11-03", // age 27 ✓
+        religion: "Christianity", // ✓
+        caste: "Catholic",
+        motherTongue: "English",
+        maritalStatus: "single", // ✓
+
+        height: "168",
+        weight: "58",
+        complexion: "fair",
+        bodyType: "slim",
+        bloodGroup: "O+",
+        smoking: "never",
+        drinking: "never",
+        foodPreferences: "non-vegetarian",
+        isDifferentlyAbled: false,
+
+        educationLevel: "Graduate / Professional Degree", // ✓
+        educationDescription: "Master's in Data Analytics – University of Colombo",
+        profession: "Data Scientist", // ✓
+        employedIn: "Private Corporate",
+        annualIncomeRange: "LKR 2,400,000 to LKR 4,799,999", // ✓
+
+        country: "Sri Lanka",
+        state: "Gampaha",
+        city: "Negombo",
+        residencyStatus: "CITIZEN", // ✓
+
+        narrative:
+            "Passionate about numbers and machine learning. Looking for an intelligent, grounded partner who values honest conversation and lifelong learning.",
+        hobbies: ["Reading", "Music", "Fitness"],
+        profilePic:
+            "https://njmjwpwawggmyqvjdbwu.supabase.co/storage/v1/object/public/profile_images/avatars/kavindi.png",
+        photoVisible: true,
+        status: "approved",
+    },
+    {
+        // ── Match 3 ──────────────────────────────────────────────────────────
+        email: "shenali.jayasinghe@jeevana.lk",
+        createdBy: "self",
+        fullName: "Shenali Jayasinghe",
+        contact: "+94709876543",
+        gender: "female",
+        dob: "2001-05-20", // age 25 ✓
+        religion: "Buddhism", // ✓
+        caste: "Govi",
+        motherTongue: "Sinhala",
+        maritalStatus: "single", // ✓
+
+        height: "162",
+        weight: "52",
+        complexion: "medium",
+        bodyType: "slim",
+        bloodGroup: "B+",
+        smoking: "never",
+        drinking: "never",
+        foodPreferences: "non-vegetarian",
+        isDifferentlyAbled: false,
+
+        educationLevel: "Bachelor's Degree", // ✓
+        educationDescription: "BSc (Hons) Software Engineering – University of Kelaniya",
+        profession: "Software Engineer", // ✓
+        employedIn: "Private Corporate",
+        annualIncomeRange: "LKR 1,200,000 to LKR 2,399,999", // ✓
+
+        country: "Sri Lanka",
+        state: "Colombo",
+        city: "Dehiwala",
+        residencyStatus: "CITIZEN", // ✓
+
+        narrative:
+            "Full-stack developer by day, casual gamer by night. Big fan of open-source software and exploring hidden cafés around Colombo.",
+        hobbies: ["Gaming", "Photography", "Traveling"],
+        profilePic:
+            "https://njmjwpwawggmyqvjdbwu.supabase.co/storage/v1/object/public/profile_images/avatars/shenali.png",
+        photoVisible: true,
+        status: "approved",
+    },
+    {
+        // ── Match 4 ──────────────────────────────────────────────────────────
+        email: "tharushi.wickramasinghe@jeevana.lk",
+        createdBy: "self",
+        fullName: "Tharushi Wickramasinghe",
+        contact: "+94765432109",
+        gender: "female",
+        dob: "1998-09-18", // age 28 ✓
+        religion: "Buddhism", // ✓
+        caste: "Karava",
+        motherTongue: "Sinhala",
+        maritalStatus: "single", // ✓
+
+        height: "160",
+        weight: "50",
+        complexion: "fair",
+        bodyType: "slim",
+        bloodGroup: "A-",
+        smoking: "never",
+        drinking: "never",
+        foodPreferences: "vegetarian",
+        isDifferentlyAbled: false,
+
+        educationLevel: "Bachelor's Degree", // ✓
+        educationDescription: "BBA – University of Sri Jayewardenepura",
+        profession: "Financial Analyst", // ✓
+        employedIn: "Private Corporate",
+        annualIncomeRange: "LKR 1,200,000 to LKR 2,399,999", // ✓
+
+        country: "Sri Lanka",
+        state: "Kandy",
+        city: "Kandy City",
+        residencyStatus: "CITIZEN", // ✓
+
+        narrative:
+            "Numbers enthusiast and outdoor photography lover. Believe in building a home where respect and laughter go hand in hand.",
+        hobbies: ["Photography", "Traveling", "Cooking"],
+        profilePic:
+            "https://njmjwpwawggmyqvjdbwu.supabase.co/storage/v1/object/public/profile_images/avatars/tharushi.png",
+        photoVisible: true,
+        status: "approved",
+    },
+    {
+        // ── Match 5 ──────────────────────────────────────────────────────────
+        email: "amaya.fernando@jeevana.lk",
+        createdBy: "self",
+        fullName: "Amaya Fernando",
+        contact: "+94756789012",
+        gender: "female",
+        dob: "1997-03-25", // age 29 ✓
+        religion: "Christianity", // ✓
+        caste: "Anglican",
+        motherTongue: "Sinhala",
+        maritalStatus: "single", // ✓
+
+        height: "167",
+        weight: "57",
+        complexion: "fair",
+        bodyType: "average",
+        bloodGroup: "O-",
+        smoking: "never",
+        drinking: "never",
+        foodPreferences: "non-vegetarian",
+        isDifferentlyAbled: false,
+
+        educationLevel: "Graduate / Professional Degree", // ✓
+        educationDescription: "MBBS – University of Colombo, Faculty of Medicine",
+        profession: "Doctor", // ✓
+        employedIn: "Government Sector",
+        annualIncomeRange: "LKR 2,400,000 to LKR 4,799,999", // ✓
+
+        country: "Sri Lanka",
+        state: "Colombo",
+        city: "Battaramulla",
+        residencyStatus: "CITIZEN", // ✓
+
+        narrative:
+            "Medical officer passionate about community health. Finds balance through hiking, classical music, and volunteering at rural health clinics.",
+        hobbies: ["Fitness", "Music", "Reading"],
+        profilePic:
+            "https://njmjwpwawggmyqvjdbwu.supabase.co/storage/v1/object/public/profile_images/avatars/amaya.png",
+        photoVisible: true,
+        status: "approved",
+    },
+    {
+        // ── Match 6 ──────────────────────────────────────────────────────────
+        email: "nethmi.dissanayake@jeevana.lk",
+        createdBy: "self",
+        fullName: "Nethmi Dissanayake",
+        contact: "+94741122334",
+        gender: "female",
+        dob: "2002-07-08", // age 24 ✓ (minimum edge)
+        religion: "Buddhism", // ✓
+        caste: "Govi",
+        motherTongue: "Sinhala",
+        maritalStatus: "single", // ✓
+
+        height: "163",
+        weight: "53",
+        complexion: "medium",
+        bodyType: "slim",
+        bloodGroup: "AB+",
+        smoking: "never",
+        drinking: "never",
+        foodPreferences: "vegetarian",
+        isDifferentlyAbled: false,
+
+        educationLevel: "Bachelor's Degree", // ✓
+        educationDescription: "BSc (Hons) Accounting & Finance – University of Sri Jayewardenepura",
+        profession: "Accountant", // ✓
+        employedIn: "Private Corporate",
+        annualIncomeRange: "LKR 1,200,000 to LKR 2,399,999", // ✓
+
+        country: "Sri Lanka",
+        state: "Colombo",
+        city: "Maharagama",
+        residencyStatus: "CITIZEN", // ✓
+
+        narrative:
+            "Detail-oriented accountant who loves precision at work and spontaneity on weekends. Enjoys cooking, reading financial thrillers, and long drives.",
+        hobbies: ["Cooking", "Reading", "Traveling"],
+        profilePic:
+            "https://njmjwpwawggmyqvjdbwu.supabase.co/storage/v1/object/public/profile_images/avatars/nethmi.png",
+        photoVisible: true,
+        status: "approved",
+    },
+];
+
 export const sampleProposals = [
     {
         id: 'JV-71042',

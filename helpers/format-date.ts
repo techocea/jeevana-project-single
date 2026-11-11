@@ -11,7 +11,7 @@ export const formatDate = (dateVal: any) => {
 
 export function getAccurateAge(dobString: string | null) {
     // 1. Split the "YYYY-MM-DD" string into numbers
-    const [birthYear, birthMonth, birthDay] = dobString.split('-').map(Number);
+    const [birthYear, birthMonth, birthDay] = dobString ?dobString.split('-').map(Number) : [];
 
     // 2. Get the current local date
     const today = new Date();

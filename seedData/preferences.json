@@ -1,132 +1,164 @@
 [
   {
-    "preferred_min_age": 22,
+    "preferred_min_age": 23,
     "preferred_max_age": 30,
-    "preferred_marital_status": "single",
-    "preferred_education_levels": ["Bachelor's", "Master's"],
+    "preferred_min_height": "155",
+    "preferred_max_height": "175",
+    "preferred_religions": ["Buddhism", "Christianity"],
+    "preferred_castes": [],
+    "preferred_marital_statuses": "single",
+    "preferred_education_levels": [
+      "Bachelor's Degree",
+      "Graduate / Professional Degree"
+    ],
+    "preferred_professions": [
+      "Software Engineer",
+      "Financial Analyst",
+      "Data Scientist",
+      "Doctor",
+      "UI/UX Designer",
+      "Accountant"
+    ],
+    "preferred_annual_income_ranges": [
+      "LKR 1,200,000 to LKR 2,399,999",
+      "LKR 2,400,000 to LKR 4,799,999"
+    ],
+    "preferred_residency_statuses": ["CITIZEN", "PR_VISA"]
+  },
+  {
+    "preferred_min_age": 27,
+    "preferred_max_age": 34,
+    "preferred_min_height": "165",
+    "preferred_max_height": "185",
+    "preferred_religions": ["Buddhism"],
+    "preferred_castes": ["Govi"],
+    "preferred_marital_statuses": "single",
+    "preferred_education_levels": [
+      "Bachelor's Degree",
+      "Graduate / Professional Degree"
+    ],
     "preferred_professions": [
       "Software Engineer",
       "Data Scientist",
       "Product Manager"
     ],
-    "preferred_annual_income_ranges": ["10-15 LPA", "15-20 LPA", "20-30 LPA"]
+    "preferred_annual_income_ranges": [
+      "LKR 2,400,000 to LKR 4,799,999",
+      "LKR 4,800,000 and over"
+    ],
+    "preferred_residency_statuses": ["CITIZEN"]
   },
   {
-    "min_age": 25,
-    "max_age": 33,
-
-    "marital_status": "single",
-
-    "preferred_education_levels": ["Master's", "Doctorate (PhD)"],
+    "preferred_min_age": 28,
+    "preferred_max_age": 35,
+    "preferred_min_height": "170",
+    "preferred_max_height": "185",
+    "preferred_religions": ["Christianity", "Buddhism"],
+    "preferred_castes": [],
+    "preferred_marital_statuses": "single",
+    "preferred_education_levels": [
+      "Bachelor's Degree",
+      "Graduate / Professional Degree"
+    ],
     "preferred_professions": [
+      "Software Engineer",
       "Doctor",
-      "Research Scientist",
-      "Software Engineer"
+      "Financial Analyst"
     ],
-    "preferred_annual_income_ranges": ["$100k-$150k", "$150k-$200k", "30+ LPA"]
+    "preferred_annual_income_ranges": [
+      "LKR 2,400,000 to LKR 4,799,999",
+      "LKR 4,800,000 and over"
+    ],
+    "preferred_residency_statuses": ["CITIZEN", "PR_VISA"]
   },
   {
-    "min_age": 24,
-    "max_age": 32,
-
-    "marital_status": "single",
-
-    "preferred_education_levels": ["Bachelor's", "Master's", "MBA"],
+    "preferred_min_age": 26,
+    "preferred_max_age": 33,
+    "preferred_min_height": "168",
+    "preferred_max_height": "185",
+    "preferred_religions": ["Buddhism"],
+    "preferred_castes": ["Govi"],
+    "preferred_marital_statuses": "single",
+    "preferred_education_levels": [
+      "Bachelor's Degree",
+      "Graduate / Professional Degree"
+    ],
     "preferred_professions": [
-      "Investment Banker",
+      "Software Engineer",
+      "Product Manager",
+      "Financial Analyst"
+    ],
+    "preferred_annual_income_ranges": [
+      "LKR 2,400,000 to LKR 4,799,999"
+    ],
+    "preferred_residency_statuses": ["CITIZEN"]
+  },
+  {
+    "preferred_min_age": 29,
+    "preferred_max_age": 36,
+    "preferred_min_height": "165",
+    "preferred_max_height": "185",
+    "preferred_religions": ["Buddhism"],
+    "preferred_castes": [],
+    "preferred_marital_statuses": "single",
+    "preferred_education_levels": [
+      "Bachelor's Degree",
+      "Graduate / Professional Degree"
+    ],
+    "preferred_professions": [
+      "Software Engineer",
       "Financial Analyst",
-      "Consultant"
+      "Accountant"
     ],
-    "preferred_annual_income_ranges": ["$80k-$120k", "$120k-$180k"]
+    "preferred_annual_income_ranges": [
+      "LKR 2,400,000 to LKR 4,799,999",
+      "LKR 4,800,000 and over"
+    ],
+    "preferred_residency_statuses": ["CITIZEN"]
   },
   {
-    "min_age": 38,
-    "max_age": 52,
-
-    "marital_status": "divorced",
-
-    "preferred_education_levels": ["Master's", "Professional Degree"],
+    "preferred_min_age": 29,
+    "preferred_max_age": 36,
+    "preferred_min_height": "170",
+    "preferred_max_height": "185",
+    "preferred_religions": ["Christianity", "Buddhism"],
+    "preferred_castes": [],
+    "preferred_marital_statuses": "single",
+    "preferred_education_levels": [
+      "Bachelor's Degree",
+      "Graduate / Professional Degree"
+    ],
     "preferred_professions": [
-      "Business Owner",
-      "Executive",
-      "Chartered Accountant"
+      "Software Engineer",
+      "Doctor",
+      "Financial Analyst"
     ],
-    "preferred_annual_income_ranges": ["£60k-£90k", "£90k+", "20-30 LPA"]
+    "preferred_annual_income_ranges": [
+      "LKR 2,400,000 to LKR 4,799,999",
+      "LKR 4,800,000 and over"
+    ],
+    "preferred_residency_statuses": ["CITIZEN"]
   },
   {
-    "min_age": 25,
-    "max_age": 32,
-
-    "marital_status": "single",
-
-    "preferred_education_levels": ["Master's", "Bachelor's Tech"],
-    "preferred_professions": ["Civil Engineer", "Architect", "UX Designer"],
-    "preferred_annual_income_ranges": ["7-10 LPA", "10-15 LPA"]
-  },
-  {
-    "min_age": 24,
-    "max_age": 32,
-
-    "marital_status": "single",
-
-    "preferred_education_levels": ["Doctorate (PhD)", "Master's"],
+    "preferred_min_age": 25,
+    "preferred_max_age": 33,
+    "preferred_min_height": "168",
+    "preferred_max_height": "185",
+    "preferred_religions": ["Buddhism"],
+    "preferred_castes": ["Govi"],
+    "preferred_marital_statuses": "single",
+    "preferred_education_levels": [
+      "Bachelor's Degree",
+      "Graduate / Professional Degree"
+    ],
     "preferred_professions": [
-      "Professor",
-      "BioTech Researcher",
-      "Data Analyst"
+      "Software Engineer",
+      "Accountant",
+      "Financial Analyst"
     ],
-    "preferred_annual_income_ranges": ["$90k-$130k", "$130k-$160k"]
-  },
-  {
-    "min_age": 25,
-    "max_age": 30,
-
-    "marital_status": "single",
-
-    "preferred_education_levels": ["MBA", "Master's Design"],
-    "preferred_professions": [
-      "Marketing Director",
-      "Fashion Designer",
-      "HR Manager"
+    "preferred_annual_income_ranges": [
+      "LKR 2,400,000 to LKR 4,799,999"
     ],
-    "preferred_annual_income_ranges": ["12-18 LPA", "18-25 LPA"]
-  },
-  {
-    "min_age": 24,
-    "max_age": 30,
-
-    "marital_status": "single",
-
-    "preferred_education_levels": ["Bachelor's", "Master's"],
-    "preferred_professions": ["Pharmacist", "Dentist", "Software Engineer"],
-    "preferred_annual_income_ranges": ["£45k-£65k", "£65k-£85k"]
-  },
-  {
-    "min_age": 28,
-    "max_age": 35,
-
-    "marital_status": "single",
-
-    "preferred_education_levels": ["Master's", "Doctorate"],
-    "preferred_professions": [
-      "Attorney",
-      "Legal Consultant",
-      "Senior Software Engineer"
-    ],
-    "preferred_annual_income_ranges": ["25-40 LPA", "$110k-$150k"]
-  },
-  {
-    "min_age": 27,
-    "max_age": 32,
-
-    "marital_status": "single",
-
-    "preferred_education_levels": ["Bachelor's", "Master's"],
-    "preferred_professions": [
-      "Government Officer",
-      "Bank Manager",
-      "Mechanical Engineer"
-    ],
-    "preferred_annual_income_ranges": ["8-12 LPA", "12-15 LPA"]
+    "preferred_residency_statuses": ["CITIZEN"]
   }
 ]

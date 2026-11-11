@@ -5,6 +5,7 @@ import * as path from "path";
 import * as schema from "@/drizzle/schema";
 import {eq} from "drizzle-orm";
 import {fileURLToPath} from "url";
+import {getSupabaseAdmin} from "@/utils/supabase-admin";
 import "dotenv/config";
 
 const connectionString = process.env.DATABASE_URL!;
@@ -38,18 +39,61 @@ async function main() {
             `📦 Found ${jsonProfiles.length} template profiles. Remapping and seeding...`,
         );
 
+        const supabaseAdmin = getSupabaseAdmin();
+        const { data: authUsersData } = await supabaseAdmin.auth.admin.listUsers();
+        const existingAuthUsers = authUsersData?.users || [];
+
         for (let i = 0; i < jsonProfiles.length; i++) {
             const p = jsonProfiles[i];
             const mockUserEmail = p.email?.trim().toLowerCase();
 
+            // 1. Resolve or provision the user in Supabase Auth (auth.users)
+            let authUserId: string;
+            const existingAuthUser = existingAuthUsers.find(
+                (u) => u.email?.toLowerCase() === mockUserEmail,
+            );
+
+            if (existingAuthUser) {
+                authUserId = existingAuthUser.id;
+                await supabaseAdmin.auth.admin.updateUserById(authUserId, {
+                    password: p.password || "Demo@123456",
+                    email_confirm: true,
+                    user_metadata: {
+                        full_name: p.full_name,
+                        role: "user",
+                    },
+                });
+            } else {
+                const { data: newAuthData, error: createAuthError } =
+                    await supabaseAdmin.auth.admin.createUser({
+                        email: mockUserEmail,
+                        password: p.password || "Demo@123456",
+                        email_confirm: true,
+                        user_metadata: {
+                            full_name: p.full_name,
+                            role: "user",
+                        },
+                    });
+
+                if (createAuthError || !newAuthData.user) {
+                    throw new Error(
+                        `Failed to create Supabase Auth user for ${mockUserEmail}: ${createAuthError?.message}`,
+                    );
+                }
+                authUserId = newAuthData.user.id;
+            }
+
+            // 2. Ensure public.users record uses the exact same authUserId
             let userRecord = await db.query.users.findFirst({
-                where: eq(users.email, mockUserEmail),
+                where: eq(users.id, authUserId),
             });
 
             if (!userRecord) {
-                const newUserId = crypto.randomUUID();
+                // Delete any orphaned record with this email but different id
+                await db.delete(users).where(eq(users.email, mockUserEmail));
+
                 await db.insert(users).values({
-                    id: newUserId,
+                    id: authUserId,
                     fullName: p.full_name,
                     email: mockUserEmail,
                     onboardingStatus: "COMPLETED",
@@ -57,7 +101,7 @@ async function main() {
                 });
 
                 userRecord = await db.query.users.findFirst({
-                    where: eq(users.email, mockUserEmail),
+                    where: eq(users.id, authUserId),
                 });
             }
 
@@ -76,13 +120,18 @@ async function main() {
                     fullName: p.full_name,
                     contact: p.contact,
                     gender: p.gender,
+                    maritalStatus: p.marital_status || "single",
                     profilePic: p.profile_pic,
+                    photoVisible: p.photo_visible !== undefined ? p.photo_visible : true,
                     dob: new Date(p.dob),
                     religion: p.religion,
                     caste: p.caste,
+                    subCaste: p.sub_caste || null,
                     motherTongue: p.mother_tongue,
                     educationLevel: p.education_level,
+                    educationDescription: p.education_description || null,
                     profession: p.profession,
+                    employedIn: p.employed_in || "Private Corporate",
                     annualIncomeRange: p.annual_income_range,
                     country: p.country,
                     state: p.state,
@@ -90,7 +139,9 @@ async function main() {
                     residencyStatus: p.residency_status,
                     height: p.height_cm,
                     weight: p.weight_kg,
-                    age: p.age,
+                    complexion: p.complexion || "fair",
+                    bodyType: p.body_type || "slim",
+                    bloodGroup: p.blood_group || "O+",
                     narrative: p.narrative,
                     smoking: p.smoking_habits,
                     drinking: p.drinking_habits,
@@ -100,7 +151,7 @@ async function main() {
                     hobbies: p.hobbies || [],
                     mailRoutingTarget: p.mail_routing_target || "owner",
                     secondaryEmail: p.secondary_email || null,
-                    status: p.status || "pending",
+                    status: p.status || "approved",
                 })
                 .returning({generatedProfileId: profiles.profileID});
 
@@ -110,12 +161,17 @@ async function main() {
                 await db.insert(partnerPreferences).values({
                     id: crypto.randomUUID(),
                     userId: userRecord.id,
-                    preferredMinAge: matchedPref.min_age,
-                    preferredMaxAge: matchedPref.max_age,
-                    preferredMaritalStatus: matchedPref.marital_status,
-                    preferredEducationLevels: matchedPref.preferred_education_levels,
-                    preferredProfessions: matchedPref.preferred_professions,
-                    preferredAnnualIncomeRanges: matchedPref.preferred_annual_income_ranges,
+                    preferredMinAge: matchedPref.preferred_min_age ?? matchedPref.min_age,
+                    preferredMaxAge: matchedPref.preferred_max_age ?? matchedPref.max_age,
+                    preferredMinHeight: matchedPref.preferred_min_height || null,
+                    preferredMaxHeight: matchedPref.preferred_max_height || null,
+                    preferredReligions: matchedPref.preferred_religions || [],
+                    preferredCastes: matchedPref.preferred_castes || [],
+                    preferredMaritalStatuses: matchedPref.preferred_marital_statuses ?? matchedPref.marital_status ?? matchedPref.preferred_marital_status ?? "single",
+                    preferredEducationLevels: matchedPref.preferred_education_levels || [],
+                    preferredProfessions: matchedPref.preferred_professions || [],
+                    preferredAnnualIncomeRanges: matchedPref.preferred_annual_income_ranges || [],
+                    preferredResidencyStatuses: matchedPref.preferred_residency_statuses || ["CITIZEN"],
                 });
             }
 

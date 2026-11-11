@@ -43,7 +43,7 @@ const LoginForm = () => {
             }
 
             if (result?.success) {
-                router.push("/control-panel");
+                router.push(result.targetRoute || "/my-dashboard");
                 router.refresh();
             }
         } catch (error) {

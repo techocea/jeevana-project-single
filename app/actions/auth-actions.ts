@@ -203,12 +203,14 @@ export async function loginUser(data: AuthLoginValues) {
 
     let targetRoute = "/my-dashboard";
 
-    if (
-        !dbUser ||
-        dbUser.role === "user" ||
-        dbUser.onboardingStatus === "INCOMPLETED"
-    ) {
+    if (!dbUser) {
         targetRoute = "/onboarding";
+    } else if (dbUser.role === "admin" || dbUser.role === "staff") {
+        targetRoute = "/control-panel";
+    } else if (dbUser.onboardingStatus === "INCOMPLETED") {
+        targetRoute = "/onboarding";
+    } else {
+        targetRoute = "/my-dashboard";
     }
 
     return {
@@ -326,3 +328,13 @@ export async function createUserByAdmin(data: CreateUserByAdminValues) {
         };
     }
 }
+
+export async function logout() {
+    const supabase = await createClient();
+    const {error} = await supabase.auth.signOut();
+    if (error) {
+        console.error("Logout failed:", error.message);
+    }
+    redirect("/");
+}
+
