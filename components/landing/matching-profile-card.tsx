@@ -302,7 +302,7 @@ const MatchingProfileCard = ({
             {/* Actions */}
             <div className="grid grid-cols-1 gap-2 border-t border-[#F2ECE3] pt-3 sm:grid-cols-2">
                 <Link
-                    href={`/my-dashboard/proposals/${match.id}`}
+                    href={`/my-dashboard/best-proposals/${match.id}`}
                     aria-label={`View ${displayName}'s full profile`}
                     className="inline-flex min-h-10 items-center justify-center rounded-lg border border-[#D6CDBC] px-3 py-2 text-xs font-medium text-[#4A423A] transition-colors hover:bg-[#F2ECE3] hover:text-[#1F1B18] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8E6516] focus-visible:ring-offset-2"
                 >

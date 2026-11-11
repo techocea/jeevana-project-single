@@ -989,17 +989,26 @@ export async function getUserProfile(profileId: string) {
     }
 
     if (!joinedResult || joinedResult.length === 0) {
-        redirect("/control-panel/approval-queues");
+        return {
+            success: false,
+            data: null,
+            error: "Profile not found.",
+        };
     }
 
     const row = joinedResult[0];
-    const currentRole = authedUser.user_metadata?.role;
+    const currentRole = authedUser.user_metadata?.role || authedUser.app_metadata?.role;
 
     const isOwner = row.profiles.userId === authedUser.id;
-    const isAdmin = currentRole === "admin";
+    const isAdmin = currentRole === "admin" || currentRole === "staff";
+    const isApprovedProfile = row.profiles.status === "approved";
 
-    if (!isOwner && !isAdmin) {
-        redirect("/control-panel/approval-queues");
+    if (!isOwner && !isAdmin && !isApprovedProfile) {
+        return {
+            success: false,
+            data: null,
+            error: "You are not authorized to view this profile.",
+        };
     }
 
     const flatProfileData = {
