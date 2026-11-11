@@ -5,14 +5,14 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 import { updateProfile } from "@/app/actions/profile-actions";
-import { ArrowLeft } from "lucide-react";
 import { InitialProfileData } from "@/types";
-import BasicInformationForm from "@/components/forms/onboarding-one-form";
-import ReligionForm from "@/components/forms/onboarding-two-form";
-import AchievementsForm from "@/components/forms/onboarding-three-form"; // or career step
-import LocationForm from "@/components/forms/onboarding-four-form";
-import HobbiesForm from "@/components/forms/onboarding-five-form";
 import toast from "react-hot-toast";
+import OnboardingFormOne from "@/components/forms/onboarding-one-form";
+import OnboardingFormTwo from "@/components/forms/onboarding-two-form";
+import OnboardingFormThree from "@/components/forms/onboarding-three-form";
+import OnboardingFormFour from "@/components/forms/onboarding-four-form";
+import OnboardingFormFive from "@/components/forms/onboarding-five-form";
+
 
 interface EditProfileProps {
   initialData: InitialProfileData;
@@ -23,11 +23,9 @@ const EditProfile = ({ initialData, profileId }: EditProfileProps) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<
     | "basic"
-    | "religion"
-    | "career"
-    | "location"
-    | "personal"
-    | "hobbies"
+    | "attributes_habits"
+    | "education_career"
+    | "about_me_photos"
     | "partner_preferences"
   >("basic");
 
@@ -53,29 +51,14 @@ const EditProfile = ({ initialData, profileId }: EditProfileProps) => {
   };
 
   return (
-    <main>
-      <div className="mx-auto max-w-4xl">
-        {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="outline" onClick={() => router.back()}>
-              <ArrowLeft size={20} />
-            </Button>
-            <h1 className="text-2xl font-semibold text-slate-950">
-              Edit Profile
-            </h1>
-          </div>
-        </div>
-
+     <div className="bg-white rounded-lg border border-[#E8E2D7] shadow-sm overflow-hidden">
         {/* Tabs for different sections */}
-        <div className="mb-2 bg-white rounded-lg flex gap-2 overflow-x-auto border-b border-slate-200 p-2">
+        <div className="mb-2 bg-[#FAF8F5] px-6 border-b border-strong flex items-center gap-3 flex-wrap">
           {[
-            { id: "basic", label: "Basic Info" },
-            { id: "religion", label: "Religion" },
-            { id: "career", label: "Career" },
-            { id: "location", label: "Location" },
-            { id: "personal", label: "Personal" },
-            { id: "hobbies", label: "Hobbies" },
+            { id: "basic", label: "Basic Details" },
+            { id: "attributes_habits", label: "Attributes & Habits" },
+            { id: "education_career", label: "Education & Career" },
+            { id: "about_me_photos", label: "About Me & Photos" },
             { id: "partner_preferences", label: "Partner Preferences" },
           ].map((tab) => (
             <button
@@ -83,8 +66,8 @@ const EditProfile = ({ initialData, profileId }: EditProfileProps) => {
               onClick={() => setActiveTab(tab.id as any)}
               className={`px-4 py-2 text-sm font-medium whitespace-nowrap cursor-pointer ${activeTab === tab.id
                   ? "border-b-2 border-primary text-primary"
-                  : "text-muted hover:text-primary hover:border-b-2 delay-100 transition-colors"
-                }`}
+                  : "text-muted-foreground hover:text-primary hover:border-b-2 delay-100 transition-colors"
+              }`}
             >
               {tab.label}
             </button>
@@ -92,51 +75,37 @@ const EditProfile = ({ initialData, profileId }: EditProfileProps) => {
         </div>
 
         {/* Form content based on active tab */}
-        <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="p-6">
           {activeTab === "basic" && (
-            <BasicInformationForm
+            <OnboardingFormOne
               variant="editing"
               initialData={initialData}
               onNext={handleSaveStep}
             />
           )}
-          {activeTab === "religion" && (
-            <ReligionForm
+          {activeTab === "attributes_habits" && (
+            <OnboardingFormTwo
               variant="editing"
               initialData={initialData}
               onNext={handleSaveStep}
             />
           )}
-          {activeTab === "career" && (
-            <AchievementsForm
+          {activeTab === "education_career" && (
+            <OnboardingFormThree
               variant="editing"
               initialData={initialData}
               onNext={handleSaveStep}
             />
           )}
-          {activeTab === "location" && (
-            <LocationForm
-              variant="editing"
-              initialData={initialData}
-              onNext={handleSaveStep}
-            />
-          )}
-          {activeTab === "personal" && (
-            <PersonalForm
-              variant="editing"
-              initialData={initialData}
-              onNext={handleSaveStep}
-            />
-          )}
-          {activeTab === "hobbies" && (
-            <HobbiesForm
+          {activeTab === "about_me_photos" && (
+            <OnboardingFormFour
               variant="editing"
               initialData={initialData}
               onNext={handleSaveStep}
             />
           )}
           {activeTab === "partner_preferences" && (
-            <PartnerPreferences
+            <OnboardingFormFive
               variant="editing"
               initialData={initialData}
               onNext={handleSaveStep}
@@ -144,7 +113,6 @@ const EditProfile = ({ initialData, profileId }: EditProfileProps) => {
           )}
         </div>
       </div>
-    </main>
   );
 };
 

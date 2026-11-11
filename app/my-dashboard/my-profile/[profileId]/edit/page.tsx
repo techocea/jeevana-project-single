@@ -1,19 +1,22 @@
-import { db } from "@/lib/db";
-import { partnerPreferences, profiles } from "@/drizzle/schema";
-import { eq } from "drizzle-orm";
-import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase";
+import {db} from "@/lib/db";
+import {partnerPreferences, profiles} from "@/drizzle/schema";
+import {eq} from "drizzle-orm";
+import {redirect} from "next/navigation";
+import {createClient} from "@/utils/supabase";
 import EditProfile from "./page.client";
+import TitleHeader from "@/components/dashboard/title-header";
+import {CancelButton} from "@/components/dashboard/cancel-button";
+import { Separator } from "@/components/ui/separator";
 
 interface PageProps {
     params: Promise<{ profileId: string }>;
 }
 
-const EditProfilePage = async ({ params }: PageProps) => {
-    const { profileId } = await params;
+const EditProfilePage = async ({params}: PageProps) => {
+    const {profileId} = await params;
     const supabase = await createClient();
     const {
-        data: { user: authedUser },
+        data: {user: authedUser},
     } = await supabase.auth.getUser();
 
     if (!authedUser) {
@@ -49,7 +52,18 @@ const EditProfilePage = async ({ params }: PageProps) => {
     // console.log("Flattened user profile & preferences:", flatProfileData);
 
     return (
-        <EditProfile initialData={flatProfileData as any} profileId={profileId} />
+        <div className="space-y-8">
+            <div className="flex items-center justify-between gap-x-52 w-full">
+                <TitleHeader title={"Edit Matrimonial Profile"}
+                             description={"Update your profile information inside the dashboard. Approved profiles will generate a review request while the live advertisement remains active."}/>
+                <CancelButton/>
+            </div>
+
+            <Separator/>
+
+            <EditProfile initialData={flatProfileData as any} profileId={profileId}/>
+        </div>
+
     );
 };
 

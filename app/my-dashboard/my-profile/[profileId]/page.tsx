@@ -156,7 +156,7 @@ const ProfilePage = async ({params}: PageProps) => {
                                     <span className="text-[#8C8375] block font-medium">Occupation:</span>
                                     <span className="font-semibold text-[#1F1B18]">{profile.profession}</span>
                                     <span
-                                        className="text-[#665D52] block text-[11px]">{profile.employedIn} Sector · {profile.annualIncomeRange}</span>
+                                        className="text-[#665D52] block text-[11px]">{profile.employedIn} Sector <br/> {profile.annualIncomeRange}</span>
                                 </div>
                                 {/*<div className="space-y-2">*/}
                                 {/*    <span className="text-[#8C8375] block font-medium">Family Heritage:</span>*/}
@@ -176,15 +176,17 @@ const ProfilePage = async ({params}: PageProps) => {
                                 <div
                                     className="bg-[#FAF8F5] p-3.5 rounded border border-[#F2ECE3]">
                                     <p className="text-xs text-[#4A423A] leading-relaxed">{profile.narrative}</p>
-                                    <Separator className="my-3q"/>
+                                    <Separator className="my-3"/>
                                     {/* Lifestyle metadata */}
                                     <div
-                                        className="flex flex-wrap items-center gap-2 text-[11px] text-[#665D52]">
+                                        className="flex flex-wrap items-center gap-1 text-[11px] text-[#665D52]">
                                         <span className="font-semibold text-[#1F1B18]">Lifestyle:</span>
                                         <span>Diet: <strong>{profile.foodPreferences}</strong></span>
-                                        <span aria-hidden="true" className="text-[#8C8375]">·</span>
-                                        <span>Habits: <strong>{profile.smoking}</strong></span>
-                                        <span aria-hidden="true" className="text-[#8C8375]">·</span>
+                                        <span aria-hidden="true" className="text-[#8C8375]"><Dot /></span>
+                                        <span>Smoking: <strong>{profile.smoking}</strong></span>
+                                        <span aria-hidden="true" className="text-[#8C8375]"><Dot /></span>
+                                        <span>Drinking: <strong>{profile.drinking}</strong></span>
+                                        <span aria-hidden="true" className="text-[#8C8375]"><span className={"w-3 h-3"}><Dot className={"w-6 h-6"}/></span></span>
                                         <span>Mother Tongue: <strong>{profile.motherTongue}</strong></span>
                                     </div>
                                 </div>
@@ -258,26 +260,3 @@ const ProfilePage = async ({params}: PageProps) => {
 };
 
 export default ProfilePage;
-
-const renderField = (
-    label: string,
-    value: string | string[] | number | boolean | null | undefined,
-) => {
-    let displayValue = "Not specified";
-    if (value === null || value === undefined) {
-        displayValue = "Not specified";
-    } else if (typeof value === "boolean") {
-        displayValue = value ? "Yes" : "No";
-    } else {
-        displayValue = String(value);
-    }
-
-    return (
-        <div>
-            <Label className="text-muted font-normal">{label}</Label>
-            <p className="mt-2 text-sm font-regular text-black capitalize">
-                {displayValue}
-            </p>
-        </div>
-    );
-};

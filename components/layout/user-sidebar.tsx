@@ -22,7 +22,7 @@ import { Button } from "../ui/button";
 // ).length;
 
 export const NAV_ITEMS = [
-    {href: '/my-dashboard', label: 'Overview', icon: Home},
+    {href: '/', label: 'Overview', icon: Home},
     {href: '/my-profile', label: 'My Profile', icon: User},
     {href: '/best-proposals', label: 'Best Proposals', icon: Search},
     {
