@@ -17,7 +17,7 @@ import {users} from "@/drizzle/schema";
 import {createClient} from "@/utils/supabase";
 import {getSupabaseAdmin} from "@/utils/supabase-admin";
 import {redirect} from "next/navigation";
-import {AppRole} from "@/lib/constants";
+import {AppRole} from "@/types";
 
 export async function sendPhoneOtp(formData: FormData) {
     const supabase = await createClient();

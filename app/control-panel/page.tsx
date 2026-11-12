@@ -1,7 +1,7 @@
 import {RevenueAdChart} from "@/components/dashboard/revenue-ad-chart";
 import {SectionCards} from "@/components/dashboard/section-cards";
 import TitleHeader from "@/components/dashboard/title-header";
-import {getDemographicsData, getRevenueAdData} from "@/app/actions/dashboard-actions";
+import {getAgeDemographics,getProvinceDemographics, getSettledRevenueMonthly, getSalesAdsMonthly} from "@/app/actions/dashboard-actions";
 import {DemographicsChart} from "@/components/dashboard/demographics-chart";
 import {getCurrentUser} from "@/app/actions/profile-actions";
 
@@ -15,11 +15,13 @@ export default async function ControlPanelDashboard() {
 
     const userName = currentUser?.fullName;
 
-    const [demographics] = await Promise.all([
-        getDemographicsData(),
-        // getRevenueAdData(30),
+    const [ageDemographics, provinceDemographics] = await Promise.all([
+        getAgeDemographics(),
+        getProvinceDemographics(),
     ])
 
+    console.log("OVERALL DEMOGRAPHICS:", ageDemographics,provinceDemographics);
+    
     return (
         <div className="flex flex-1 flex-col">
             <div className="@container/main flex flex-1 flex-col gap-2">
@@ -35,7 +37,7 @@ export default async function ControlPanelDashboard() {
                             <RevenueAdChart data={[]}/>
                         </div>
                         <div className="lg:col-span-1">
-                            <DemographicsChart data={demographics}/>
+                            <DemographicsChart data={ageDemographics}/>
                         </div>
                     </div>
                 </div>

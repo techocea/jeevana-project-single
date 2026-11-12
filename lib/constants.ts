@@ -1,4 +1,4 @@
-import {LKRegionMap, StepConfig} from "@/types";
+import {AppRole, LKRegionMap, StepConfig} from "@/types";
 import {
     FileText,
     Send,
@@ -7,19 +7,13 @@ import {
     Brush,
     ShieldCheck,
     Headset,
-    Sparkles,
-    CreditCard,
-    Flag,
-    Ban,
-    RefreshCw,
-    HeartPlus,
-    User,
-    Settings,
-    LucideLayoutDashboard,
-    Spotlight,
+    FilePen,
+    BadgeCheck,
+    BarChart3,
+    FileSearch, Settings, Users, Search, Mail, Home, User, CreditCard
 } from "lucide-react";
 
-export type AppRole = "admin" | "staff" | "user";
+import {MemberNavItem} from "@/components/layout/user-sidebar";
 
 export interface NavSubItem {
     title: string;
@@ -379,6 +373,96 @@ export const PRICING_PACKAGES = [
             "Profile boost twice monthly",
             "Verified badge on profile",
         ],
+    },
+];
+
+export const NAV_ITEMS: MemberNavItem[] = [
+    {
+        id: 1,
+        label: "Overview",
+        href: "/my-dashboard",
+        iconName: "home",
+    },
+    {
+        id: 2,
+        label: "My Profile",
+        href: "/my-dashboard/my-profile",
+        iconName: "user",
+    },
+    {
+        id: 3,
+        label: "Best Proposals",
+        href: "/my-dashboard/best-proposals",
+        iconName: "search",
+    },
+    {
+        id: 4,
+        label: "Invitations",
+        href: "/my-dashboard/invitations",
+        iconName: "mail",
+    },
+    {
+        id: 5,
+        label: "Verify Account",
+        href: "/my-dashboard/verify",
+        iconName: "shield-check",
+    },
+    {
+        id: 6,
+        label: "Membership & Billing",
+        href: "/my-dashboard/membership",
+        iconName: "credit-card",
+    },
+    {
+        id: 7,
+        label: "Settings",
+        href: "/my-dashboard/settings",
+        iconName: "settings",
+    },
+];
+
+export const ADMIN_NAV_ITEMS: MemberNavItem[] = [
+    {
+        id: 1,
+        label: "Operations Overview",
+        href: "/control-panel",
+        iconName: "bar-chart",
+    },
+    {
+        id: 2,
+        label: "Profile Reviews",
+        href: "/control-panel/reviews",
+        iconName: "file-search",
+    },
+    {
+        id: 3,
+        label: "Profile Changes",
+        href: "/control-panel/changes",
+        iconName: "file-pen",
+    },
+    {
+        id: 4,
+        label: "NIC Verification Queue",
+        href: "/control-panel/verification",
+        iconName: "badge-check",
+    },
+    {
+        id: 5,
+        label: "Member Directory",
+        href: "/control-panel/members",
+        iconName: "users",
+    },
+    {
+        id: 6,
+        label: "Invitation Surveillance",
+        href: "/control-panel/invitations",
+        iconName: "mail",
+    },
+    {
+        id: 7,
+        label: "Business Revenue & Analytics",
+        href: "/control-panel/payments",
+        iconName: "credit-card",
     },
 ];
 

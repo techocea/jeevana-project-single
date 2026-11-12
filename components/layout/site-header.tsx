@@ -1,12 +1,13 @@
 "use client";
 
-import {LogOut, Menu, X} from "lucide-react";
+import {LogOut, Menu, UserPlus, X} from "lucide-react";
 import Image from "next/image";
 import {Button} from "../ui/button";
 import React, {useState} from "react";
-
-import {NAV_ITEMS} from "@/components/layout/user-sidebar";
 import {usePathname, useRouter} from "next/navigation";
+import {ICONS, MemberNavItem} from "@/components/layout/user-sidebar";
+import {AppRole} from "@/types";
+import {logout} from "@/app/actions/auth-actions";
 
 interface HeaderUser {
     id: string;
@@ -15,11 +16,13 @@ interface HeaderUser {
 }
 
 interface SiteHeaderProps {
+    role?:AppRole;
+    items: MemberNavItem[]
     currentUser: HeaderUser | null;
 }
 
 
-export function SiteHeader({currentUser}: SiteHeaderProps) {
+export function SiteHeader({currentUser, items, role}: SiteHeaderProps) {
     const router = useRouter();
     const pathname = usePathname();
 
@@ -63,7 +66,17 @@ export function SiteHeader({currentUser}: SiteHeaderProps) {
                     </div>
                 </div>
                 {currentUser && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2.5">
+                        {role === "admin" && (
+                            <Button
+                                onClick={() => router.push('/control-panel/create-advertisement')}
+                                className="p-2 transition-colors"
+                                title="Sign out (Demo)"
+                            >
+                                <UserPlus className="w-4 h-4"/>
+                                <span>Create on Behalf</span>
+                            </Button>
+                        )}
                         <div
                             className="w-8 h-8 rounded-full bg-[#E8E2D7] overflow-hidden border border-[#D6CDBC] flex items-center justify-center text-xs font-semibold text-[#554D45]">
                             <span aria-hidden="true">{initials}</span>
@@ -77,13 +90,14 @@ export function SiteHeader({currentUser}: SiteHeaderProps) {
                             </div>
                         </div>
 
-                        <button
-                            // onClick={() => setCurrentView('auth')}
-                            className="p-2 text-[#7A7065] hover:text-[#B91C1C] hover:bg-[#FDF2F2] rounded-md transition-colors"
+                        <Button
+                            variant={"ghost"}
+                            onClick={() => logout()}
+                            className="p-2 transition-colors"
                             title="Sign out (Demo)"
                         >
                             <LogOut className="w-4 h-4"/>
-                        </button>
+                        </Button>
                     </div>
                 )}
 
@@ -113,12 +127,12 @@ export function SiteHeader({currentUser}: SiteHeaderProps) {
                                 </div>
 
                                 <div className="space-y-1">
-                                    {NAV_ITEMS.map((item) => {
-                                        const Icon = item.icon;
+                                    {items.map((item) => {
+                                        const Icon = ICONS[item.iconName];
                                         const isActive = pathname === item.href;
                                         return (
                                             <Button
-                                                key={item.href}
+                                                key={item.id}
                                                 variant={isActive ? "secondary" : "ghost"}
                                                 onClick={() => router.push(item.href)}
                                                 className={"w-full justify-start"}

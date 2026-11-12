@@ -3,16 +3,22 @@
 import * as React from "react";
 import {usePathname, useRouter} from "next/navigation";
 import {
+    BadgeCheck,
+    BarChart3,
+    CreditCard,
+    FilePen,
+    FileSearch,
     Home,
-    User,
-    Search,
     Mail,
     Lock,
+    Search,
+    Settings,
     ShieldCheck,
-    CreditCard,
-    Settings
+    User,
+    Users,
+    type LucideIcon,
 } from "lucide-react";
-import { Button } from "../ui/button";
+import {Button} from "../ui/button";
 
 
 // TODOO: ADD INVITATIONS AND CURRENT USER CODE HERE
@@ -21,61 +27,71 @@ import { Button } from "../ui/button";
 //     (i) => i.direction === 'received' && i.status === 'pending'
 // ).length;
 
-export const NAV_ITEMS = [
-    {href: '/', label: 'Overview', icon: Home},
-    {href: '/my-profile', label: 'My Profile', icon: User},
-    {href: '/best-proposals', label: 'Best Proposals', icon: Search},
-    {
-        href: '/invitations',
-        label: 'Invitations',
-        icon: Mail,
-        // badge: pendingReceivedInvitations > 0 ? pendingReceivedInvitations : undefined
-    },
-    {
-        href: '/verify',
-        label: 'Verify Account',
-        icon: ShieldCheck,
-        // badge: userProfile.hrefentityVerificationStatus === 'verified' ? '✓' : undefined
-    },
-    {href: '/membership', label: 'Membership & Billing', icon: CreditCard},
-    {href: '/settings', label: 'Settings', icon: Settings},
-];
+export type MemberNavItem = {
+    id: number;
+    label: string;
+    href: string;
+    iconName: IconName;
+}
 
-function UserSidebar() {
+export type IconName =
+    | "bar-chart"
+    | "file-search"
+    | "file-pen"
+    | "badge-check"
+    | "users"
+    | "mail"
+    | "credit-card"
+    | "home"
+    | "user"
+    | "search"
+    | "shield-check"
+    | "settings";
+
+export type SidebarProps = {
+    items: MemberNavItem[]
+};
+
+export const ICONS: Record<IconName, LucideIcon> = {
+    "bar-chart": BarChart3,
+    "file-search": FileSearch,
+    "file-pen": FilePen,
+    "badge-check": BadgeCheck,
+    users: Users,
+    mail: Mail,
+    "credit-card": CreditCard,
+    home: Home,
+    user: User,
+    search: Search,
+    "shield-check": ShieldCheck,
+    settings: Settings,
+};
+
+function UserSidebar({items}: SidebarProps) {
     const router = useRouter();
     const pathname = usePathname();
 
     return (
-        <aside className="hidden lg:flex lg:flex-col lg:justify-between lg:col-span-3 bg-white rounded-lg border border-strong p-4 shadow-2xs space-y-6 sticky h-full top-[110px]">
-            {/* Navigation Links */}
+        <aside aria-label="Admin navigation"
+            className="hidden lg:flex lg:flex-col lg:justify-between lg:col-span-3 bg-white rounded-lg border border-strong p-4 shadow-2xs space-y-6 sticky h-full top-[110px]">
             <nav className="space-y-2 w-full flex flex-col">
-                {NAV_ITEMS.map((item) => {
-                    const Icon = item.icon;
-                    const isActive = pathname === item.href;
+                {items.map((item) => {
+                    const Icon = ICONS[item.iconName];
+                    const isActive =
+                        pathname === item.href ||
+                        pathname.startsWith(`${item.href}/`);
 
                     return (
                         <Button
-                            key={item.href}
+                            key={item.id}
                             variant={isActive ? "secondary" : "ghost"}
-                            onClick={() => router.push(`/my-dashboard/${item.href}`)}
+                            onClick={() => router.push(item.href)}
                             className={"w-full justify-start"}
                         >
                             <div className="flex items-center gap-3">
-                                <Icon className="w-4 h-4" />
+                                <Icon className="w-4 h-4"/>
                                 <span>{item.label}</span>
                             </div>
-
-                    {/*        {item.badge !== undefined && (*/}
-                    {/*            <span*/}
-                    {/*                className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${*/}
-                    {/*                    typeof item.badge === 'number'*/}
-                    {/*                        ? 'bg-[#8E6516] text-white'*/}
-                    {/*                        : 'bg-[#DCFCE7] text-[#15803D]'*/}
-                    {/*                }`}*/}
-                    {/*            >*/}
-                    {/*  {item.badge}*/}
-                    {/*</span>*/}
-                    {/*        )}*/}
                         </Button>
                     );
                 })}
@@ -84,7 +100,7 @@ function UserSidebar() {
             {/* Upgrade to Premium version */}
             <div className="p-3.5 bg-[#FAF8F5] rounded-md border border-[#E8E2D7] text-xs text-[#554D45] space-y-1.5">
                 <div className="font-semibold text-[#1F1B18] flex items-center gap-1.5">
-                    <Lock className="w-3.5 h-3.5 text-[#8E6516]" />
+                    <Lock className="w-3.5 h-3.5 text-[#8E6516]"/>
                     <span>Family Privacy Shield</span>
                 </div>
                 <p className="text-[11px] text-[#665D52] leading-tight">

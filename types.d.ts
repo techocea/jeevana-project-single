@@ -27,7 +27,7 @@ export type MaritalStatusTypes = "single" | "divorced" | "widowed";
 export type ComplexionTypes = "very_fair" | "fair" | "medium" | "brown" | "dark_brown" | "black";
 export type BodyTypes = "slim" | "athletic" | "average" | "small" | "not_specified";
 export type BloodGroupTypes = "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-" |  "not_specified";
-
+export type AppRole = "admin" | "staff" | "user";
 
 export interface StepConfig {
     id: number;
