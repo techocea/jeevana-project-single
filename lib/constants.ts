@@ -452,16 +452,16 @@ export const ADMIN_NAV_ITEMS: MemberNavItem[] = [
         href: "/control-panel/members",
         iconName: "users",
     },
-    {
-        id: 6,
-        label: "Invitation Surveillance",
-        href: "/control-panel/invitations",
-        iconName: "mail",
-    },
+    // {
+    //     id: 6,
+    //     label: "Invitation Surveillance",
+    //     href: "/control-panel/invitations",
+    //     iconName: "mail",
+    // },
     {
         id: 7,
         label: "Business Revenue & Analytics",
-        href: "/control-panel/payments",
+        href: "/control-panel/revenue",
         iconName: "credit-card",
     },
 ];

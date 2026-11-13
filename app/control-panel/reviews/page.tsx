@@ -3,10 +3,11 @@ import {eq, and, desc} from "drizzle-orm";
 import {profiles, users, verifications} from "@/drizzle/schema";
 import {db} from "@/lib/db";
 import {AdvertisementTable, columns} from "./columns";
-import {ProfileStatusTypes, VerificationStatusTypes} from "@/types";
+import {GenderTypes, ProfileStatusTypes, VerificationStatusTypes} from "@/types";
 import {approveProfile, deleteProfile, rejectProfile} from "@/app/actions/profile-actions";
 import {DataTable} from "./data-table";
-import ApprovalQueueTabs from "./approval-queue-tabs";
+import ReviewTabs from "./review-tabs";
+import {Separator} from "@/components/ui/separator";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,7 @@ interface PageProps {
     searchParams: Promise<{ status?: string }>;
 }
 
-const ApprovalQueuePage = async ({searchParams}: PageProps) => {
+const ApprovalReviewsPage = async ({searchParams}: PageProps) => {
     const resolvedParams = await searchParams;
     const currentStatus = resolvedParams.status || "all";
 
@@ -28,42 +29,32 @@ const ApprovalQueuePage = async ({searchParams}: PageProps) => {
             id: profiles.id,
             profileId: profiles.profileID,
             fullName: profiles.fullName,
-            religion: profiles.religion,
-            caste: profiles.caste,
-            email: users.email,
+            city: profiles.city,
+            gender: profiles.gender,
+            email:users.email,
+            country: profiles.country,
+            dob: profiles.dob,
             status: profiles.status,
-            isVerified: profiles.isVerified,
             createdAt: profiles.createdAt,
-
-            verificationId: verifications.id,
-            idNumber: verifications.idNumber,
-            documentFrontUrl: verifications.documentFrontUrl,
-            documentBackUrl: verifications.documentBackUrl,
-            verificationStatus: verifications.status,
-            rejectionReason: verifications.rejectionReason,
         })
         .from(profiles)
         .leftJoin(users, eq(profiles.userId, users.id))
-        .leftJoin(verifications, eq(profiles.id, verifications.profileId))
         .where(filters.length > 0 ? and(...filters) : undefined)
         .orderBy(desc(profiles.createdAt));
+
+    console.log("data:", data);
 
     const sanitizedData: AdvertisementTable[] = (data ?? []).map((row) => ({
         id: row.id,
         profileId: row.profileId,
         fullName: row.fullName ?? "N/A",
-        religion: row.religion ?? "N/A",
-        caste: row.caste ?? "N/A",
+        city: row.city ?? "N/A",
+        country: row.country ?? "N/A",
         email: row.email ?? "N/A",
-        createdAt: row.createdAt ? new Date(row.createdAt) : undefined,
+        dob: row.dob ?? null,
+        gender: (row.gender ?? "") as GenderTypes,
         status: (row.status ?? "pending") as ProfileStatusTypes,
-        isVerified: row.isVerified ?? false,
-        idNumber: row.idNumber ?? null,
-        verificationStatus: (row.verificationStatus ?? null) as VerificationStatusTypes | null,
-        verificationId: row.verificationId ?? null,
-        documentFrontUrl: row.documentFrontUrl ?? null,
-        documentBackUrl: row.documentBackUrl ?? null,
-        rejectionReason: row.rejectionReason ?? null,
+        createdAt: row.createdAt ? new Date(row.createdAt) : null,
     }));
 
     const handleApprove = async (profileId: string, verificationId?: string | null) => {
@@ -89,14 +80,16 @@ const ApprovalQueuePage = async ({searchParams}: PageProps) => {
         <div className="flex flex-1 flex-col">
             <div className="@container/main flex flex-1 flex-col gap-2">
                 <div className="flex flex-col gap-4 md:gap-6">
-                    <div className="flex items-center justify-between w-full">
+                    <div className="flex items-end justify-between w-full">
                         <TitleHeader
                             isGreeting={false}
-                            title="advertisement hub"
-                            description="Review and manage matrimonial advertisement listings"
+                            title="Advertisement Reviews"
+                            description="Inspect submitted candidate advertisements, review pending edits, and record moderation decisions."
                         />
-                        <ApprovalQueueTabs currentStatus={currentStatus}/>
+                      <span className={"text-xs text-muted-foreground"}>{data.length} advertisements shown</span>
                     </div>
+
+                    <Separator/>
 
                     <div>
                         <DataTable
@@ -107,6 +100,9 @@ const ApprovalQueuePage = async ({searchParams}: PageProps) => {
                                 onReject: handleReject,
                                 onDelete: handleDelete,
                             }}
+                            toolbarFilters={
+                                <ReviewTabs currentStatus={currentStatus} />
+                            }
                         />
                     </div>
                 </div>
@@ -115,4 +111,4 @@ const ApprovalQueuePage = async ({searchParams}: PageProps) => {
     );
 };
 
-export default ApprovalQueuePage;
+export default ApprovalReviewsPage;
