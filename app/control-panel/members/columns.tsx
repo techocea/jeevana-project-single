@@ -25,9 +25,6 @@ export const columns: ColumnDef<UsersTable>[] = [
       const email = row.original.email;
       return (
         <div className="flex gap-2">
-          <div className="flex items-center justify-center rounded-full w-10 h-10 bg-accent text-white uppercase text-sm">
-            {email?.slice(0, 2)}
-          </div>
           <div className="flex flex-col gap-0.5">
             <span className="font-semibold text-black">{name}</span>
             <span className="text-xs text-muted-foreground italic">

@@ -8,6 +8,8 @@ import {banUser, reactivateUser} from "@/app/actions/users-actions";
 import UserManagementTabs from "./user-management-tabs";
 import {MembershipTypes, UserStatusTypes} from "@/types";
 import CreateUser from "@/components/dashboard/create-user";
+import {Separator} from "@/components/ui/separator";
+import ReviewTabs from "@/app/control-panel/reviews/review-tabs";
 
 export const dynamic = "force-dynamic";
 
@@ -64,14 +66,15 @@ const UserManagementPage = async ({searchParams}: PageProps) => {
         <div className="flex flex-1 flex-col">
             <div className="@container/main flex flex-1 flex-col gap-2">
                 <div className="flex flex-col gap-4 md:gap-6">
-                    <div className="flex items-center justify-between w-full">
+                    <div className="flex items-end justify-between w-full">
                         <TitleHeader
                             isGreeting={false}
-                            title="user directory"
-                            description="Manage Jeevana`s global community of seekers."
+                            title="Registered Matrimonial Members"
+                            description="Inspect submitted candidate advertisements, review pending edits, and record moderation decisions."
                         />
-                        <CreateUser/>
                     </div>
+
+                    <Separator/>
 
                     <DataTable
                         columns={columns}
@@ -81,6 +84,9 @@ const UserManagementPage = async ({searchParams}: PageProps) => {
                             onBan: handleUserBan,
                             onReactivate: handleUserReactivate,
                         }}
+                        toolbarFilters={
+                            <UserManagementTabs currentStatus={currentStatus} />
+                        }
                     />
                 </div>
             </div>

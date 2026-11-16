@@ -1,14 +1,29 @@
 "use client";
 
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 
-const UserManagementTabs = ({ currentStatus }: { currentStatus: string }) => {
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const UserManagementTabs = ({
+                              currentStatus,
+                            }: {
+  currentStatus: string;
+}) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const handleTabChange = (value: string) => {
+  const handleStatusChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
 
     if (value === "all") {
@@ -17,21 +32,34 @@ const UserManagementTabs = ({ currentStatus }: { currentStatus: string }) => {
       params.set("status", value);
     }
 
-    router.push(`${pathname}?${params.toString()}`);
+    params.delete("page");
+
+    const query = params.toString();
+
+    router.push(
+        query ? `${pathname}?${query}` : pathname,
+        { scroll: false },
+    );
   };
 
   return (
-    <Tabs
-      value={currentStatus}
-      onValueChange={handleTabChange}
-      className="w-auto"
-    >
-      <TabsList>
-        <TabsTrigger className="cursor-pointer" value="all">All</TabsTrigger>
-        <TabsTrigger className="cursor-pointer" value="active">Active</TabsTrigger>
-        <TabsTrigger className="cursor-pointer" value="banned">Banned</TabsTrigger>
-      </TabsList>
-    </Tabs>
+      <Select
+          value={currentStatus || "all"}
+          onValueChange={handleStatusChange}
+      >
+        <SelectTrigger
+            aria-label="Filter users by status"
+            className="h-10 w-full"
+        >
+          <SelectValue placeholder="All users" />
+        </SelectTrigger>
+
+        <SelectContent>
+          <SelectItem value="all">All users</SelectItem>
+          <SelectItem value="active">Active</SelectItem>
+          <SelectItem value="banned">Banned</SelectItem>
+        </SelectContent>
+      </Select>
   );
 };
 

@@ -1,158 +1,212 @@
 "use client";
 
 import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  ColumnFiltersState,
-  getFilteredRowModel,
-  useReactTable,
-  getPaginationRowModel,
+    ColumnDef,
+    flexRender,
+    getCoreRowModel,
+    ColumnFiltersState,
+    getFilteredRowModel,
+    useReactTable,
+    getPaginationRowModel,
 } from "@tanstack/react-table";
 
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell, TableFooter,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {ReactNode, useState} from "react";
+import {Button} from "@/components/ui/button";
 import UserManagementTabs from "./user-management-tabs";
+import {ChevronLeft, ChevronRight} from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
-  currentStatus: string;
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-  meta?: {
-    onBan?: (id: string) => void;
-    onReactivate?: (id: string) => void;
-  };
+    currentStatus: string;
+    columns: ColumnDef<TData, TValue>[];
+    data: TData[];
+    toolbarFilters?: ReactNode;
+    meta?: {
+        onBan?: (id: string) => void;
+        onReactivate?: (id: string) => void;
+    };
 }
 
 export function DataTable<TData, TValue>({
-  columns = [],
-  data = [],
-  meta,
-  currentStatus,
-}: DataTableProps<TData, TValue>) {
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    meta,
-    state: {
-      columnFilters,
-      columnVisibility: {
-        email: false,
-      },
-    },
-  });
+                                             columns = [],
+                                             data = [],
+                                             meta,
+                                             toolbarFilters
+                                         }: DataTableProps<TData, TValue>) {
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const table = useReactTable({
+        data,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+        onColumnFiltersChange: setColumnFilters,
+        getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        meta,
+        state: {
+            columnFilters,
+            columnVisibility: {
+                email: false,
+            },
+        },
+        initialState: {
+            pagination: {
+                pageSize: 5
+            }
+        }
+    });
 
-  const pageIndex = table.getState().pagination.pageIndex;
-  const pageSize = table.getState().pagination.pageSize;
-  const totalRows = table.getFilteredRowModel().rows.length;
+    const {pageIndex, pageSize} = table.getState().pagination;
 
-  const startRow = totalRows === 0 ? 0 : pageIndex * pageSize + 1;
-  const endRow = Math.min((pageIndex + 1) * pageSize, totalRows);
+    const totalRows = table.getFilteredRowModel().rows.length;
+    const totalPages = Math.max(1, table.getPageCount());
+    const currentPage = totalRows === 0 ? 1 : pageIndex + 1;
 
-  return (
-    <div>
-      <div className="flex items-center justify-between w-full py-4">
-        <Input
-          placeholder="Search by email"
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <UserManagementTabs currentStatus={currentStatus} />
-      </div>
-      <div className="overflow-hidden rounded-md shadow-sm">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
+    const startRow = totalRows === 0 ? 0 : pageIndex * pageSize + 1;
+    const endRow = Math.min((pageIndex + 1) * pageSize, totalRows);
+
+    return (
+        <div className={"space-y-4"}>
+            <div className="grid grid-cols-1 gap-3 lg:grid-cols-12">
+                <div className={toolbarFilters ? "min-w-0 lg:col-span-9" : "min-w-0 lg:col-span-12"}>
+                    <Input
+                        placeholder="Search by email..."
+                        aria-label="Search members by email"
+                        value={
+                            (table
+                                .getColumn("email")
+                                ?.getFilterValue() as string) ?? ""
+                        }
+                        onChange={(event) =>
+                            table
+                                .getColumn("email")
+                                ?.setFilterValue(event.target.value)
+                        }
+                        className="h-10 w-full"
+                    />
+                </div>
+
+                {toolbarFilters && (
+                    <div className="min-w-0 lg:col-span-3">
+                        {toolbarFilters}
+                    </div>
+                )}
+            </div>
+            <div className="overflow-hidden rounded-md shadow-sm">
+                <Table>
+                    <TableHeader>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <TableRow key={headerGroup.id}>
+                                {headerGroup.headers.map((header) => {
+                                    return (
+                                        <TableHead key={header.id}>
+                                            {header.isPlaceholder
+                                                ? null
+                                                : flexRender(
+                                                    header.column.columnDef.header,
+                                                    header.getContext(),
+                                                )}
+                                        </TableHead>
+                                    );
+                                })}
+                            </TableRow>
+                        ))}
+                    </TableHeader>
+                    <TableBody>
+                        {table.getRowModel().rows?.length ? (
+                            table.getRowModel().rows.map((row) => (
+                                <TableRow
+                                    key={row.id}
+                                    data-state={row.getIsSelected() && "selected"}
+                                >
+                                    {row.getVisibleCells().map((cell) => (
+                                        <TableCell key={cell.id}>
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext(),
+                                            )}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className="h-24 text-center"
+                                >
+                                    No results.
+                                </TableCell>
+                            </TableRow>
                         )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex items-center justify-between py-4">
-        <div className="text-xs font-normal text-muted font-sans">
-          Showing{" "}
-          <span className="font-semibold text-muted">
-            {startRow}-{endRow}
-          </span>{" "}
-          of <span className="font-semibold text-muted">{totalRows} rows</span>
+                    </TableBody>
+                    <TableFooter>
+                        <TableRow>
+                            <TableCell
+                                colSpan={table.getVisibleLeafColumns().length}
+                            >
+                                <div className="flex gap-3 text-muted-foreground items-center justify-between">
+                                    <p className="tabular-nums text-[12px]">
+                                        Showing{" "}
+                                        <span className="font-semibold  text-foreground">
+                        {startRow}–{endRow}
+                    </span>{" "}
+                                        of{" "}
+                                        <span className="font-semibold text-foreground">
+                        {totalRows}
+                    </span>{" "}
+                                        members
+                                    </p>
+
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => table.previousPage()}
+                                            disabled={!table.getCanPreviousPage()}
+                                            aria-label="Previous advertisement page"
+                                        >
+                                            <ChevronLeft
+                                                aria-hidden="true"
+                                                className="h-3.5 w-3.5"
+                                            />
+                                            <span>Previous</span>
+                                        </Button>
+
+                                        <span
+                                            className="whitespace-nowrap px-2 text-[11px] font-medium tabular-nums text-foreground">
+                        Page {currentPage} of {totalPages}
+                    </span>
+
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => table.nextPage()}
+                                            disabled={!table.getCanNextPage()}
+                                            aria-label="Next advertisement page"
+                                        >
+                                            <span>Next</span>
+                                            <ChevronRight
+                                                aria-hidden="true"
+                                                className="h-3.5 w-3.5"
+                                            />
+                                        </Button>
+                                    </div>
+                                </div>
+                            </TableCell>
+                        </TableRow>
+                    </TableFooter>
+                </Table>
+            </div>
         </div>
-        <div className="flex gap-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
+    );
 }
