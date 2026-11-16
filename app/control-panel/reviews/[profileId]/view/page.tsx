@@ -6,8 +6,28 @@ import {
 import {Label} from "@/components/ui/label";
 import {getProfileStatusBadge} from "@/helpers/get-status-badge";
 import Breadcrumbs from "@/components/dashboard/breadcrumbs";
-import NicVerificationBanner from "@/components/dashboard/nic-verification-banner";
+import {
+    Card,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+    CardContent,
+    CardFooter,
+} from "@/components/ui/card"
 import {createClient} from "@/utils/supabase";
+import TitleHeader from "@/components/dashboard/title-header";
+import {Separator} from "@/components/ui/separator";
+import {
+    MapPin,
+    Briefcase,
+    GraduationCap,
+    Users,
+    Heart,
+    Lock, AlertCircle,
+} from "lucide-react";
+import {Button} from "@/components/ui/button";
+import {convertCmToFeetInches} from "@/helpers/measurement-utils";
+import {getAccurateAge} from "@/helpers/format-date";
 
 interface PageProps {
     params: Promise<{ profileId: string }>;
@@ -19,265 +39,244 @@ const ViewProfilePage = async ({params}: PageProps) => {
 
     if (!result.success || !result.data) {
         return (
-            <div className="min-h-screen flex items-center justify-center px-4 py-20">
-                <div className="max-w-lg rounded-xl border border-slate-200 bg-white p-10 text-center shadow-sm">
-                    <h2 className="text-2xl font-semibold text-slate-950">
-                        Profile unavailable
-                    </h2>
-                    <p className="mt-4 text-muted">
-                        We could not locate the profile. Please try again later.
-                    </p>
+            <div className="bg-white p-8 rounded-lg border border-[#FCA5A5] text-center shadow-2xs">
+                <div
+                    className="w-12 h-12 rounded-full bg-[#FEF2F2] text-[#B91C1C] flex items-center justify-center mx-auto mb-3">
+                    <AlertCircle className="w-6 h-6"/>
                 </div>
+                <h3 className="font-editorial text-lg font-semibold text-[#1F1B18]">
+                    Unable to Load Candidate Registry
+                </h3>
+                <p className="text-xs text-[#554D45] max-w-md mx-auto mt-1">
+                    A temporary connection issue prevented loading the matchmaking directory. Please check your network
+                    connection and retry.
+                </p>
+                <Button>
+                    Retry
+                </Button>
             </div>
         );
     }
 
     const profile = result.data;
-    console.log("profile data with verifications:", profile);
-    const verification = profile.verification;
-    const supabase = await createClient();
+    console.log("profile data:", profile);
 
-
+    const displayName = profile.fullName;
     const profileImage = profile.profilePic || "/images/demo-profile-pic.png";
-    const hobbies = Array.isArray(profile.hobbies)
-        ? profile.hobbies.join(", ")
-        : profile.hobbies || "Not specified";
-
-
-    let frontSignedUrl: string | null = null;
-    let backSignedUrl: string | null = null;
-
-    if (verification?.documentFrontUrl) {
-        const {data} = await supabase.storage
-            .from("nic_documents")
-            .createSignedUrl(verification.documentFrontUrl, 3600);
-        frontSignedUrl = data?.signedUrl || null;
-    }
-
-    if (verification?.documentBackUrl) {
-        const {data} = await supabase.storage
-            .from("nic_documents")
-            .createSignedUrl(verification.documentBackUrl, 3600);
-        backSignedUrl = data?.signedUrl || null;
-    }
+    const submittedAt = profile.updatedAt.toISOString().split("T")[0];
+    const parsedDOB = profile.dob ? profile.dob.toISOString().split("T")[0] : null;
+    const age = parsedDOB
+        ? getAccurateAge(parsedDOB)
+        : null;
+    const heightStr = convertCmToFeetInches(profile.height).formatted;
+    const city = profile.city;
+    const country = profile.country;
+    const location = `${city},${country}`;
 
     return (
-        <main>
-            <div className="mx-auto max-w-6xl space-y-3">
-                <Breadcrumbs primaryText="Control Panel" primaryLink="control-panel" secondaryText="Approval Queue"
-                             secondaryLink="approval-queues" currentPath={profile.profileID}/>
-                <div className="mb-8 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-                    <div className="flex items-start justify-between gap-6">
-                        <div className="flex items-start justify-between w-full">
-                            <div className="flex items-center gap-4">
-                                <div className="overflow-hidden rounded-sm bg-slate-100">
-                                    <Image
-                                        src={profileImage}
-                                        alt={profile.fullName || "Profile image"}
-                                        width={80}
-                                        height={80}
-                                        className="h-20 w-20 object-cover"
-                                        priority
-                                    />
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                    <div className="flex items-center gap-2">
-                                        <Badge className="bg-blue-100 text-blue-400 border border-blue-400">
-                                            {profile.profileID}
-                                        </Badge>
-                                        {getProfileStatusBadge(profile.status)}
-                                    </div>
-                                    <div>
-                                        <h2 className="text-lg font-semibold text-slate-950">
-                                            {profile.fullName || "User"}
-                                        </h2>
-                                        <p className="flex items-center gap-1 text-sm text-muted">
-                                            {profile.city || "Location not set"},{" "}
-                                            {profile.country || "Country not set"}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            {/*<ProfileActionsButtons profileId={profileId} status={profile.status}/>*/}
-                        </div>
-                    </div>
+        <div className="space-y-4">
+            <Breadcrumbs primaryText="Control Panel" primaryLink="control-panel" secondaryText="Profile Reviews"
+                         secondaryLink="reviews" currentPath={profile.profileID}/>
+            <div className="flex items-end justify-between w-full">
+                <TitleHeader
+                    title={`${displayName}`}
+                    description="Editorial inspection for compliance with community modesty and privacy standards."
+                />
+                <div>
+                    {/*ADD BUTTONS HERE*/}
                 </div>
-
-                {/* Basic Information Section */}
-                <div className="mb-8 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-                    <div className="mb-6 pb-4 flex items-center justify-between border-b border-muted-foreground/50">
-                        <h2 className="text-lg font-semibold text-slate-950">
-                            Basic Information
-                        </h2>
-                    </div>
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                        {renderField("Full Name", profile.fullName)}
-                        {renderField("Created By", profile.createdBy)}
-                        {renderField("Contact", profile.contact)}
-                        {renderField("Gender", profile.gender)}
-                        {renderField(
-                            "Date of Birth",
-                            profile.dob
-                                ? new Date(profile.dob).toLocaleDateString("en-GB")
-                                : "Not specified",
-                        )}
-                    </div>
-                </div>
-
-                {/* Religion Section */}
-                <div className="mb-8 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-                    <div className="mb-6 pb-4 flex items-center justify-between border-b border-muted-foreground/50">
-                        <h2 className="text-lg font-semibold text-slate-950">Religion</h2>
-                    </div>
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                        {renderField("Religion", profile.religion)}
-                        {renderField("Caste", profile.caste)}
-                        {renderField("Mother Tongue", profile.motherTongue)}
-                    </div>
-                </div>
-
-                {/* Career Section */}
-                <div className="mb-8 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-                    <div className="mb-6 pb-4 flex items-center justify-between border-b border-muted-foreground/50">
-                        <h2 className="text-lg font-semibold text-slate-950">
-                            Career & Education
-                        </h2>
-                    </div>
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                        {renderField("Education Level", profile.educationLevel)}
-                        {renderField("Profession", profile.profession)}
-                        {renderField("Annual Income Range", profile.annualIncomeRange)}
-                    </div>
-                </div>
-
-                {/* Location Section */}
-                <div className="mb-8 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-                    <div className="mb-6 pb-4 flex items-center justify-between border-b border-muted-foreground/50">
-                        <h2 className="text-lg font-semibold text-slate-950">Location</h2>
-                    </div>
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                        {renderField("Country", profile.country)}
-                        {renderField("State", profile.state)}
-                        {renderField("City", profile.city)}
-                        {renderField("Residency Status", profile.residencyStatus)}
-                    </div>
-                </div>
-
-                {/* Personal Section */}
-                <div className="mb-8 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-                    <div className="mb-6 pb-4 flex items-center justify-between border-b border-muted-foreground/50">
-                        <h2 className="text-lg font-semibold text-slate-950">
-                            Personal Details
-                        </h2>
-                    </div>
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                        {renderField("Height (cm)", profile.height)}
-                        {renderField("Weight (kg)", profile.weight)}
-                        {renderField("Age", profile.age)}
-                        {renderField("Smoking Habits", profile.smoking)}
-                        {renderField("Drinking Habits", profile.drinking)}
-                        {renderField("Food Preferences", profile.foodPreferences)}
-                        {renderField("Differently Abled", profile.isDifferentlyAbled)}
-                    </div>
-                    {profile.isDifferentlyAbled && profile.differentlyAbledDetails && (
-                        <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
-                            <p className="text-xs font-medium uppercase text-muted">
-                                Accessibility Details
-                            </p>
-                            <p className="mt-2 text-sm font-semibold text-slate-900">
-                                {profile.differentlyAbledDetails}
-                            </p>
-                        </div>
-                    )}
-                </div>
-
-                {/* Partner Preferences Section */}
-                <div className="mb-8 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-                    <div className="mb-6 pb-4 flex items-center justify-between border-b border-muted-foreground/50">
-                        <h2 className="text-lg font-semibold text-slate-950">
-                            Partner Preferences Details
-                        </h2>
-                    </div>
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                        {renderField("Partner Preferred Min Age", profile.partnerPreferences?.preferredMinAge)}
-                        {renderField("Partner Preferred Max Age", profile.partnerPreferences?.preferredMaxAge)}
-                        {renderField("Partner's Marriage Status Should be", profile.partnerPreferences?.preferredMaritalStatus)}
-                        {renderField("Partner's Education Status Should be", profile.partnerPreferences?.preferredEducationLevels)}
-                        {renderField("Partner's Job Status Should be", profile.partnerPreferences?.preferredProfessions)}
-                        {renderField("Partner's Annual Income Should be", profile.partnerPreferences?.preferredAnnualIncomeRanges)}
-                    </div>
-                    {profile.isDifferentlyAbled && profile.differentlyAbledDetails && (
-                        <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
-                            <p className="text-xs font-medium uppercase text-muted">
-                                Accessibility Details
-                            </p>
-                            <p className="mt-2 text-sm font-semibold text-slate-900">
-                                {profile.differentlyAbledDetails}
-                            </p>
-                        </div>
-                    )}
-                </div>
-
-                {/* Final Details Section */}
-                <div className="mb-8 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-                    <div className="mb-6 pb-4 flex items-center justify-between border-b border-muted-foreground/50">
-                        <h2 className="text-lg font-semibold text-slate-950">
-                            Final Details
-                        </h2>
-                    </div>
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                        {renderField("Hobbies", hobbies)}
-                        {renderField("Mail Routing Target", profile.mailRoutingTarget)}
-                        {renderField("Secondary Email", profile.secondaryEmail)}
-                        {renderField("Profile Status", profile.status)}
-                    </div>
-                    {profile.narrative && (
-                        <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
-                            <p className="text-xs font-medium uppercase text-muted">
-                                Narrative
-                            </p>
-                            <p className="mt-2 text-sm font-semibold text-slate-900">
-                                {profile.narrative}
-                            </p>
-                        </div>
-                    )}
-                </div>
-
-                {verification && (
-                    <NicVerificationBanner
-                        isAdmin={true}
-                        profileId={profile.id}
-                        verificationId={verification.verificationId}
-                        verificationStatus={verification.verificationStatus}
-                        rejectionReason={verification.rejectionReason}
-                        documentFrontUrl={frontSignedUrl}
-                        documentBackUrl={backSignedUrl}
-                    />
-                )}
             </div>
-        </main>
-    );
-};
 
-const renderField = (
-    label: string,
-    value: string | string[] | number | boolean | null | undefined,
-) => {
-    let displayValue = "Not specified";
-    if (value === null || value === undefined) {
-        displayValue = "Not specified";
-    } else if (typeof value === "boolean") {
-        displayValue = value ? "Yes" : "No";
-    } else {
-        displayValue = String(value);
-    }
+            <Separator/>
 
-    return (
-        <div>
-            <Label className="text-muted font-normal">{label}</Label>
-            <p className="mt-2 text-sm font-regular text-black capitalize">
-                {displayValue}
-            </p>
+            {/* Section 1: Profile Summary */}
+            <Card>
+                <CardHeader className="pb-3 border-b border-[#E8E2D7]">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                            <CardTitle className="text-base">Profile Summary</CardTitle>
+                            <CardDescription>
+                                Publicly visible advertisement overview (private contact &amp; NIC details excluded).
+                            </CardDescription>
+                        </div>
+                        <span
+                            className="inline-flex items-center gap-1.5 text-[11px] text-[#635A50] bg-[#FAF8F5] px-2.5 py-1 rounded border border-[#E8E2D7]">
+                <Lock className="w-3 h-3 text-primary"/>
+                <span>
+                  Photo:{'Visible to Members'}
+                    {/*  <strong className="text-[#1E1B18]">*/}
+                    {/*  {(*/}
+                    {/*      isPrimaryMember*/}
+                    {/*          ? profile.partnerPreferences.photoVisible*/}
+                    {/*          : profile.proposal.photoVisible*/}
+                    {/*  )*/}
+                    {/*      ? 'Visible to Members'*/}
+                    {/*      : 'Hidden (Privacy Mode)'}*/}
+                    {/*</strong>*/}
+                </span>
+              </span>
+                    </div>
+                </CardHeader>
+                <CardContent className="">
+                    <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                        <div>
+                            <dt className="text-[#635A50] mb-0.5">Public Display Name</dt>
+                            <dd className="font-semibold text-[#1E1B18]">
+                                {profile.fullName}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt className="text-[#635A50] mb-0.5">Age &amp; Height</dt>
+                            <dd className="font-semibold text-[#1E1B18] tabular-numbers">
+                                {age} yrs · {heightStr}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt className="text-[#635A50] mb-0.5">Marital Status</dt>
+                            <dd className="font-semibold text-[#1E1B18] capitalize">
+                                {profile.maritalStatus && (profile.maritalStatus).replace('_', ' ')}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt className="text-[#635A50] mb-0.5">Religion &amp; Background</dt>
+                            <dd className="font-semibold text-[#1E1B18]">
+                                {`${profile.religion} · ${profile.caste}`}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt className="text-[#635A50] mb-0.5">Location</dt>
+                            <dd className="font-semibold text-[#1E1B18] inline-flex items-center gap-1">
+                                <MapPin className="w-3.5 h-3.5 text-primary shrink-0"/>
+                                <span>{location}</span>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt className="text-[#635A50] mb-0.5">Submitted / Registered</dt>
+                            <dd className="font-semibold text-[#1E1B18] tabular-numbers">
+                                {submittedAt}
+                            </dd>
+                        </div>
+                    </dl>
+                </CardContent>
+            </Card>
+
+            {/* Section 2: About Me & Education Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card>
+                    <CardHeader className="pb-3 border-b border-[#E8E2D7]">
+                        <CardTitle className="text-base inline-flex items-center gap-2">
+                            <GraduationCap className="w-4 h-4 text-primary"/>
+                            <span>Education &amp; Career</span>
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className=" text-xs space-y-2.5">
+                        <div className="flex justify-between gap-4 border-b border-[#F2ECE3] pb-2">
+                            <span className="text-[#635A50]">Qualification</span>
+                            <span className="font-medium text-[#1E1B18] text-right">
+                  {profile.educationLevel}
+                </span>
+                        </div>
+
+                        <div className="flex justify-between gap-4 border-b border-[#F2ECE3] pb-2">
+                            <span className="text-[#635A50]">Institution</span>
+                            <span className="font-medium text-[#1E1B18] text-right">
+                    {profile.educationDescription}
+                  </span>
+                        </div>
+                        <div className="flex justify-between gap-4 border-b border-[#F2ECE3] pb-2">
+                            <span className="text-[#635A50]">Occupation</span>
+                            <span className="font-medium text-[#1E1B18] text-right inline-flex items-center gap-1">
+                  <Briefcase className="w-3.5 h-3.5 text-primary shrink-0"/>
+                  <span>{profile.profession}</span>
+                </span>
+                        </div>
+
+                        <div className="flex justify-between gap-4">
+                            <span className="text-[#635A50]">Employment Sector</span>
+                            <span className="font-medium text-[#1E1B18] text-right">
+                            {profile.employedIn}
+                                </span>
+                        </div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="pb-3 border-b border-[#E8E2D7]">
+                        <CardTitle className="text-base">Narrative Inspection (&ldquo;About Me&rdquo;)</CardTitle>
+                    </CardHeader>
+                    <CardContent className="italic">
+                        &ldquo;
+                        {profile.narrative}
+                        &rdquo;
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Section 3: About Me & Partner Preferences */}
+            <div className="grid grid-cols-1  gap-6">
+                <Card>
+                    <CardHeader className="pb-3 border-b border-[#E8E2D7]">
+                        <CardTitle className="text-base inline-flex items-center gap-2">
+                            <Heart className="w-4 h-4 text-primary" />
+                            <span>Partner Preferences</span>
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs space-y-2.5">
+                        {profile.partnerPreferences && (
+                            <>
+                                <div className="flex justify-between gap-4 border-b border-[#F2ECE3] pb-2">
+                                    <span className="text-[#635A50]">Age &amp; Height Range</span>
+                                    <span className="font-medium text-[#1E1B18] text-right tabular-numbers">
+                      {profile.partnerPreferences.preferredMinAge}–{profile.partnerPreferences.preferredMaxAge} yrs ·{' '}
+                                        {profile.partnerPreferences.preferredMinHeight} to {profile.partnerPreferences.preferredMaxHeight}
+                    </span>
+                                </div>
+                                <div className="flex justify-between gap-4 border-b border-[#F2ECE3] pb-2">
+                                    <span className="text-[#635A50]">Education</span>
+                                    <span className="font-medium text-[#1E1B18] text-right">
+                      {profile.partnerPreferences.preferredEducationLevels?.join(', ')}
+                    </span>
+                                </div>
+                                <div className="flex justify-between gap-4 border-b border-[#F2ECE3] pb-2">
+                                    <span className="text-[#635A50] block mb-1">Religions</span>
+                                    <span className="font-medium text-[#1E1B18] text-right">
+                      {profile.partnerPreferences.preferredReligions?.join(', ')}
+                    </span>
+                                </div>
+                                <div className="flex justify-between gap-4 border-b border-[#F2ECE3] pb-2">
+                                    <span className="text-[#635A50] block mb-1">Professions</span>
+                                    <span className="font-medium text-[#1E1B18] text-right">
+                      {profile.partnerPreferences.preferredProfessions?.join(', ')}
+                    </span>
+                                </div>
+                                <div className="flex justify-between gap-4 border-b border-[#F2ECE3] pb-2">
+                                    <span className="text-[#635A50] block mb-1">Castes</span>
+                                    <span className="font-medium text-[#1E1B18] text-right">
+                      {profile.partnerPreferences.preferredCastes?.join(', ')}
+                    </span>
+                                </div>
+                                <div className="flex justify-between gap-4 border-b border-[#F2ECE3] pb-2">
+                                    <span className="text-[#635A50] block mb-1">Annual Income Range</span>
+                                    <span className="font-medium text-[#1E1B18] text-right">
+                      {profile.partnerPreferences.preferredAnnualIncomeRanges?.join(', ')}
+                    </span>
+                                </div>
+                                <div className="flex justify-between gap-4 border-b border-[#F2ECE3] pb-2">
+                                    <span className="text-[#635A50] block mb-1">Marital Status</span>
+                                    <span className="font-medium text-[#1E1B18] text-right">
+                      {profile.partnerPreferences.preferredMaritalStatuses?.toLocaleUpperCase()}
+                    </span>
+                                </div>
+                                <div className="flex justify-between gap-4 border-b border-[#F2ECE3] pb-2">
+                                    <span className="text-[#635A50] block mb-1">Residency Status</span>
+                                    <span className="font-medium text-[#1E1B18] text-right">
+                      {profile.partnerPreferences.preferredResidencyStatuses?.join(', ')}
+                    </span>
+                                </div>
+                            </>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     );
 };

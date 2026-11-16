@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import {MemberNavItem} from "@/components/layout/user-sidebar";
+import {SalesPeriod} from "@/components/dashboard/sales-bar-chart";
 
 export interface NavSubItem {
     title: string;
@@ -1203,5 +1204,44 @@ export const sampleProposals = [
             profession: 'Open to any professional career',
         },
         registeredDate: '2026-10-08',
+    },
+];
+
+export const demoSalesData: SalesPeriod[] = [
+    {
+        period: "2026-06",
+        label: "Jun",
+        salesMinor: 4500000,
+        paymentCount: 15,
+    },
+    {
+        period: "2026-07",
+        label: "Jul",
+        salesMinor: 6300000,
+        paymentCount: 21,
+    },
+    {
+        period: "2026-08",
+        label: "Aug",
+        salesMinor: 5400000,
+        paymentCount: 18,
+    },
+    {
+        period: "2026-09",
+        label: "Sep",
+        salesMinor: 9000000,
+        paymentCount: 30,
+    },
+    {
+        period: "2026-10",
+        label: "Oct",
+        salesMinor: 11700000,
+        paymentCount: 39,
+    },
+    {
+        period: "2026-11",
+        label: "Nov",
+        salesMinor: 8100000,
+        paymentCount: 27,
     },
 ];

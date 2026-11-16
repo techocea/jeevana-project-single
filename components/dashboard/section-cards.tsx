@@ -1,160 +1,122 @@
 "use client";
 
-import {Badge} from "@/components/ui/badge";
 import {
     Card,
-    CardAction,
-    CardDescription,
-    CardFooter,
+    CardContent,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
 import {
-    TrendingUpIcon,
-    FolderHeart,
-    CircleDollarSign,
+    TrendingUp,
+    Receipt,
+    Clock,
     Users,
+    ArrowRight
 } from "lucide-react";
-import {Progress} from "../ui/progress";
-import Image from "next/image";
-import {AppRole} from "@/lib/constants";
+import {AppRole} from "@/types";
+import Link from "next/link";
 
 export function SectionCards({role}: { role: AppRole }) {
     return (
-        <div className="grid grid-cols-1 gap-4  @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
-            <Card
-                className="@container/card [container-type:inline-size] bg-white shadow-sm border border-neutral-200/80 rounded-xl">
-                <CardHeader className="flex flex-col gap-2">
-                    <CardAction className="flex items-center justify-between w-full">
-              <span
-                  className="bg-indigo-50 text-indigo-600 w-10 h-10 flex items-center justify-center rounded-xl transition-colors">
-            <FolderHeart className="w-5 h-5"/>
-          </span>
-                        <Badge variant="secondary"
-                               className="flex items-center gap-1 font-medium bg-emerald-50 text-emerald-700 border-emerald-200/60">
-                            <TrendingUpIcon className="w-3.5 h-3.5"/>
-                            +8.5%
-                        </Badge>
-                    </CardAction>
-                    <CardDescription className="uppercase">Total Ads</CardDescription>
-                    <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                        1,234
-                    </CardTitle>
-                </CardHeader>
-                <CardFooter className="flex flex-col items-start gap-2 text-xs text-muted-foreground pt-0 px-5">
-                    <Progress value={85} className="h-1.5 w-full bg-neutral-100 [&>div]:bg-indigo-600"/>
-                    <div className="flex justify-between w-full text-neutral-500 font-medium">
-                        <span>Target Reach</span>
-                        <span>85%</span>
-                    </div>
-                </CardFooter>
-            </Card>
-            {role === "admin" && (
-                <Card
-                    className="@container/card [container-type:inline-size] bg-white shadow-sm border border-neutral-200/80 rounded-xl">
-                    <CardHeader className="flex flex-col gap-2 p-5">
-                        <CardAction className="flex items-center justify-between w-full">
-            <span className="bg-emerald-50 text-emerald-600 w-10 h-10 flex items-center justify-center rounded-xl">
-              <CircleDollarSign className="size-5"/>
-            </span>
-                            <Badge variant="secondary"
-                                   className="flex items-center gap-1 font-medium bg-emerald-50 text-emerald-700 border-emerald-200/60">
-                                <TrendingUpIcon className="size-3.5"/>
-                                +20%
-                            </Badge>
-                        </CardAction>
-
-                        <div className="space-y-1 mt-1">
-                            <CardDescription
-                                className="uppercase text-xs font-semibold tracking-wider text-muted-foreground">
-                                Monthly Revenue
-                            </CardDescription>
-                            <CardTitle
-                                className="text-2xl font-bold tracking-tight text-neutral-900 tabular-nums @[250px]/card:text-3xl">
-                                LKR 2,123,456
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {role === "admin" ? (
+                <>
+                    {/* Metric 1: Revenue for Selected Period */}
+                    <Card>
+                        <CardHeader className="pb-2">
+                            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold text-[#8C8375] uppercase tracking-wider">
+                Settled Period Revenue
+              </span>
+                                <TrendingUp className="w-4 h-4 text-[#8E6516]"/>
+                            </div>
+                            <CardTitle className="text-xl font-semibold text-[#1F1B18] mt-1 font-mono">
+                                {/*Rs. {displayRevenue.toLocaleString()}*/}
+                                Rs. 2,943,600
                             </CardTitle>
-                        </div>
-                    </CardHeader>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                            <div className="text-[11px] text-[#665D52] leading-tight">
+                                Current Month (November 2026)
+                            </div>
+                        </CardContent>
+                    </Card>
+                    {/* Metric 2: Successful Paid Memberships/Sales */}
+                    <Card>
+                        <CardHeader className="pb-2">
+                            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold text-[#8C8375] uppercase tracking-wider">
+                Successful Paid Sales
+              </span>
+                                <Receipt className="w-4 h-4 text-[#2563EB]"/>
+                            </div>
+                            <CardTitle className="text-xl font-semibold text-[#1F1B18] mt-1 tabular-numbers font-mono">
+                                32 {/*{displaySales}*/}
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                            <div className="text-[11px] text-[#2563EB] font-medium leading-tight">
+                                {/*{timeframe === '30d' ? 'Completed checkouts this month' : 'Total sales across period'}*/}
+                                Completed checkouts this month
+                            </div>
+                            <div className="text-[10px] text-[#8C8375] mt-1">
+                                Distinct checkout transactions
+                            </div>
+                        </CardContent>
+                    </Card>
+                    {/* Metric 3: Active Memberships */}
+                    <Card>
+                        <CardHeader className="pb-2">
+                            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold text-[#8C8375] uppercase tracking-wider">
+                Active Memberships
+              </span>
+                                <Users className="w-4 h-4 text-[#15803D]"/>
+                            </div>
+                            <CardTitle className="text-xl font-semibold text-[#1F1B18] mt-1 tabular-numbers font-mono">
+                                {/*{data.paidActiveMemberships}*/}
+                                150
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                            <div className="text-[11px] text-[#15803D] font-medium leading-tight">
+                                Currently unexpired subscriptions
+                            </div>
+                            <div className="text-[10px] text-[#8C8375] mt-1">
+                                112 Gold · 28 Platinum · 10 Concierge
+                            </div>
+                        </CardContent>
+                    </Card>
+                    {/* Metric 4: Pending Advertisement Reviews */}
+                    <Link href={"/control-panel/reviews"}>
+                        <Card
+                            className="hover:border-[#8E6516] cursor-pointer transition-colors h-full"
+                        >
 
-                    <CardFooter
-                        className="flex items-center justify-between gap-2 text-xs text-muted-foreground pt-0 px-5">
-                        <span className="font-medium text-neutral-500">30-day trend</span>
-                        <Image
-                            src="/images/revenue-trend.png"
-                            alt="Revenue trend graph"
-                            width={92}
-                            height={36}
-                            className="h-9 w-auto object-contain"
-                        />
-                    </CardFooter>
-                </Card>
-            )}
-            <Card
-                className="@container/card [container-type:inline-size] bg-white shadow-sm border border-neutral-200/80 rounded-xl">
-                <CardHeader className="flex flex-col gap-2 p-5">
-                    <CardAction className="flex items-center justify-between w-full">
-            <span className="bg-amber-50 text-amber-600 w-10 h-10 flex items-center justify-center rounded-xl">
-              <Users className="size-5"/>
-            </span>
-                        <Badge variant="secondary"
-                               className="flex items-center gap-1 font-medium bg-emerald-50 text-emerald-700 border-emerald-200/60">
-                            <TrendingUpIcon className="size-3.5"/>
-                            +12.5%
-                        </Badge>
-                    </CardAction>
-
-                    <div className="space-y-1 mt-1">
-                        <CardDescription
-                            className="uppercase text-xs font-semibold tracking-wider text-muted-foreground">
-                            Active Accounts
-                        </CardDescription>
-                        <CardTitle
-                            className="text-2xl font-bold tracking-tight text-neutral-900 tabular-nums @[250px]/card:text-3xl">
-                            989
-                        </CardTitle>
-                    </div>
-                </CardHeader>
-
-                <CardFooter className="flex flex-col items-start gap-1 text-xs pt-0 px-5 ">
-                    <div className="line-clamp-1 flex items-center gap-1.5 font-medium text-neutral-800">
-                        Strong user retention <TrendingUpIcon className="size-3.5 text-emerald-600"/>
-                    </div>
-                    <p className="text-muted-foreground">Engagement exceeds targets</p>
-                </CardFooter>
-            </Card>
-            <Card
-                className="@container/card [container-type:inline-size] bg-white shadow-sm border border-neutral-200/80 rounded-xl">
-                <CardHeader className="flex flex-col gap-2 p-5">
-                    <CardAction className="flex items-center justify-between w-full">
-            <span className="bg-sky-50 text-sky-600 w-10 h-10 flex items-center justify-center rounded-xl">
-              <TrendingUpIcon className="size-5"/>
-            </span>
-                        <Badge variant="secondary"
-                               className="flex items-center gap-1 font-medium bg-emerald-50 text-emerald-700 border-emerald-200/60">
-                            <TrendingUpIcon className="size-3.5"/>
-                            +4.5%
-                        </Badge>
-                    </CardAction>
-
-                    <div className="space-y-1 mt-1">
-                        <CardDescription
-                            className="uppercase text-xs font-semibold tracking-wider text-muted-foreground">
-                            Growth Rate
-                        </CardDescription>
-                        <CardTitle
-                            className="text-2xl font-bold tracking-tight text-neutral-900 tabular-nums @[250px]/card:text-3xl">
-                            4.5%
-                        </CardTitle>
-                    </div>
-                </CardHeader>
-
-                <CardFooter className="flex flex-col items-start gap-1 text-xs pt-0 px-5 ">
-                    <div className="line-clamp-1 flex items-center gap-1.5 font-medium text-neutral-800">
-                        Steady performance increase <TrendingUpIcon className="size-3.5 text-emerald-600"/>
-                    </div>
-                    <p className="text-muted-foreground">Meets growth projections</p>
-                </CardFooter>
-            </Card>
+                            <CardHeader className="pb-2">
+                                <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold text-[#8C8375] uppercase tracking-wider">
+                Pending Ad Reviews
+              </span>
+                                    <Clock className="w-4 h-4 text-[#B45309]"/>
+                                </div>
+                                <CardTitle className="text-xl font-semibold text-[#1F1B18] mt-1 tabular-numbers font-mono">
+                                    {/*{userProfile.profileReviewStatus === 'pending' ? '1' : '0'}*/} 0
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="pt-0">
+                                <div className="text-[11px] text-[#B45309] font-medium leading-tight">
+                                    Awaiting editorial sign-off
+                                </div>
+                                <div className="text-[10px] text-[#8E6516] flex items-center gap-1 mt-1 font-semibold">
+                                    <span>Open Review Queue</span>
+                                    <ArrowRight className="w-3 h-3"/>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </Link>
+                </>
+            ) : null}
         </div>
     );
 }

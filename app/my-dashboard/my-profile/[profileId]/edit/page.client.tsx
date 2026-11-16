@@ -53,7 +53,7 @@ const EditProfile = ({ initialData, profileId }: EditProfileProps) => {
   return (
      <div className="bg-white rounded-lg border border-[#E8E2D7] shadow-sm overflow-hidden">
         {/* Tabs for different sections */}
-        <div className="mb-2 bg-[#FAF8F5] px-6 border-b border-strong flex items-center gap-3 flex-wrap">
+        <div className="mb-2 bg-[#FAF8F5] px-6 border-b border-strong flex items-center gap-3 overflow-x-auto">
           {[
             { id: "basic", label: "Basic Details" },
             { id: "attributes_habits", label: "Attributes & Habits" },

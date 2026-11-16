@@ -13,13 +13,11 @@ import {
   ShieldCogCorner,
   UserCheck,
 } from "lucide-react";
-import ReligionInformation from "@/components/forms/onboarding-two-form";
-import AchievementsForm from "@/components/forms/onboarding-three-form";
-import LocationInformation from "@/components/forms/onboarding-four-form";
-import PersonalInformation from "@/components/forms/onboarding-six-form";
-import HobbiesSelector from "@/components/forms/onboarding-five-form";
-import PartnerPreferences from "@/components/forms/onboarding-six-form";
-import BasicInformation from "@/components/forms/onboarding-one-form";
+import OnboardingFormFive from "@/components/forms/onboarding-five-form";
+import OnboardingFormTwo from "@/components/forms/onboarding-two-form";
+import OnboardingFormFour from "@/components/forms/onboarding-four-form";
+import OnboardingFormThree from "@/components/forms/onboarding-three-form";
+import OnboardingFormOne from "@/components/forms/onboarding-one-form";
 import TitleHeader from "@/components/dashboard/title-header";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { InitialProfileData } from "@/types";
@@ -142,37 +140,27 @@ const CreateAdPage = ({ initialData }: { initialData: InitialProfileData }) => {
 
               {selectedUserId && (
                 <div className="space-y-8 animate-in fade-in duration-300">
-                  {/* SECTION 1: Basic Details */}
-                  <BasicInformation initialData={initialData} variant="admin" />
-
-                  {/* SECTION 2: Religion */}
-                  <ReligionInformation
-                    initialData={initialData}
+                  <OnboardingFormOne
                     variant="admin"
+                    initialData={initialData} />
+                  
+                  <OnboardingFormTwo
+                      variant="admin"
+                      initialData={initialData}
                   />
 
-                  {/* SECTION 3: Location */}
-                  <LocationInformation
-                    initialData={initialData}
-                    variant="admin"
+                  <OnboardingFormThree
+                      variant="admin"
+                      initialData={initialData}
                   />
+                  
+                  <OnboardingFormFour
+                      variant="admin"
+                      initialData={initialData}/>
 
-                  {/* SECTION 4: Career */}
-                  <AchievementsForm initialData={initialData} variant="admin" />
-
-                  {/* SECTION 5: Personal Info */}
-                  <PersonalInformation
-                    initialData={initialData}
-                    variant="admin"
-                  />
-
-                  {/* SECTION 6: Hobbies */}
-                  <HobbiesSelector initialData={initialData} variant="admin" />
-
-                  {/* SECTION 7: Partner Preferences */}
-                  <PartnerPreferences
-                    initialData={initialData}
-                    variant="admin"
+                  <OnboardingFormFive
+                      variant="admin"
+                      initialData={initialData}
                   />
 
                   {/* SECTION 7: Admin Overrides */}
